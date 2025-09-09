@@ -1,0 +1,43 @@
+/* src/Intro.css */
+.intro-root{
+  min-height: 100dvh;
+  display: grid; place-items: center;
+  padding: max(20px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+  background-position: center; background-size: cover;
+  background-repeat: repeat;    /* évite bandes */
+  background-attachment: fixed; /* évite micro-reflows */
+  touch-action: pan-y;
+}
+.intro-stack{
+  text-align: center;
+  display: grid; gap: 14px;
+  opacity: 0; transform: translateY(8px); /* caché avant “enter” */
+}
+.logo{ width: min(140px, 28vw); justify-self: center; }
+.title{
+  margin: 0;
+  font-family:'Sorts Mill Goudy', serif;
+  color:#F8F5E1; font-size: clamp(2.2rem, 7vw, 4rem);
+}
+.tagline{
+  margin: 0 0 10px 0;
+  font-family:'Sorts Mill Goudy', serif;
+  color:#F8F5E1; opacity:.9;
+  font-size: clamp(1.1rem, 3vw, 1.6rem);
+}
+.arrow{ width:min(104px, 16vw); justify-self:center; filter: drop-shadow(0 4px 10px rgba(0,0,0,.35)); }
+
+/* IN (2s) / OUT (2s) groupés */
+@keyframes introIn  { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
+@keyframes introOut { from{opacity:1; transform:none} to{opacity:0; transform:translateY(-8px) scale(.985)} }
+
+.intro-root.enter  .intro-stack{ animation: introIn 2000ms ease forwards; }
+.intro-root.leaving .intro-stack{ animation: introOut 2000ms ease forwards; }
+
+/* flèche animée en continu */
+@keyframes pulseSlide {
+  0% { transform: translateX(-8px); opacity:.9; }
+  50%{ transform: translateX(8px); opacity:1; }
+  100%{ transform: translateX(-8px); opacity:.9; }
+}
+.pulse{ animation: pulseSlide 2.2s ease-in-out infinite; }

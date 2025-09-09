@@ -1,0 +1,39 @@
+.coach-root { margin-top: 12px; }
+.coach-row { display:flex; align-items:center; gap:8px; }
+.coach-btn {
+  padding: 8px 12px; border: 0; border-radius: 10px;
+  background: #f0f3ff; cursor: pointer; font-weight: 600;
+  box-shadow: 0 1px 0 rgba(0,0,0,.06);
+}
+.coach-btn.pulse { animation: coachPulse 1.2s ease-in-out infinite; }
+@keyframes coachPulse { 0%{box-shadow:0 0 0 0 rgba(99,102,241,.4)} 100%{box-shadow:0 0 0 10px rgba(99,102,241,0)} }
+
+.coach-chip { font-size:12px; padding:3px 8px; border-radius: 999px; }
+.coach-chip.ok { background:#e8f7ee; color:#107a3d; }
+.coach-chip.warn { background:#fff4e5; color:#9a5a00; }
+
+.coach-panel {
+  margin-top:10px; padding:12px; border-radius:12px;
+  background: rgba(255,255,255,.9);
+  box-shadow: 0 6px 24px rgba(0,0,0,.08);
+}
+
+.coach-block + .coach-block { margin-top: 10px; }
+.coach-title { font-weight:700; margin-bottom:6px; }
+.coach-list { margin: 0 0 0 18px; padding: 0; }
+
+.coach-sugs { display:flex; flex-direction:column; gap:8px; }
+.coach-sug {
+  text-align:left; border:1px solid #e5e7eb; background:#fff; padding:10px 12px; border-radius:10px; cursor:pointer;
+}
+.coach-sug:hover { background:#f9fafb; }
+
+.coach-follow-q { font-size: 14px; margin-bottom: 6px; opacity:.8; }
+.coach-input {
+  width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:10px; margin-bottom:8px;
+  background:#fff;
+}
+
+.coach-foot { display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
+.coach-close { background:none; border:0; text-decoration:underline; cursor:pointer; }
+.hint { font-size:12px; opacity:.7; }

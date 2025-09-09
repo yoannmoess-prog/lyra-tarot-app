@@ -1,0 +1,179 @@
+/* src/Page3.css */
+.question-wrap{
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+/* bloc formulaire (fade-in 2s à l’arrivée, fade-out 2s au submit) */
+.question-inner{
+  width: 100%;
+  max-width: 860px;
+  display: grid;
+  gap: 18px;
+  text-align: center;
+  will-change: opacity, transform;
+}
+.question-inner.pre    { opacity: 0; transform: translateY(8px) scale(.995); }
+.question-inner.arrive { opacity: 1; transform: none; transition: opacity 2000ms ease, transform 2000ms ease; }
+.question-inner.leaving{ opacity: 0; transform: translateY(-8px) scale(.985); transition: opacity 2000ms ease, transform 2000ms ease; }
+
+.question-title{
+  margin: 0;
+  font-family: 'Sorts Mill Goudy', serif;
+  color: #F8F5E1;
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  line-height: 1.25;
+}
+
+/* bulle claire (textarea) */
+.input-bubble{
+  position: relative;
+  margin: 0 auto;
+  width: min(720px, 92vw);
+  border-radius: 22px;
+  background: rgba(248,245,225, .92);
+  border: 1px solid rgba(0,0,0,.15);
+  box-shadow: 0 10px 22px rgba(0,0,0,.28);
+  padding: 12px 52px 12px 16px; /* place pour l’icône */
+}
+.input-bubble.textarea { padding: 12px 52px 12px 16px; }
+.input-bubble:has(textarea:focus){
+  box-shadow: 0 0 0 3px rgba(248,245,225,.35), 0 10px 22px rgba(0,0,0,.28);
+}
+.input-bubble textarea{
+  width: 100%;
+  border: none; outline: none; background: transparent;
+  color: #1d1f20;
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 110px;
+}
+
+/* icône Send unique, centrée verticalement, sans cadre */
+.send-btn{
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 44px; height: 44px; display: grid; place-items: center;
+  border: none; background: transparent; padding: 0; cursor: pointer;
+  border-radius: 50%; -webkit-tap-highlight-color: transparent;
+}
+.send-btn .material-symbols-outlined{ font-size: 24px; line-height: 1; color: #1d1f20; }
+.send-btn:focus-visible{ outline: 2px solid rgba(0,0,0,.35); outline-offset: 2px; }
+
+/* overlay pleine page : seul élément visible pendant la transition */
+.question-overlay{
+  position: fixed; inset: 0; z-index: 10;
+  display: grid; place-items: center;
+  padding: 6vh 6vw; pointer-events: none;
+  opacity: 0; will-change: opacity, transform;
+}
+.overlay-text{
+  margin: 0; text-align: center;
+  font-family: 'Sorts Mill Goudy', serif; color: #F8F5E1;
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem); line-height: 1.35;
+}
+
+@keyframes ovIn  { from{opacity:0; transform: translateY(8px)} to{opacity:1; transform:none} }
+@keyframes ovOut { from{opacity:1; transform:none} to{opacity:0; transform: translateY(-8px) scale(.985)} }
+.question-overlay.overlay-in  { animation: ovIn 2000ms ease forwards; }
+.question-overlay.overlay-hold{ opacity: 1; }
+.question-overlay.overlay-out { animation: ovOut 2000ms ease forwards; }
+
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+
+@media (max-width: 520px){
+  .question-wrap{ padding: 18px 12px; }
+  .input-bubble{ border-radius: 18px; }
+}
+
+/* Send (champ) — aucun contour / aucun fond */
+.send-btn{ border:none !important; background:transparent !important; box-shadow:none !important; }
+.send-btn:focus, .send-btn:focus-visible{ outline:none !important; box-shadow:none !important; }
+
+/* --- Shuffle /question : éventail fluide, loop sans couture --- */
+.q-shuffle{
+  position: relative;
+  width: min(180px, 42vw);
+  aspect-ratio: 9.27 / 16;
+  margin: 18px auto 8px;
+  pointer-events: none;
+}
+.q-shuffle .card{
+  position: absolute; inset: 0;
+  border-radius: 14px;
+  background: url("./assets/desk_01.png") center / 110% 110% no-repeat;
+  box-shadow: 0 8px 18px rgba(0,0,0,.30);
+  will-change: transform;
+  opacity: .95;
+}
+
+/* loop “sans couture” via alternate + offsets différents */
+.q-shuffle.is-on .card:nth-child(1){ animation: fanSweep 2200ms ease-in-out   0ms infinite alternate; }
+.q-shuffle.is-on .card:nth-child(2){ animation: fanSweep 2400ms ease-in-out 150ms infinite alternate; }
+.q-shuffle.is-on .card:nth-child(3){ animation: fanSweep 2000ms ease-in-out 300ms infinite alternate; }
+.q-shuffle.is-on .card:nth-child(4){ animation: fanSweep 2600ms ease-in-out 450ms infinite alternate; }
+.q-shuffle.is-on .card:nth-child(5){ animation: fanSweep 2300ms ease-in-out 600ms infinite alternate; }
+
+/* amplitude “éventail” mais zen */
+@keyframes fanSweep{
+  0%   { transform: translate(-14px, 10px) rotate(-18deg) scale(.985); }
+  50%  { transform: translate(  0px,  0px) rotate(  0deg) scale(1.000); }
+  100% { transform: translate( 14px,-10px) rotate( 18deg) scale(.985); }
+}
+
+/* Pendant les fades de la page, on NE met PAS en pause les anims */
+.fp-wrap.fade-out .q-shuffle .card,
+.fp-wrap.fade-out-soft .q-shuffle .card{
+  animation-play-state: running !important;
+}
+
+/* === Shuffle ambiance — éventail fluide, boucle lisse === */
+.q-shuffle{
+  position: relative;
+  height: min(72px, 9vh);
+  margin: 12px 0 18px;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.q-shuffle .card{
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: min(100px, 20vw);
+  aspect-ratio: 9.27/16;
+  border-radius: 12px;
+  background: url("./assets/desk_01.png") center/110% 110% no-repeat;
+  box-shadow: 0 6px 14px rgba(0,0,0,.18);
+  opacity: .95;
+
+  /* variables de pose (définies inline via style) */
+  --rot: 0deg;
+  --shift: 0%;
+
+  /* animation conserve la pose éventail */
+  animation: fanSweep 2600ms ease-in-out infinite;
+}
+
+@keyframes fanSweep{
+  0% {
+    transform: translate(calc(-50% + var(--shift)), 0) rotate(var(--rot));
+  }
+  50% {
+    transform: translate(calc(-50% + var(--shift)), 4px) rotate(calc(var(--rot) * 1.06));
+  }
+  100% {
+    transform: translate(calc(-50% + var(--shift)), 0) rotate(var(--rot));
+  }
+}
+
+/* sécurité : au cas où un reste de markup subsisterait */
+.q-shuffle { display: none !important; }

@@ -1,0 +1,30 @@
+.debugbar {
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  backdrop-filter: blur(2px);
+}
+.debugbar-btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 4px 8px;
+  background: #ffd24d;
+  cursor: pointer;
+}
+.debugbar-btn:hover { filter: brightness(0.95); }
+.debugbar-toast {
+  background: #2ecc71;
+  color: #fff;
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+.debugbar-info { margin-left: 8px; opacity: .8; }

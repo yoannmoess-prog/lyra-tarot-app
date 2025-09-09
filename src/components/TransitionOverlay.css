@@ -1,0 +1,32 @@
+/* src/components/TransitionOverlay.css */
+.to-root{
+  position: fixed; inset: 0;
+  z-index: 50;
+  display: grid; place-items: center;
+  padding: 6vh 4vw;
+  background: rgba(0,0,0,0);           /* phases “blank” transparentes */
+  transition: background 350ms ease;
+  pointer-events: none;                 /* ne bloque pas le clavier */
+}
+.to-root.show{ background: rgba(0,0,0,0.0); }
+.to-center{
+  max-width: min(900px, 92vw);
+  text-align: center;
+}
+
+.to-line{
+  margin: 0;
+  font-family:'Sorts Mill Goudy', serif;
+  color: #F8F5E1;
+  font-size: clamp(1.4rem, 3.4vw, 2.1rem);
+  line-height: 1.4;
+  opacity: 0; transform: translateY(6px);
+  animation: toFade 600ms ease forwards;
+}
+@keyframes toFade {
+  to { opacity: 1; transform: none; }
+}
+
+/* phase classes pour lisibilité (blankBefore/blankAfter = écran “vide”) */
+.to-root.blankBefore .to-line,
+.to-root.blankAfter  .to-line { display:none; }

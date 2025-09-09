@@ -1,0 +1,23 @@
+/* Bouton copier dans une bulle LYRA */
+.bubble.lyra { position: relative; }
+
+/* DebugBar petit plus */
+.debugbar-info { margin-left: 8px; opacity: .7; }
+
+/* Empilement doux quand une réponse de LYRA est scindée en plusieurs bulles */
+.bubble.lyra.stacked { margin-top: 8px; }
+
+/* Empêche les callouts (iOS) dans le chat */
+.chat-wrap { -webkit-touch-callout: none; }
+
+/* Texte des bulles : non sélectionnable */
+.chat-wrap .bubble .msg,
+.chat-wrap .bubble .who {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Évite le drag d'images dans le chat (Chrome/Safari) */
+.chat-wrap img { -webkit-user-drag: none; }
