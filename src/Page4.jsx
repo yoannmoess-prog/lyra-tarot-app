@@ -189,6 +189,8 @@ export default function Page4() {
   const slotRefs = [useRef(null), useRef(null), useRef(null)];
   const [flight, setFlight] = useState(null);
 
+  const availableSlots = [0, 1, 2].filter(i => !chosen.includes(i));
+
   const computeFlight = (targetIndex) => {
     const deckEl = deckRef.current;
     const slotEl = slotRefs[targetIndex]?.current;
