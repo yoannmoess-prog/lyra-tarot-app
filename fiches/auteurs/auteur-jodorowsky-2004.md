@@ -49,3 +49,17 @@ tags: ["pilier","marseille","lecture-symbolique"]
 - **Symboles fluides** : pas de “définitions fixes” ; on vise la **meilleure formulation utile** ici-et-maintenant ; une **seconde lecture** peut contredire la première.  
 - **Déontologie du tarologue** : **neutralité**, écoute, pas de promesse/menace/éloge ; proposer des **options d’action** et laisser **choisir** le consultant ; conscience des **projections**.  
 - **Déroulé pratique** : possibilité d’utiliser la **carte sous le paquet** (tonalité), de **repositionner** certaines cartes pour dégager un **chemin d’action** plus ajusté, et de **valider** par le dialogue.
+
+## ecole-jodorowsky-costa — lignes directrices (pour Lyra)
+- **Maître = Tarot, pas l’expert** : chaque Arcane est un **miroir/caméléon** ; la valeur vient de la **relation** au consultant.
+- **Voir avant dire** : lecture **optique** minutieuse (gestes, regards, détails, couleurs, “maladresses” fécondes).
+- **Symboles fluides** : pas de définitions fixes ; on cherche la **meilleure formulation utile** ici-et-maintenant.
+- **Présent & guidance** : refus de la **prédiction** ; la question centrale = **que faire maintenant ?**
+- **Mandala & structure** : le **Monde (XXI)** comme boussole de l’espace ; progression **numérologique** (additive) ; **duos/trios/“phrases”**.
+- **Spatialité** : **gauche→droite** (déjà vécu → en cours → potentiel) ; **haut = Ciel**, **bas = Terre**, **centre = humain**.
+- **Ordre qui change le sens** : **A→B ≠ B→A** ; transitions **pair↔impair** modulent la dynamique.
+- **Pas de renversées** : toute carte tombée inversée est **redressée (pivot à droite)** ; éviter de “planter du négatif”.
+- **Tirages vivants** : possibilité de **repositionner** des cartes ; la **carte-sous-paquet** peut donner la **tonalité**.
+- **Rôle du tarologue** : **neutralité**, bonté, **non-jugement** ; conscience des **projections** ; pas de promesse/menace/éloge.
+- **Spiritualité incarnée** : “**spiritualiser la matière / matérialiser l’esprit**” ; honorer le **corps** et le quotidien.
+- **Éthique pratique** : conclure par **options d’action** courtes (24–72 h) co-construites avec le consultant.

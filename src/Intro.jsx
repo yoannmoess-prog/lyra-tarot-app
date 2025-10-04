@@ -10,42 +10,38 @@ export default function Intro() {
   const nav = useNavigate();
   const [entered, setEntered] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const mainRef = useRef(null);
   const startRef = useRef(null);
 
-  const DUR = 2000; // 2s in / 2s out
+  const DUR = 2000;
 
-  // Action "continuer" (protégée contre les doubles appels)
   const go = useCallback(() => {
     if (leaving) return;
     setLeaving(true);
-    setTimeout(() => nav("/name"), DUR); // fade-out 2s puis route
+    setTimeout(() => nav("/name"), DUR);
   }, [leaving, nav]);
 
-  // Fade-in sans "saute" (active la classe .enter au frame suivant)
+  // Fade-in + focus automatique du conteneur
   useEffect(() => {
-    const id = requestAnimationFrame(() => setEntered(true));
+    const id = requestAnimationFrame(() => {
+      setEntered(true);
+      mainRef.current?.focus(); // ✅ focus via ref
+    });
     return () => cancelAnimationFrame(id);
   }, []);
 
-  // Auto-continue après 1,2s
-  useEffect(() => {
-    const t = setTimeout(go, 1200);
-    return () => clearTimeout(t);
-  }, [go]);
-
-  // Support clavier : Enter/Space pour continuer
+  // Clavier : Enter ou Espace → go()
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        go();
-      }
+      if (!leaving) {
+  e.preventDefault(); // pour éviter un scroll par erreur
+  go();
+}
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [go]);
 
-  // Swipe droite → gauche pour continuer
   const begin = (x, y) => {
     startRef.current = { x, y, t: Date.now() };
   };
@@ -60,6 +56,7 @@ export default function Intro() {
 
   return (
     <main
+      ref={mainRef} // ✅ ref ici
       className={`intro-root ${entered ? "enter" : ""} ${leaving ? "leaving" : ""}`}
       style={{ backgroundImage: `url(${bg})` }}
       onClick={go}

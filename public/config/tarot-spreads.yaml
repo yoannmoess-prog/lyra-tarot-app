@@ -1,0 +1,108 @@
+spreads:
+  conseil3:
+    id: conseil3
+    label: "Conseil (3 cartes)"
+    description: "Enjeu (Atout) • Message (Valeur mineure) • Part de soi (Figure mineure)"
+    positions:
+      - key: enjeu
+        label: "Vrai enjeu"
+        draw:
+          pool: majors
+          allow:
+            numeric_range: [0, 21]
+            roman_labels: ["0","00","I","II","III","IIII","V","VI","VII","VIII","VIIII","X","XI","XII","XIII","XIIII","XV","XVI","XVII","XVIII","XVIIII","XX","XXI"]
+
+      - key: message
+        label: "Message (valeur)"
+        draw:
+          pool: minors
+          allow:
+            ranks_numeric: [1,2,3,4,5,6,7,8,9,10]   # 1 = As
+            ranks_labels: ["As","A","2","3","4","5","6","7","8","9","10"]
+
+      - key: part_de_soi
+        label: "Part de soi (figure)"
+        draw:
+          pool: minors
+          allow:
+            courts: ["Valet","Reyne","Reine","Roy","Roi","Cavalier"]
+
+    output_template:
+      summary_slots: ["levier_1","levier_2?","action_24_72h"]
+      guidance_notes:
+        - "Formuler 1–2 leviers concrets"
+        - "Proposer 1 micro-action datée (24–72 h)"
+        - "Langage inclusif, non-jugeant"
+
+  heros3:
+    id: heros3
+    label: "Voyage du héros (3 cartes)"
+    description: "Séparation • Initiation • Retour (toutes en Atouts)"
+    positions:
+      - key: separation
+        label: "Séparation (appel/refus/seuil)"
+        draw:
+          pool: majors
+          allow: { numeric_range: [0, 21] }
+
+      - key: initiation
+        label: "Initiation (épreuve/ressource/transformation)"
+        draw:
+          pool: majors
+          allow: { numeric_range: [0, 21] }
+
+      - key: retour
+        label: "Retour (intégration/partage/élixir)"
+        draw:
+          pool: majors
+          allow: { numeric_range: [0, 21] }
+
+    output_template:
+      summary_slots: ["phase_nommee","micro_rituel","action_24_72h","question_reflexive"]
+      guidance_notes:
+        - "Nommer la phase (Séparation/Initiation/Retour)"
+        - "Proposer 1 micro-rituel + 1 action 24–72 h"
+        - "Inclure 1 question réflexive"
+        - "Rester en périmètre coaching"
+
+validation:
+  enforce_position_constraints: true
+  redraw_on_violation: true
+  max_redraw_attempts: 5
+  on_exhausted_pool: "fail_with_message"
+
+deck_vocab:
+  courts_order_marseille: ["Valet","Reyne","Roy","Cavalier"]
+  courts_aliases: { Reine: "Reyne", Roi: "Roy" }
+  ace_aliases: ["As","A"]
+
+routing:
+  spreads:
+    conseil: { id: conseil3, positions: ["enjeu","message","part_de_soi"], default: true }
+    heros:   { id: heros3,   positions: ["separation","initiation","retour"] }
+  heuristics:
+    lexicon:
+      conseil: ["choisir","décider","accepter","refuser","prioriser","plan","organiser","négocier","aujourd’hui","cette semaine","ce mois","rdv","entretien","budget","mail"]
+      heros:   ["changer de vie","reconversion","mission","vocation","sens","appel","blocage","peur","traverser","renaître","tourner la page","deuil","burnout","quête","voyage","transformation"]
+    horizon:
+      short_terms: ["aujourd’hui","cette semaine","ce mois","maintenant"]
+      long_terms:  ["cette année","à long terme","sur la durée","dans la vie","dans l'avenir"]
+    weights:
+      conseil_word: 2
+      heros_word: 2
+      short_horizon_conseil: 1
+      long_horizon_heros: 1
+      delta_threshold: 2
+  decision:
+    rules:
+      - if: "explicit:heros_terms"
+        then: "heros3"
+      - if: "score_heros - score_conseil >= delta_threshold"
+        then: "heros3"
+      - if: "score_conseil - score_heros >= delta_threshold"
+        then: "conseil3"
+      - else: "conseil3"
+
+rendering:
+  conseil3: { sections: ["Enjeu","Message","Part de soi","Leviers","Action 24–72 h"] }
+  heros3:   { sections: ["Phase","Micro-rituel","Action 24–72 h","Question réflexive"] }

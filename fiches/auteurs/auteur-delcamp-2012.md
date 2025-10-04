@@ -45,3 +45,13 @@ tags: ["pilier","marseille","ésotérisme","lecture-symbolique"]
 - **Colonnes du Temple** : correspondance symbolique des deux rangées (au-dessus actif/manifesté ; au-dessous psychique/spirituel).  
 - **Combinaisons** : lectures **par paires**, **par quaternions** et autres regroupements pour dévoiler les deux faces d’une même réalité.  
 - **Parcours en 3 étapes** : I–V (**prise de conscience/initiation théorique**), VI–XIII (**mise à l’épreuve & transformation**), XIIII–XXI (**transmutation & accomplissement**), avec des jalons forts (VI charnière, XI maîtrise de soi, XII dépouillement, XIII transformation, XXI accomplissement).
+
+## ecole-delcamp — lignes directrices (pour Lyra)
+- **Voie initiatique** : Tarot = **chemin de transmutation** plus que manuel pratique ; viser la **connaissance intérieure** (gnose).
+- **Pas d’isolement** : « nul arcane n’a de valeur **pris isolément** » → priorité aux **rapports** (paires, quaternions, colonnes).
+- **Cadres d’étude** : **Rota** (0 entre I & XXI) et **boustrophédon** en 2 rangées ; **Colonnes du Temple** (haut = manifesté, bas = psychique/spirituel).
+- **Parcours en 3 temps** : I–V **prise de conscience** ; VI–XIII **épreuves & transformations** ; XIIII–XXI **transmutation & accomplissement**.
+- **Amour & Espérance** : moteurs du processus ; l’**affect** ouvre la compréhension symbolique mieux que l’intellect seul.
+- **Dépouillement alchimique** : quitter les « **métaux** » (conditionnements/attachements) ; maxime **« Vouloir sans désirer »**.
+- **Posture** : chemin **personnel** (volonté, persévérance), **au-delà des dogmes** ; conserver un **langage inclusif** et non-jugeant côté app.
+- **Éthique pour Lyra** : pas de voyance ; **guidance** introspective, exercices/gestes concrets ; reformuler l’élitisme initiatique en **pédagogie accessible**.

@@ -203,6 +203,19 @@ Sépare chaque bloc par une ligne vide (deux pressions sur Entrée) pour que l�
 
 /* ------------------------------ Routes ----------------------------------- */
 
+app.get("/", (req, res) => {
+  res.type("text/plain").send(
+`Lyra backend OK.
+
+Endpoints utiles:
+- /healthz
+- /metrics
+- /api/rag/debug
+- /api/rag/search   (POST JSON: { "query": "...", "k": 6 })
+- /api/lyra         (POST JSON)
+- /api/lyra/stream  (POST SSE)`);
+});
+
 // Santé
 app.get("/healthz", (req, res) => {
   res.json({ ok: true, ts: Date.now() });
@@ -630,4 +643,18 @@ app.post("/api/lyra/stream", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Lyra backend on http://localhost:${PORT}`);
   console.log(`[lyra] LLM key: ${LLM_API_KEY ? "présente" : "absente"}`);
+});
+
+// server/index.js
+app.post("/api/question", async (req, res) => {
+  const { question } = req.body;
+  if (!question) {
+    return res.status(400).json({ error: "question manquante" });
+  }
+
+  // Appelle RAG
+  const hits = await searchRag(question, 6, { minScore: 0.6 });
+  const context = formatRagContext(hits);
+
+  return res.json({ ok: true, context });
 });

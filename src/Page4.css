@@ -7,20 +7,31 @@
 .fade-out-soft { opacity: 0; transform: translateY(6px) scale(.985); transition: opacity .55s ease, transform .55s ease; }
 .pre-fade { opacity: 0; transform: translateY(6px) scale(.985); }
 
-/* Titre fixe pendant le tirage */
-.p4-fixed-title{
-  position: fixed;
-  top: clamp(10px, 3vh, 32px);
-  left: 0; right: 0;
+/* Bloc titre + instructions groupés */
+.title-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6em;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  /* Le padding/margin vertical est géré par les enfants ou le parent */
+}
+
+/* Titre intégré dans le flow */
+.p4-fixed-title {
   text-align: center;
-  z-index: 3;
-  pointer-events: none;
-  font-family:'Sorts Mill Goudy', serif;
-  color:#F8F5E1;
+  font-family: 'Sorts Mill Goudy', serif;
+  color: #F8F5E1;
   font-size: clamp(1.6rem, 3vw, 2.4rem);
-  line-height:1.25;
+  line-height: 1.25;
   padding: 0 4vw;
-  opacity: 0;
+  margin: 0;
+  opacity: 1;
+  position: static;
+  pointer-events: auto;
+  z-index: auto;
 }
 .title-reveal{ animation: titleFade .6s ease forwards; }
 @keyframes titleFade{
@@ -28,21 +39,28 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Instructions */
-.p4-fixed-instructions{
-  position: fixed;
-  top: calc(clamp(10px, 3vh, 32px) + clamp(32px, 7vh, 96px));
-  left: 0; right: 0;
+/* Instructions intégrées dans le flow */
+.p4-fixed-instructions {
   text-align: center;
-  z-index: 2;
-  pointer-events: none;
+  font-family: 'Sorts Mill Goudy', serif;
+  color: #F8F5E1;
+  font-size: clamp(1.05rem, 1.7vw, 1.5rem);
+  line-height: 1.4;
   padding: 0 4vw;
-  opacity: 0;
+  margin: 0;
+  opacity: 1;
+  position: static;
+  pointer-events: auto;
+  z-index: auto;
 }
-.instr-reveal{ animation: instrFade .5s ease .1s forwards; }
-@keyframes instrFade{
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
+.instr-reveal {
+  animation: fadeIn 1.4s ease-out;
+  will-change: opacity;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .p4-instruction{
   font-family:'Sorts Mill Goudy', serif;
@@ -63,16 +81,50 @@
 .with-title-only{ --top-fixed: clamp(56px, 12vh, 120px); }
 
 /* Root */
+.page4-mask {
+  position: fixed;
+  inset: 0;
+  background: #0c0b0b; /* ou un dégradé sombre pour coller au fond */
+  z-index: 9999;
+  animation: maskFadeOut 0.8s ease forwards;
+}
+
+@keyframes maskFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
 .page4-root{ overscroll-behavior-y: contain; min-height: 100vh; }
 @supports (height: 100svh){ .page4-root{ min-height: 100svh; } }
 
+.page4-fadein {
+  opacity: 0;
+  animation: page4FadeIn 1.8s ease-out forwards;
+}
+
+@keyframes page4FadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Board (deck + slots) */
-.page4-wrap{
+/* Ajout d'un padding-top plus grand pour donner plus de marge sous les instructions */
+.page4-wrap {
   min-height: calc(100vh - var(--top-fixed, 0px) - max(env(safe-area-inset-bottom), var(--kb, 0px)));
-  display:flex; flex-direction: column;
-  align-items:center; justify-content:center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: clamp(18px, 4vh, 36px);
-  text-align:center; padding: 6vh 4vw;
+  text-align: center;
+  padding: 6vh 4vw;
+  padding-top: calc(var(--top-fixed) + 4vh);
 }
 @supports (height: 100lvh){
   .page4-wrap{ min-height: calc(100lvh - var(--top-fixed, 0px) - max(env(safe-area-inset-bottom), var(--kb, 0px))); }
@@ -143,12 +195,27 @@
 }
 
 /* Rail des cartes tirées */
-.chosen-rail{
-  display:flex; flex-direction: row; align-items:center; justify-content:center;
-  gap:clamp(12px, 2.4vw, 26px);
-  min-height: min(20vh, 220px);
+/* Rail des cartes tirées - responsive, non-overlapping cards and labels */
+.chosen-rail {
+  display: flex;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 26px);
+  flex-wrap: wrap;
+  padding: 1vh 0;
+  min-height: 120px;
 }
-.slot-wrap{ position: relative; width: min(12vw, 16vh, 120px); aspect-ratio: 9.27 / 16; height:auto; }
+/* Slot wrap - consistent spacing and size */
+.slot-wrap {
+  width: min(30vw, 120px);
+  aspect-ratio: 9.27 / 16;
+  position: relative;
+  height: auto;
+}
+/* Fade-out 2s for header-rail-block */
+.header-rail-block.fade-out-2s {
+  opacity: 0;
+  transition: opacity 2s ease;
+}
 .slot-ghost{
   position:absolute; inset:0; border-radius:12px;
   border: 2px dashed rgba(248,245,225,.35);
@@ -269,6 +336,22 @@
   transform: translateY(0);
 }
 
+.final-rail {
+  display: flex;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 24px); /* espace adaptatif */
+  flex-wrap: wrap; /* sur petits écrans */
+}
+
+.final-card-outer {
+  flex: 1 1 30%;
+  min-width: 90px;
+}
+.final-caption {
+  margin-top: 0.3em;
+  font-size: clamp(0.7rem, 1vw, 1rem);
+}
+
 /* --- Chat : alignements fermes à gauche/droite --- */
 .chat-wrap{
   width: 100%;
@@ -282,6 +365,17 @@
   align-items: flex-start;
 }
 .chat-wrap.show{ opacity: 1; transform: translateY(0); }
+
+.fade-in-bubble {
+  opacity: 0;
+  animation: fadeInBubble 0.8s ease forwards;
+}
+
+@keyframes fadeInBubble {
+  to {
+    opacity: 1;
+  }
+}
 
 .bubble{
   max-width: 78%;
@@ -489,5 +583,190 @@
   .final-card-outer{ width:min(30vw, 26vh, 156px); }
 }
 
+/* ================= MOBILE (max-width: 520px) ================= */
+@media (max-width: 520px) {
+  .title-block {
+    gap: 0.6em;
+    width: 100%;
+    max-width: 100vw;
+    margin: 0 auto;
+    align-items: center;
+  }
+  .p4-fixed-title {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    padding: 16px 12px 0;
+    margin: 0;
+  }
+  .p4-fixed-instructions {
+    font-size: 0.95rem;
+    padding: 0 12px;
+    margin: 0 0 3vh 0;
+    line-height: 1.4;
+    color: #E0E2D0;
+  }
+  .p4-instruction {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: #E0E2D0;
+    opacity: 0.95;
+    margin: 0;
+  }
+  .page4-wrap {
+    padding-top: 4vh !important;
+    gap: 4vh;
+  }
+  .deck-area {
+    margin-top: 6px;
+    width: min(34vw, 24vh, 180px);
+  }
+  .final-card-outer {
+    width: min(34vw, 28vh, 168px);
+  }
+  .fade-in-soft,
+  .fade-out-soft,
+  .pre-fade {
+    transform: none !important;
+    transition: opacity 0.6s ease !important;
+  }
+  .you-block {
+    border-top: none;
+    padding-top: 16px;
+  }
+  .newdraw-btn {
+    margin-top: 12px;
+    color: rgba(224, 226, 208, 0.5); /* #E0E2D0 à 50% */
+    background: none;
+    border: none;
+    text-decoration: underline;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+}
+
+/* ========== DESKTOP ≥ 821px ========== */
+@media screen and (min-width: 821px) {
+  .title-block {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6em;
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .p4-fixed-title {
+    font-size: 1.8rem;
+    line-height: 1.3;
+    margin: 0 0 0.6em 0;
+    padding: 0 4vw;
+  }
+  .p4-fixed-instructions {
+    font-size: 1rem !important;
+    line-height: 1.4;
+    color: #E0E2D0;
+    margin: 0 0 3vh 0;
+    padding: 0 4vw;
+  }
+  .page4-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6vw !important;
+    padding: 6vh 6vw !important;
+    margin-top: 6vh !important;
+  }
+  .deck-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    flex: 0 0 auto;
+  }
+  .deck-area {
+    width: min(20vw, 180px);
+    height: auto;
+  }
+  .chosen-rail {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: nowrap;
+    flex: 1 1 auto;
+    min-height: min(22vh, 240px);
+  }
+  .slot-wrap {
+    width: min(12vw, 140px);
+    height: auto;
+  }
+}
+
+
 /* Lightbox: contour à 0% (si présent dans ton CSS) */
 .lb-frame{ border: none !important; }
+
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+
+/* Animation globale douce du corps de page */
+.fade-in-init {
+  opacity: 0;
+  transform: translateY(16px);
+  will-change: opacity, transform;
+}
+
+.fade-in-start {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+
+/* Ajout fade-in bulles + espacement adaptatif cartes finales */
+
+.lyra-fadein {
+  animation: fadeInSoft 0.8s ease;
+}
+
+@keyframes fadeInSoft {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Espacement cartes + légendes adaptatif */
+.final-rail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: clamp(10px, 3vw, 28px);
+}
+
+.final-caption {
+  margin-top: 1.2em;
+  font-size: clamp(0.85rem, 1.2vw, 1.1rem);
+  line-height: 1.3;
+}
+@media (max-width: 520px) {
+  .chosen-rail {
+    gap: clamp(6px, 2vw, 18px);
+    padding: 1vh 0 2vh;
+  }
+  .slot-wrap {
+    width: min(30vw, 100px);
+  }
+}

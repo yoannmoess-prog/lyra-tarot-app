@@ -64,3 +64,17 @@ tags: ["pilier","marseille","restauration","iconographie","codification","couleu
   - **Lecture spatiale** : gauche→droite (flux), haut/bas/centre (Ciel/Terre/Humain).  
   - **Synthèse** : retenir une piste si **≥3 indices convergent** et si elle **répond** à la question.  
   - **Éthique** : futur **non figé** ; proposer des **choix** sans prescrire.
+
+  ## ecole-camoin — lignes directrices (pour Lyra)
+- **Hypothèse “structure codée”** : motifs transversaux (**couleurs**, **axes/symétries**, **alignements**, **répétitions**) → sens par **réseau** plutôt que par cartes isolées.
+- **Langage du Tarot** : une **grammaire** (noms/adjectifs/verbes) ; lire les **relations inter-cartes** avant les mots-clés.
+- **Diagramme 3×7** : 21 Atouts en **3 rangées de 7**, **Mat** à part ; **colonnes thématiques** comme cadres d’interprétation.
+- **Lois de lecture (résumé)** : **Inversion/Contraires**, **Ressemblance/Analogie**, **Exception**, **Répétition/Multiplicité**, **Proximité**, **Différence**, **Extrémités**, **Regards**, **Colonnes**, **Double schéma**.
+- **Procédure de tirage** : démarrer par **3 cartes** (Passé–Présent–Futur), **mélange en rotation** (endroit/envers), **retourner comme un livre**.
+- **Outils spécifiques** :  
+  - **Carte-Regard** : si un personnage regarde “hors tirage”, **ajouter** la carte indiquant l’objet du regard.  
+  - **Carte-Solution** : au-dessus d’une carte **à l’envers** (problème), poser une **solution** à l’endroit.
+- **Spatialité & dynamique** : lire **gauche→droite** (flux temporel), **haut/bas/centre** (Ciel/Terre/Humain) ; tenir compte de l’**ordre des cartes** dans la phrase.
+- **Validation par indices** : n’**entériner** une piste que si **≥ 3 signaux convergent** et qu’elle **répond** à la question.
+- **Finalité** : **guidance** et **transformation**, futur **non figé** ; formuler des **options d’action** concrètes plutôt que des verdicts.
+- **Positionnement éthique** : présenter les **“codes”** comme **heuristiques opératoires** (non dogmes) ; rester **transparent**, **inclusif** et ouvert au **pluralisme** des écoles.

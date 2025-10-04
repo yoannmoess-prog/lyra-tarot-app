@@ -3,6 +3,21 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const backoff = (attempt, base = 300) =>
   Math.round(base * Math.pow(2, attempt - 1) + Math.random() * 120);
 
+// src/utils/net ou dans Page4.jsx helper fetchLyra
+async function fetchLyra({ name, question, cards, userMessage, history }) {
+  try {
+    const data = await postJson("/api/lyra",
+      { name, question, cards, userMessage, history },
+      { tries: 3, base: 300, timeout: 15000 }
+    );
+    if (!data?.ok) throw new Error("lyra_error"); // force le catch
+    return data.text || "";
+  } catch (err) {
+    toast("Lyra a du mal à répondre (clé/API indisponible).");
+    return "Je réfléchis… (réponse momentanément indisponible).";
+  }
+}
+
 // POST JSON avec retries (3) + timeout par tentative
 export async function postJson(url, body, { tries = 3, base = 300, timeout = 15000 } = {}) {
   let lastErr;

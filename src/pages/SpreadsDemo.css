@@ -1,0 +1,46 @@
+/* src/pages/SpreadsDemo.css */
+.sd-wrap { max-width: 980px; margin: 24px auto; padding: 16px; }
+.sd-tip { margin: 8px 0 16px; opacity: .85; }
+.sd-form { margin: 16px 0 8px; }
+
+.input-bubble {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  background: rgbargba(245, 243, 218, 1);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  padding: 8px 10px;
+}
+.input-bubble input {
+  background: transparent; border: 0; outline: 0; color: #fff; font-size: 16px;
+}
+.input-bubble button {
+  background: #1e88e5; color: #fff; border: 0; padding: 8px 14px; border-radius: 10px; cursor: pointer;
+}
+
+.sd-spread { margin-top: 24px; }
+.sd-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  gap: 16px;
+}
+.sd-card {
+  background: #111;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+
+.sd-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: contain;
+  background: #000;
+}
+
+.sd-card .ph { padding: 24px; }
+.sd-card figcaption { padding: 8px 12px 12px; font-size: 14px; line-height: 1.2; color: #ddd; }
+.sd-card .pos { font-weight: 600; color: #fff; margin-bottom: 4px; }

@@ -36,7 +36,7 @@ export default function Page2() {
       (n) => `Enchantée, ${n}. Notre voyage avec le Tarot commence maintenant.`,
       (n) => `Bienvenue parmi les symboles, ${n}. Que le Tarot t'ouvre ses portes !`,
       (n) => `C’est un plaisir de t'accueillir, ${n}. Bienvenue là où les symboles prennent tout leurs sens.`,
-      (n) => `${n}, prends le temps de t'installer. Le Tarot aime les échanges véritables.`,
+      (n) => `${n}, prends le temps de t'installer. Et écoutons les cartes.`,
     ],
     []
   );

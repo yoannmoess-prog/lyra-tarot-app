@@ -1,5 +1,6 @@
-/* src/Page2.css */
-.name-wrap{
+/* src/Page2.css — Version responsive unifiée */
+
+.name-wrap {
   min-height: 100dvh;
   display: flex;
   align-items: center;
@@ -7,8 +8,8 @@
   padding: 24px 16px;
 }
 
-/* bloc formulaire (fade-in 2s à l’arrivée, fade-out 2s au submit) */
-.name-inner{
+/* Bloc formulaire avec transitions */
+.name-inner {
   width: 100%;
   max-width: 860px;
   display: grid;
@@ -20,7 +21,7 @@
 .name-inner.arrive { opacity: 1; transform: none; transition: opacity 2000ms ease, transform 2000ms ease; }
 .name-inner.leaving{ opacity: 0; transform: translateY(-8px) scale(.985); transition: opacity 2000ms ease, transform 2000ms ease; }
 
-.name-title{
+.name-title {
   margin: 0;
   font-family: 'Sorts Mill Goudy', serif;
   color: #F8F5E1;
@@ -28,8 +29,8 @@
   line-height: 1.25;
 }
 
-/* bulle claire */
-.input-bubble{
+/* Bulle de saisie */
+.input-bubble {
   position: relative;
   margin: 0 auto;
   width: min(720px, 92vw);
@@ -37,59 +38,153 @@
   background: rgba(248,245,225, .92);
   border: 1px solid rgba(0,0,0,.15);
   box-shadow: 0 10px 22px rgba(0,0,0,.28);
-  padding: 12px 52px 12px 16px; /* place pour l’icône */
+  padding: 12px 52px 12px 16px;
 }
-.input-bubble:has(input:focus){
+.input-bubble:has(input:focus) {
   box-shadow: 0 0 0 3px rgba(248,245,225,.35), 0 10px 22px rgba(0,0,0,.28);
 }
-.input-bubble input{
+.input-bubble input {
   width: 100%;
-  border: none; outline: none; background: transparent;
-  color: #1d1f20;
+  border: none;
+  outline: none;
+  background: transparent;
+  caret-color: #191A1C !important;
+  color: #191A1C !important;
   font-family: 'Sorts Mill Goudy', serif;
   font-size: clamp(1.05rem, 1.8vw, 1.25rem);
   line-height: 1.4;
 }
-
-/* icône Send unique, centrée verticalement, sans cadre */
-.send-btn{
-  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-  width: 44px; height: 44px; display: grid; place-items: center;
-  border: none; background: transparent; padding: 0; cursor: pointer;
-  border-radius: 50%; -webkit-tap-highlight-color: transparent;
-}
-.send-btn .material-symbols-outlined{ font-size: 24px; line-height: 1; color: #1d1f20; }
-.send-btn:focus-visible{ outline: 2px solid rgba(0,0,0,.35); outline-offset: 2px; }
-
-/* overlay pleine page : seul élément visible pendant la transition */
-.name-overlay{
-  position: fixed; inset: 0; z-index: 10;
-  display: grid; place-items: center;
-  padding: 6vh 6vw; pointer-events: none;
-  opacity: 0; will-change: opacity, transform;
-}
-.overlay-text{
-  margin: 0; text-align: center;
-  font-family: 'Sorts Mill Goudy', serif; color: #F8F5E1;
-  font-size: clamp(1.6rem, 3.2vw, 2.2rem); line-height: 1.35;
+.input-bubble input::placeholder {
+  color: #191A1C !important;
+  opacity: 1;
 }
 
-@keyframes ovIn  { from{opacity:0; transform: translateY(8px)} to{opacity:1; transform:none} }
-@keyframes ovOut { from{opacity:1; transform:none} to{opacity:0; transform: translateY(-8px) scale(.985)} }
+/* Icône Send */
+.send-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: none !important;
+}
+.send-btn .material-symbols-outlined {
+  font-size: 24px;
+  line-height: 1;
+  color: #191A1C;
+}
+.send-btn:focus-visible {
+  outline: 2px solid rgba(0,0,0,.35);
+  outline-offset: 2px;
+}
+.send-btn:focus,
+.send-btn:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Overlay de transition */
+.name-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 6vh 6vw;
+  pointer-events: none;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+.overlay-text {
+  margin: 0;
+  text-align: center;
+  font-family: 'Sorts Mill Goudy', serif;
+  color: #F8F5E1;
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  line-height: 1.35;
+}
+
+@keyframes ovIn  {
+  from { opacity:0; transform: translateY(8px); }
+  to   { opacity:1; transform: none; }
+}
+@keyframes ovOut {
+  from { opacity:1; transform: none; }
+  to   { opacity:0; transform: translateY(-8px) scale(.985); }
+}
 .name-overlay.overlay-in  { animation: ovIn 2000ms ease forwards; }
 .name-overlay.overlay-hold{ opacity: 1; }
 .name-overlay.overlay-out { animation: ovOut 2000ms ease forwards; }
 
-.sr-only{
-  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
-  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+/* Accessibilité */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
 }
 
-@media (max-width: 520px){
-  .name-wrap{ padding: 18px 12px; }
-  .input-bubble{ border-radius: 18px; }
+/* ===== Responsive spécifique Mobile ===== */
+@media (max-width: 520px) {
+  .name-wrap {
+    padding: 18px 12px;
+  }
+  .input-bubble {
+    border-radius: 18px;
+  }
+  .input-bubble input {
+    font-size: clamp(1rem, 4vw, 1.2rem);
+  }
 }
 
-/* Send (champ) — aucun contour / aucun fond */
-.send-btn{ border:none !important; background:transparent !important; box-shadow:none !important; }
-.send-btn:focus, .send-btn:focus-visible{ outline:none !important; box-shadow:none !important; }
+/* ===== Desktop : min-width 961px ===== */
+@media screen and (min-width: 961px) {
+  .name-wrap {
+    padding: 48px 32px;
+  }
+
+  .name-inner {
+    gap: 24px;
+  }
+
+  .name-title {
+    font-size: clamp(2rem, 2.8vw, 3rem);
+  }
+
+  .input-bubble {
+    border-radius: 26px;
+    padding: 16px 60px 16px 20px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.3);
+  }
+
+  .input-bubble input {
+    font-size: clamp(1.2rem, 1.4vw, 1.4rem);
+  }
+
+  .send-btn {
+    width: 52px;
+    height: 52px;
+  }
+
+  .send-btn .material-symbols-outlined {
+    font-size: 26px;
+  }
+
+  .overlay-text {
+    font-size: clamp(2rem, 2.5vw, 3rem);
+  }
+}

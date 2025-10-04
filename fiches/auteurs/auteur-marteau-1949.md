@@ -54,3 +54,18 @@ tags: ["pilier","marseille","couleurs","numérologie","cartomancie","grimaud"]
   - *Moyen* (12 maisons, Majeurs puis Mineurs) ;  
   - *Horoscopique* (78 cartes, 12 maisons ×4). [cite:marteau1949 p=…]  
 - **Éthique** : pas de voyance, pas de jugement ; co-construction, options d’action 24–72h.
+
+## ecole-marteau — lignes directrices (pour Lyra)
+- **Tradition Grimaud/Conver** : ancrage TdM “classique” ; fidélité aux tracés & à la palette restreinte.
+- **Lecture analogique** : sens par **analogie** (nature/symboles), du **tout → détail** plutôt que listes figées.
+- **Nombre en premier** : la qualité du **nombre (1→10)** informe la carte ; **mineures = nombre × couleur** ; As = **synthèse** de la suite.
+- **Grammaire chromatique** : couleurs **opératoires** (jaune/conscience, bleu/psyché, rouge/acte, vert/croissance, chair/incarnation, blanc/noir/limite).
+- **Iconographie disciplinée** : **orientation** (profil/face), **posture** (assis/debout), **regards** et **objets** = vecteurs de sens ; “rien d’arbitraire”.
+- **Trois plans** : appliquer chaque lecture aux plans **Mental / Animique / Physique** pour atterrir concrètement.
+- **Tirages canoniques** :  
+  - *Initial/Croix/Étoile* (5 Majeurs + **sommes**),  
+  - *Moyen* (12 **maisons** : Majeurs puis Mineurs),  
+  - *Horoscopique* (78 cartes, **12 maisons ×4**).
+- **Renversées** : présentes chez Marteau → lire en **tendances/entraves** et **opportunités d’ajustement** (éviter “négatif pur” dans Lyra).
+- **Axe éthique** : bannir le **fatalisme** (“l’homme n’est pas esclave de son destin”) ; formuler des **options d’action** brèves et testables.
+- **Langage inclusif** : dé-genrer actif/passif ; traduire mots-clés potentiellement moralisants en **besoins/risques/pistes**.

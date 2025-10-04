@@ -179,6 +179,27 @@ export default function Page4() {
   const name = (state?.name || "voyageur").trim();
   const niceName = useMemo(() => firstNameNice(name), [name]);
   const question = (state?.question || "").trim();
+    const [isLandscape, setIsLandscape] = useState(window.innerWidth > window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLandscape(window.innerWidth > window.innerHeight);
+    };
+
+    handleResize(); // exécute une fois au montage
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const [pageLoaded, setPageLoaded] = useState(false);
+
+useEffect(() => {
+  const timer = requestAnimationFrame(() =>
+    setTimeout(() => setPageLoaded(true), 80) // ou 100ms selon tests
+  );
+  return () => cancelAnimationFrame(timer);
+}, []);
 
   // Timings / motion
   const prefersReduced =
@@ -202,23 +223,20 @@ export default function Page4() {
 
   /* --------- Tirage --------- */
   const [phase, setPhase] = useState("deck");
-  const [showTitle, setShowTitle] = useState(false);
-  const [showInstruction, setShowInstruction] = useState(false);
+  const [showHeaderRail, setShowHeaderRail] = useState(false);
   const [showBoard, setShowBoard] = useState(false);
-  const [showRail, setShowRail] = useState(false);
   const [shuffleActive, setShuffleActive] = useState(false);
   const [boardFading, setBoardFading] = useState(false);
 
+  // Show the grouped header/rail block in sequence
   useEffect(() => {
-    const t1 = setTimeout(() => setShowTitle(true), 0);
-    const t2 = setTimeout(() => setShowInstruction(true), DUR.titleIn);
-    const t3 = setTimeout(() => {
+    const t1 = setTimeout(() => setShowHeaderRail(true), 0);
+    const t2 = setTimeout(() => {
       setShowBoard(true);
       setShuffleActive(true);
     }, DUR.titleIn + DUR.instrIn);
-    const t4 = setTimeout(() => setShowRail(true), DUR.titleIn + DUR.instrIn + DUR.deckIn);
     return () => {
-      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4);
+      clearTimeout(t1); clearTimeout(t2);
     };
   }, [DUR]);
 
@@ -269,7 +287,6 @@ export default function Page4() {
         setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
         if (next.length === 3) {
           setTimeout(() => {
-            setShowInstruction(false);
             setShuffleActive(false);
             setBoardFading(true);
             setTimeout(() => {
@@ -344,6 +361,7 @@ export default function Page4() {
     );
     const tChat = setTimeout(
       () => setChatVisible(true),
+  
       DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 1000
     );
 
@@ -351,6 +369,7 @@ export default function Page4() {
       clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(tChat);
     };
   }, [phase, DUR]);
+
 
   // Premier message généré par l’IA dès que le chat est visible — version STREAM
 useEffect(() => {
@@ -548,29 +567,57 @@ useEffect(() => {
   };
 
   /* ---------------- Render ---------------- */
+  // PAGE ENTRY FADE-IN
   return (
     <div
-      className="page4-root"
-      style={{ backgroundImage: `url(${background})`, backgroundSize: "cover", backgroundPosition: "center" }}
+      className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}
+      style={{
+        backgroundImage: `url(${background})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
-      {/* Titre / instructions / board */}
-      {showTitle && question && phase !== "finished" && (
-        <div className="p4-fixed-title title-reveal">{question}</div>
-      )}
-      {showInstruction && phase === "deck" && chosen.length < 3 && (
-        <div className="p4-fixed-instructions instr-reveal" aria-live="polite">
-          <div className="p4-instruction">Piochez 3 cartes</div>
+
+      {/* Header rail block (title, instructions, rail) */}
+      {phase !== "finished" && (
+        <div
+          className={`header-rail-block${showHeaderRail ? " fade-in-soft" : " pre-fade"}`}
+        >
+          <div className="title-block">
+            <div className="p4-fixed-title">{question}</div>
+            <div className="p4-fixed-instructions instr-reveal" aria-live="polite">
+              <div className="p4-instruction">
+                Continue de te concentrer sur ta demande, et pioche 3 cartes.
+              </div>
+            </div>
+          </div>
+          <div className="chosen-rail">
+            {[0, 1, 2].map((i) => {
+              const isChosen = chosen.includes(i);
+              const isPopped = i === popIndex;
+              return (
+                <div key={`slotwrap-${i}`} ref={slotRefs[i]} className="slot-wrap">
+                  {isChosen ? (
+                    <div className={`card card-back chosen${isPopped ? " pop" : ""}`} />
+                  ) : (
+                    <div className="card slot-ghost" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
+      {/* Board/deck area */}
       {phase !== "finished" && (
         <div className="page4-wrap with-title-offset">
-          <div className={`board-shell ${boardFading ? "fade-out-2s" : ""}`}>
-            <div className="board col">
+          <div className={`board-shell${boardFading ? " fade-out-2s" : ""}`}>
+            <div className={`board${isLandscape ? "" : " col"}`}>
               <div className="deck-block">
                 <div
                   ref={deckRef}
-                  className={`deck-area ${shuffleActive ? "shuffling" : ""} ${showBoard ? "fade-in-soft" : "pre-fade"}`}
+                  className={`deck-area${shuffleActive ? " shuffling" : ""}${showBoard ? " fade-in-soft" : " pre-fade"}`}
                   onClick={onClickDeck}
                   role="button"
                   tabIndex={0}
@@ -581,36 +628,19 @@ useEffect(() => {
                   ))}
                 </div>
               </div>
-
-              <div className={`${showRail ? "fade-in-soft" : "pre-fade"} chosen-rail`}>
-                {[0, 1, 2].map((i) => {
-                  const isChosen = chosen.includes(i);
-                  const isPopped = i === popIndex;
-                  return (
-                    <div key={`slotwrap-${i}`} ref={slotRefs[i]} className="slot-wrap">
-                      {isChosen ? (
-                        <div className={`card card-back chosen ${isPopped ? "pop" : ""}`} />
-                      ) : (
-                        <div className="card slot-ghost" />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
             </div>
           </div>
         </div>
       )}
 
+      {/* Final block */}
       {phase === "finished" && (
         <main className="final-stack">
-          <h1 className="flow-title">{question}</h1>
-
           <section className="final-hero">
-            <div className={`final-rail appear-slow ${sealed ? "sealed" : ""}`}>
+            <div className={`final-rail appear-slow${sealed ? " sealed" : ""}`}>
               {[0, 1, 2].map((i) => (
                 <div key={`final-${i}`} className="final-card-outer">
-                  <div className={`final-card-flip ${finalFlip[i] ? "is-flipped" : ""}`}>
+                  <div className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}>
                     <div className="final-face final-back" />
                     <div className="final-face final-front">
                       {finalFaces[i] ? (
@@ -628,45 +658,42 @@ useEffect(() => {
 
           {/* Chat */}
           <section
-  className="chat-wrap show"
-  aria-live="polite"
-  onCopy={(e) => e.preventDefault()}
-  onCut={(e) => e.preventDefault()}
-  onContextMenu={(e) => e.preventDefault()}
-  onDragStart={(e) => e.preventDefault()}
->
-            {/* Messages finalisés */}
-{conv.map((m) => {
-  if (m.role === "lyra") {
-    const segments = splitIntoBubbles(m.text, 3);
-    return (
-      <React.Fragment key={m.id}>
-        {segments.map((seg, idx) => (
-          <div key={`${m.id}-${idx}`} className={`bubble lyra ${idx > 0 ? "stacked" : ""}`}>
-            <div className="who">LYRA</div>
-
-            <div className="msg">
-              {seg.split("\n").map((line, i) => (
-                <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
-              ))}
-            </div>
-          </div>
-        ))}
-      </React.Fragment>
-    );
-  }
-  // bulle VOUS inchangée
-  return (
-    <div key={m.id} className="bubble you">
-      <div className="who">VOUS</div>
-      <div className="msg">
-        {m.text.split("\n").map((line, i) => (
-          <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
-        ))}
-      </div>
-    </div>
-  );
-})}
+            className="chat-wrap show"
+            aria-live="polite"
+            onCopy={(e) => e.preventDefault()}
+            onCut={(e) => e.preventDefault()}
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
+          >
+            {conv.map((m) => {
+              if (m.role === "lyra") {
+                const segments = splitIntoBubbles(m.text, 3);
+                return (
+                  <React.Fragment key={m.id}>
+                    {segments.map((seg, idx) => (
+                      <div key={`${m.id}-${idx}`} className={`bubble lyra${idx > 0 ? " stacked" : ""} lyra-fadein`}>
+                        <div className="who">LYRA</div>
+                        <div className="msg">
+                          {seg.split("\n").map((line, i) => (
+                            <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </React.Fragment>
+                );
+              }
+              return (
+                <div key={m.id} className="bubble you">
+                  <div className="who">VOUS</div>
+                  <div className="msg">
+                    {m.text.split("\n").map((line, i) => (
+                      <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
 
             {/* Bulle “LYRA …” */}
             {lyraTyping && (
@@ -678,64 +705,67 @@ useEffect(() => {
               </div>
             )}
 
-            {/* Dactylographie en cours (stream) */}
-{replyTyping && !lyraTyping && (
-  <>
-    {splitIntoBubbles(replyTyping, 3).map((seg, idx) => (
-      <div key={`stream-${idx}`} className={`bubble lyra ${idx > 0 ? "stacked" : ""}`}>
-        <div className="who">LYRA</div>
-
-        <div className="msg">
-          {seg.split("\n").map((line, i) => (
-            <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
-          ))}
-        </div>
-      </div>
-    ))}
-  </>
-)}
-
-            {/* VOUS + CTA */}
-            <div className={`you-block ${youInputShown ? "show" : ""}`}>
-              <div className="bubble you input">
-                <div className="who">VOUS</div>
-                <div className="msg">
-                  <form onSubmit={onYouSubmit} className="you-form">
-                    <input
-                      className="you-input"
-                      placeholder="Message à Lyra"
-                      value={youMessage}
-                      onChange={(e) => setYouMessage(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          onYouSubmit();
-                        }
-                      }}
-                    />
-                    <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer">
-                      <span className="material-symbols-outlined">send</span>
-                    </button>
-                  </form>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className="newdraw-btn"
-                onClick={() => {
-                  localStorage.removeItem("lyra:conv"); // reset stockage
-                  nav("/question", { state: { name } });
-                }}
-              >
-                Je souhaite réaliser un nouveau tirage
-              </button>
-            </div>
-
-            <div ref={endRef} aria-hidden="true" />
+            {/* Lyra reply (fade-in) */}
+            {replyTyping && !lyraTyping && (
+              <>
+                {splitIntoBubbles(replyTyping, 3).map((seg, idx) => (
+                  <div
+                    key={`stream-${idx}`}
+                    className={`bubble lyra${idx > 0 ? " stacked" : ""} lyra-fadein`}
+                    style={{ animation: "fadeInSoft 800ms" }}
+                  >
+                    <div className="who">LYRA</div>
+                    <div className="msg">
+                      {seg.split("\n").map((line, i) => (
+                        <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
           </section>
         </main>
       )}
+
+      {/* VOUS + CTA */}
+      <div className={`you-block${youInputShown ? " show" : ""}`}>
+        <div className="bubble you input">
+          <div className="who">VOUS</div>
+          <div className="msg">
+            <form onSubmit={onYouSubmit} className="you-form">
+              <input
+                className="you-input"
+                placeholder="Message à Lyra"
+                value={youMessage}
+                onChange={(e) => setYouMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    onYouSubmit();
+                  }
+                }}
+              />
+              <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer">
+                <span className="material-symbols-outlined">send</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className="newdraw-btn"
+          onClick={() => {
+            localStorage.removeItem("lyra:conv");
+            nav("/question", { state: { name } });
+          }}
+        >
+          Je souhaite réaliser un nouveau tirage
+        </button>
+      </div>
+
+      <div ref={endRef} aria-hidden="true" />
 
       {/* Vol physique */}
       {flight && (

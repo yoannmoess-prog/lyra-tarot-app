@@ -41,3 +41,41 @@
   100%{ transform: translateX(-8px); opacity:.9; }
 }
 .pulse{ animation: pulseSlide 2.2s ease-in-out infinite; }
+
+/* ===== Responsive : uniquement Mobile / Tablette ===== */
+@media screen and (max-width: 960px) {
+  .title {
+    font-size: clamp(2.4rem, 9vw, 3.2rem);
+  }
+
+  .tagline {
+    font-size: clamp(1rem, 4vw, 1.4rem);
+  }
+
+  .logo {
+    width: min(120px, 32vw);
+  }
+
+  .arrow {
+    width: min(88px, 20vw);
+  }
+}
+
+/* ===== Responsive : uniquement Desktop (≥ 961px) ===== */
+@media screen and (min-width: 961px) {
+  .title {
+    font-size: clamp(2.8rem, 6vw, 4.2rem);
+  }
+
+  .tagline {
+    font-size: clamp(1.2rem, 2.8vw, 1.8rem);
+  }
+
+  .logo {
+    width: min(160px, 22vw);
+  }
+
+  .arrow {
+    width: min(120px, 12vw);
+  }
+}
