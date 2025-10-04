@@ -5,8 +5,6 @@ import "./Page4.css";
 import background from "./assets/background.jpg";
 import { postJson, toast } from "./utils/net";
 import "./toast.css";
-import DebugBar from "./components/DebugBar";
-import "./debugbar.css";
 import "./chat-ux.css";
 
 /* ---------------- Backend helpers ---------------- */
@@ -92,20 +90,6 @@ function firstNameNice(s) {
   if (!first) return "Voyageur";
   return first[0].toLocaleUpperCase("fr-FR") + first.slice(1);
 }
-function typewrite(text, setText, onTick, onDone, speed = 22) {
-  setText("");
-  let i = 0;
-  const id = setInterval(() => {
-    i += 1;
-    setText(text.slice(0, i));
-    onTick?.();
-    if (i >= text.length) {
-      clearInterval(id);
-      onDone?.();
-    }
-  }, speed);
-  return () => clearInterval(id);
-}
 
 function splitIntoBubbles(text, max = 3) {
   if (!text) return [""];
@@ -136,28 +120,7 @@ function buildFacePools() {
 const FACE_POOLS = buildFacePools();
 
 const MAJOR_LABELS = {
-  "00": "Le Mat",
-  "01": "Le Bateleur",
-  "02": "La Papesse",
-  "03": "L’impératrice",
-  "04": "L’Empereur",
-  "05": "Le Pape",
-  "06": "L’Amoureux",
-  "07": "Le Chariot",
-  "08": "La Justice",
-  "09": "L’Hermite",
-  "10": "La Roue de Fortune",
-  "11": "La Force",
-  "12": "Le Pendu",
-  "13": "L’Arcane Sans Nom",
-  "14": "Tempérance",
-  "15": "Le Diable",
-  "16": "La Maison Dieu",
-  "17": "L’Étoile",
-  "18": "La Lune",
-  "19": "Le Soleil",
-  "20": "Le Jugement",
-  "21": "Le Monde",
+  "00": "Le Mat", "01": "Le Bateleur", "02": "La Papesse", "03": "L’impératrice", "04": "L’Empereur", "05": "Le Pape", "06": "L’Amoureux", "07": "Le Chariot", "08": "La Justice", "09": "L’Hermite", "10": "La Roue de Fortune", "11": "La Force", "12": "Le Pendu", "13": "L’Arcane Sans Nom", "14": "Tempérance", "15": "Le Diable", "16": "La Maison Dieu", "17": "L’Étoile", "18": "La Lune", "19": "Le Soleil", "20": "Le Jugement", "21": "Le Monde",
 };
 function labelFrom(fileName) {
   const maj = fileName.match(/^([0-2]\d)_/);
@@ -179,72 +142,49 @@ export default function Page4() {
   const name = (state?.name || "voyageur").trim();
   const niceName = useMemo(() => firstNameNice(name), [name]);
   const question = (state?.question || "").trim();
-    const [isLandscape, setIsLandscape] = useState(window.innerWidth > window.innerHeight);
+  const [isLandscape, setIsLandscape] = useState(window.innerWidth > window.innerHeight);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsLandscape(window.innerWidth > window.innerHeight);
-    };
-
-    handleResize(); // exécute une fois au montage
+    const handleResize = () => setIsLandscape(window.innerWidth > window.innerHeight);
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const [pageLoaded, setPageLoaded] = useState(false);
+  const prefersReduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const DUR = useMemo(() => ({
+    fly: prefersReduced ? 60 : 600,
+    boardFade: prefersReduced ? 300 : 1500,
+    finalPauseBefore: prefersReduced ? 200 : 500,
+    finalGap: prefersReduced ? 300 : 800,
+    flipAnim: prefersReduced ? 200 : 620,
+  }), [prefersReduced]);
 
-useEffect(() => {
-  const timer = requestAnimationFrame(() =>
-    setTimeout(() => setPageLoaded(true), 80) // ou 100ms selon tests
-  );
-  return () => cancelAnimationFrame(timer);
-}, []);
-
-  // Timings / motion
-  const prefersReduced =
-    typeof window !== "undefined" &&
-    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  const DUR = useMemo(
-    () => ({
-      titleIn: prefersReduced ? 150 : 1000,
-      instrIn: prefersReduced ? 150 : 1000,
-      deckIn: prefersReduced ? 150 : 1000,
-      railIn: prefersReduced ? 150 : 1000,
-      fly: prefersReduced ? 60 : 600,
-      waitBeforeFade: prefersReduced ? 200 : 1000,
-      boardFade: prefersReduced ? 300 : 2000,
-      finalPauseBefore: prefersReduced ? 200 : 2000,
-      finalGap: prefersReduced ? 300 : 1500,
-      flipAnim: prefersReduced ? 200 : 620,
-    }),
-    [prefersReduced]
-  );
-
-  /* --------- Tirage --------- */
+  /* --------- Phases & Animations --------- */
   const [phase, setPhase] = useState("deck");
-  const [showHeaderRail, setShowHeaderRail] = useState(false);
-  const [showBoard, setShowBoard] = useState(false);
-  const [shuffleActive, setShuffleActive] = useState(false);
-  const [boardFading, setBoardFading] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+  const [showTitle, setShowTitle] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [showDeck, setShowDeck] = useState(false);
+  const [showRail, setShowRail] = useState(false);
 
-  // Show the grouped header/rail block in sequence
+  // Staggered entry animation
   useEffect(() => {
-    const t1 = setTimeout(() => setShowHeaderRail(true), 0);
-    const t2 = setTimeout(() => {
-      setShowBoard(true);
+    const t1 = setTimeout(() => setShowTitle(true), 200);
+    const t2 = setTimeout(() => setShowInstructions(true), 700);
+    const t3 = setTimeout(() => {
+      setShowDeck(true);
       setShuffleActive(true);
-    }, DUR.titleIn + DUR.instrIn);
-    return () => {
-      clearTimeout(t1); clearTimeout(t2);
-    };
-  }, [DUR]);
+    }, 1200);
+    const t4 = setTimeout(() => setShowRail(true), 1400);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+  }, []);
 
+  /* --------- Tirage Logic --------- */
+  const [shuffleActive, setShuffleActive] = useState(false);
   const [deckCount, setDeckCount] = useState(14);
   const [chosen, setChosen] = useState([]);
   const [popIndex, setPopIndex] = useState(null);
   const pickingRef = useRef(false);
-
   const deckRef = useRef(null);
   const slotRefs = [useRef(null), useRef(null), useRef(null)];
   const [flight, setFlight] = useState(null);
@@ -265,35 +205,24 @@ useEffect(() => {
     return { key: Date.now(), left: d.left, top: d.top, dx, dy, scale, width: d.width, height: d.height };
   };
 
-  const allSlots = [0, 1, 2];
-  const availableSlots = allSlots.filter((i) => !chosen.includes(i));
-  const firstAvailable = availableSlots[0] ?? 0;
-
-  const onClickDeck = () => {
-    if (phase !== "deck" || chosen.length >= 3) return;
-    pickCardTo(firstAvailable);
-  };
   const pickCardTo = (targetIndex) => {
     if (phase !== "deck" || pickingRef.current || chosen.length >= 3 || deckCount <= 0) return;
-    if (!availableSlots.includes(targetIndex)) return;
+    if (![0, 1, 2].filter(i => !chosen.includes(i)).includes(targetIndex)) return;
     pickingRef.current = true;
     const fl = computeFlight(targetIndex);
     if (fl) setFlight(fl);
     setTimeout(() => {
       setDeckCount((n) => Math.max(0, n - 1));
-      setChosen((prev) => {
-        const next = [...prev, targetIndex];
+      setChosen((p) => {
+        const next = [...p, targetIndex];
         setPopIndex(targetIndex);
         setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
         if (next.length === 3) {
           setTimeout(() => {
             setShuffleActive(false);
-            setBoardFading(true);
-            setTimeout(() => {
-              setBoardFading(false);
-              setPhase("finished");
-            }, DUR.boardFade);
-          }, DUR.waitBeforeFade);
+            setIsExiting(true);
+            setTimeout(() => setPhase("finished"), DUR.boardFade);
+          }, 600);
         }
         return next;
       });
@@ -307,361 +236,137 @@ useEffect(() => {
   const [finalFaces, setFinalFaces] = useState([null, null, null]);
   const [finalNames, setFinalNames] = useState(["", "", ""]);
   const [sealed, setSealed] = useState(false);
-
   const [chatVisible, setChatVisible] = useState(false);
   const [conv, setConv] = useState([]);
   const [youInputShown, setYouInputShown] = useState(false);
   const [youMessage, setYouMessage] = useState("");
   const [lyraTyping, setLyraTyping] = useState(false);
   const [replyTyping, setReplyTyping] = useState("");
-  const [lastUserMsg, setLastUserMsg] = useState("");
-
   const endRef = useRef(null);
   const streamAbortRef = useRef(null);
 
-  const scrollToEnd = () => {
-    endRef.current
-      ? endRef.current.scrollIntoView({ behavior: "smooth", block: "end" })
-      : window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
-  };
+  const scrollToEnd = () => endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
 
-  // flips + apparition chat
   useEffect(() => {
     if (phase !== "finished") return;
-    // reset chat pour ce tirage
-    setConv([]);
-    setYouInputShown(false);
-    setLyraTyping(false);
-    setReplyTyping("");
-
-    const t1 = setTimeout(() => {
-      const c = pick(FACE_POOLS.majors);
-      setFinalFaces((prev) => [c?.src || null, prev[1], prev[2]]);
-      setFinalNames((prev) => [c ? labelFrom(c.name) : "", prev[1], prev[2]]);
-      setFinalFlip((prev) => [true, prev[1], prev[2]]);
-    }, DUR.finalPauseBefore);
-
-    const t2 = setTimeout(() => {
-      const c = pick(FACE_POOLS.minorsValues);
-      setFinalFaces((prev) => [prev[0], c?.src || null, prev[2]]);
-      setFinalNames((prev) => [prev[0], c ? labelFrom(c.name) : "", prev[2]]);
-      setFinalFlip((prev) => [true, true, prev[2]]);
-    }, DUR.finalPauseBefore + DUR.finalGap);
-
-    const t3 = setTimeout(() => {
-      const c = pick(FACE_POOLS.minorsCourt);
-      setFinalFaces((prev) => [prev[0], prev[1], c?.src || null]);
-      setFinalNames((prev) => [prev[0], prev[1], c ? labelFrom(c.name) : ""]);
-      setFinalFlip((prev) => [true, true, true]);
-    }, DUR.finalPauseBefore + DUR.finalGap * 2);
-
-    const t4 = setTimeout(
-      () => setSealed(true),
-      DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 120
-    );
-    const tChat = setTimeout(
-      () => setChatVisible(true),
-  
-      DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 1000
-    );
-
-    return () => {
-      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(tChat);
-    };
+    setConv([]); setYouInputShown(false); setLyraTyping(false); setReplyTyping("");
+    const t1 = setTimeout(() => { const c = pick(FACE_POOLS.majors); setFinalFaces(p => [c?.src || null, p[1], p[2]]); setFinalNames(p => [c ? labelFrom(c.name) : "", p[1], p[2]]); setFinalFlip(p => [true, p[1], p[2]]); }, DUR.finalPauseBefore);
+    const t2 = setTimeout(() => { const c = pick(FACE_POOLS.minorsValues); setFinalFaces(p => [p[0], c?.src || null, p[2]]); setFinalNames(p => [p[0], c ? labelFrom(c.name) : "", p[2]]); setFinalFlip(p => [true, true, p[2]]); }, DUR.finalPauseBefore + DUR.finalGap);
+    const t3 = setTimeout(() => { const c = pick(FACE_POOLS.minorsCourt); setFinalFaces(p => [p[0], p[1], c?.src || null]); setFinalNames(p => [p[0], p[1], c ? labelFrom(c.name) : ""]); setFinalFlip(p => [true, true, true]); }, DUR.finalPauseBefore + DUR.finalGap * 2);
+    const t4 = setTimeout(() => setSealed(true), DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 120);
+    const tChat = setTimeout(() => setChatVisible(true), DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 1000);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(tChat); };
   }, [phase, DUR]);
 
-
-  // Premier message généré par l’IA dès que le chat est visible — version STREAM
-useEffect(() => {
-  if (!chatVisible) return;
-  (async () => {
-    setLyraTyping(true);
-    setYouInputShown(false);
-
-    const cards = finalNames.filter(Boolean);
-    const history = conv.map((m) => ({
-      role: m.role === "user" ? "user" : "assistant",
-      content: m.text,
-    }));
-
-    // Tentative streaming (même logique que onYouSubmit)
-    let streamed = false, streamedText = "";
-    try {
-      streamAbortRef.current?.abort?.();
-      streamAbortRef.current = new AbortController();
-
-      for await (const chunk of fetchLyraStream({
-        name: niceName, question, cards, userMessage: "", history,
-        signal: streamAbortRef.current.signal
-      })) {
-        if (!streamed) {
-          streamed = true;
-          setLyraTyping(false); // remplace la bulle "..."
-        }
-        streamedText += chunk;
-        setReplyTyping((prev) => prev + chunk); // s'accumule en temps réel
-        requestAnimationFrame(scrollToEnd);
-      }
-    } catch {
-      // fallback non-stream tout en bas
-    } finally {
-      streamAbortRef.current = null;
-    }
-
-    if (streamed) {
-      const text = streamedText.trim();
-      setReplyTyping("");
-      setConv((prev) => {
-        const next = [...prev, { id: Date.now(), role: "lyra", text }];
-        saveConv(next);
-        return next;
-      });
-      setYouInputShown(true);
-      requestAnimationFrame(scrollToEnd);
-      return;
-    }
-
-    // Fallback JSON (si le stream a échoué)
-    const MIN_DOTS = 1200;
-    const t0 = Date.now();
-    let text = "";
-    try {
-      text = await fetchLyra({ name: niceName, question, cards, userMessage: "", history });
-    } catch {
-      text = "Je réfléchis… (réponse momentanément indisponible).";
-    }
-    const wait = Math.max(0, MIN_DOTS - (Date.now() - t0));
-    setTimeout(() => {
-      setLyraTyping(false);
-      typewrite(
-        text,
-        setReplyTyping,
-        () => requestAnimationFrame(scrollToEnd),
-        () => {
-          setReplyTyping("");
-          setConv((prev) => {
-            const next = [...prev, { id: Date.now(), role: "lyra", text }];
-            saveConv(next);
-            return next;
-          });
-          setYouInputShown(true);
+  useEffect(() => {
+    if (!chatVisible) return;
+    (async () => {
+      setLyraTyping(true); setYouInputShown(false);
+      const cards = finalNames.filter(Boolean);
+      const history = conv.map(m => ({ role: m.role === "user" ? "user" : "assistant", content: m.text }));
+      let streamed = false, streamedText = "";
+      try {
+        streamAbortRef.current?.abort?.();
+        streamAbortRef.current = new AbortController();
+        for await (const chunk of fetchLyraStream({ name: niceName, question, cards, userMessage: "", history, signal: streamAbortRef.current.signal })) {
+          if (!streamed) { streamed = true; setLyraTyping(false); }
+          streamedText += chunk;
+          setReplyTyping(p => p + chunk);
           requestAnimationFrame(scrollToEnd);
-        },
-        22
-      );
-    }, wait);
-  })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [chatVisible, finalNames, niceName, question]);
+        }
+      } catch {} finally { streamAbortRef.current = null; }
+      if (streamed) {
+        const text = streamedText.trim();
+        setReplyTyping("");
+        setConv(p => { const next = [...p, { id: Date.now(), role: "lyra", text }]; saveConv(next); return next; });
+        setYouInputShown(true);
+        requestAnimationFrame(scrollToEnd);
+        return;
+      }
+      const t0 = Date.now();
+      let text = "";
+      try { text = await fetchLyra({ name: niceName, question, cards, userMessage: "", history }); } catch { text = "Je réfléchis… (réponse momentanément indisponible)."; }
+      const wait = Math.max(0, 1500 + (text.length * 20) - (Date.now() - t0));
+      setTimeout(() => {
+        setLyraTyping(false);
+        setConv(p => { const next = [...p, { id: Date.now(), role: "lyra", text }]; saveConv(next); return next; });
+        setYouInputShown(true);
+        requestAnimationFrame(scrollToEnd);
+      }, wait);
+    })();
+  }, [chatVisible, finalNames, niceName, question, conv]);
 
-  // Auto-scroll
-  useEffect(() => {
-    if (chatVisible) requestAnimationFrame(scrollToEnd);
-  }, [chatVisible]);
-  useEffect(() => {
-    requestAnimationFrame(scrollToEnd);
-  }, [conv.length, lyraTyping, replyTyping, youInputShown]);
+  useEffect(() => { if (chatVisible) requestAnimationFrame(scrollToEnd); }, [chatVisible]);
+  useEffect(() => { requestAnimationFrame(scrollToEnd); }, [conv.length, lyraTyping, replyTyping, youInputShown]);
+  useEffect(() => { const saved = loadConv(); if (saved.length) setConv(saved); }, []);
 
-  // Charger conv si on veut persister entre refresh
-  useEffect(() => {
-    const saved = loadConv();
-    if (saved.length) setConv(saved);
-  }, []);
-
-  // Submit VOUS → puis réponse IA (streaming si possible + fallback)
   const onYouSubmit = async (e) => {
     if (e) e.preventDefault();
     const msg = youMessage.trim();
     if (!msg) return;
-
-    setLastUserMsg(msg);
     recordUserMsg(msg.length);
-
     const userBubble = { id: Date.now(), role: "user", text: msg };
-    setConv((prev) => {
-      const next = [...prev, userBubble];
-      saveConv(next);
-      return next;
-    });
+    setConv(p => { const next = [...p, userBubble]; saveConv(next); return next; });
     requestAnimationFrame(scrollToEnd);
-
-    setYouMessage("");
-    setYouInputShown(false);
-    setLyraTyping(true);
+    setYouMessage(""); setYouInputShown(false); setLyraTyping(true);
     requestAnimationFrame(scrollToEnd);
-
     const cards = finalNames.filter(Boolean);
-    const history = [...conv, userBubble].map((m) => ({
-  role: m.role === "user" ? "user" : "assistant",
-  content: m.text,
-}));
-
-    // Tentative streaming
+    const history = [...conv, userBubble].map(m => ({ role: m.role === "user" ? "user" : "assistant", content: m.text }));
     let streamed = false, streamedText = "";
     try {
-      // stoppe tout flux précédent
       streamAbortRef.current?.abort?.();
       streamAbortRef.current = new AbortController();
-
-      for await (const chunk of fetchLyraStream({
-        name: niceName, question, cards, userMessage: msg, history,
-        signal: streamAbortRef.current.signal
-      })) {
-        if (!streamed) {
-          streamed = true;
-          setLyraTyping(false); // remplacer la bulle "..." au 1er token
-        }
+      for await (const chunk of fetchLyraStream({ name: niceName, question, cards, userMessage: msg, history, signal: streamAbortRef.current.signal })) {
+        if (!streamed) { streamed = true; setLyraTyping(false); }
         streamedText += chunk;
-        setReplyTyping((prev) => prev + chunk);
+        setReplyTyping(p => p + chunk);
         requestAnimationFrame(scrollToEnd);
       }
-    } catch {
-      toast("Connexion instable — passage au mode non-stream.");
-    } finally {
-      streamAbortRef.current = null;
-    }
-
+    } catch { toast("Connexion instable — passage au mode non-stream."); } finally { streamAbortRef.current = null; }
     if (streamed) {
       const text = streamedText;
       setReplyTyping("");
-      setConv((prev) => {
-        const next = [...prev, { id: Date.now() + 1, role: "lyra", text }];
-        saveConv(next);
-        return next;
-      });
+      setConv(p => { const next = [...p, { id: Date.now() + 1, role: "lyra", text }]; saveConv(next); return next; });
       setYouInputShown(true);
       requestAnimationFrame(scrollToEnd);
       return;
     }
-
-    // Fallback JSON avec bulle "…" min.
-    const MIN_DOTS = 2000;
     const t0 = Date.now();
     let text = "";
-    try {
-      text = await fetchLyra({ name: niceName, question, cards, userMessage: msg, history });
-    } catch {
-      text = "Je réfléchis… (réponse momentanément indisponible).";
-    }
-    const wait = Math.max(0, MIN_DOTS - (Date.now() - t0));
-
+    try { text = await fetchLyra({ name: niceName, question, cards, userMessage: msg, history }); } catch { text = "Je réfléchis… (réponse momentanément indisponible)."; }
+    const wait = Math.max(0, 1500 + (text.length * 20) - (Date.now() - t0));
     setTimeout(() => {
       setLyraTyping(false);
-      typewrite(
-        text,
-        setReplyTyping,
-        () => requestAnimationFrame(scrollToEnd),
-        () => {
-          setReplyTyping("");
-          setConv((prev) => {
-            const next = [...prev, { id: Date.now() + 1, role: "lyra", text }];
-            saveConv(next);
-            return next;
-          });
-          setYouInputShown(true);
-          requestAnimationFrame(scrollToEnd);
-        },
-        22
-      );
+      setConv(conv => { const next = [...conv, { id: Date.now() + 1, role: "lyra", text }]; saveConv(next); return next; });
+      setYouInputShown(true);
+      requestAnimationFrame(scrollToEnd);
     }, wait);
   };
 
-  /* ---------------- Render ---------------- */
-  // PAGE ENTRY FADE-IN
   return (
-    <div
-      className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}
-      style={{
-        backgroundImage: `url(${background})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-
-      {/* Drawing phase UI */}
-      {phase !== "finished" && (
-        <div className="page4-wrap with-title-offset">
-          <div
-            className={`header-rail-block${showHeaderRail ? " fade-in-soft" : " pre-fade"}`}
-          >
-            <div className="title-block">
-              <div className="p4-fixed-title">{question}</div>
-              <div className="p4-fixed-instructions instr-reveal" aria-live="polite">
-                <div className="p4-instruction">
-                  Continue de te concentrer sur ta demande, et pioche 3 cartes.
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className={`board-shell${boardFading ? " fade-out-2s" : ""}`}>
-            <div className={`board${isLandscape ? "" : " col"}`}>
-              <div className="deck-block">
-                <div
-                  ref={deckRef}
-                  className={`deck-area${shuffleActive ? " shuffling" : ""}${showBoard ? " fade-in-soft" : " pre-fade"}`}
-                  onClick={onClickDeck}
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Jeu de cartes : touchez pour piocher (séquentiel)"
-                >
-                  {[...Array(deckCount)].map((_, i) => (
-                    <div key={`deck-${i}`} className="card card-back stack" style={{ zIndex: i }} />
-                  ))}
-                </div>
-              </div>
-              <div className="chosen-rail">
-                {[0, 1, 2].map((i) => {
-                  const isChosen = chosen.includes(i);
-                  const isPopped = i === popIndex;
-                  return (
-                    <div key={`slotwrap-${i}`} ref={slotRefs[i]} className="slot-wrap">
-                      {isChosen ? (
-                        <div className={`card card-back chosen${isPopped ? " pop" : ""}`} />
-                      ) : (
-                        <div className="card slot-ghost" />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Final block */}
-      {phase === "finished" && (
+    <div className="page4-root" style={{ backgroundImage: `url(${background})`, backgroundSize: "cover", backgroundPosition: "center" }}>
+      <div className={`p4-fixed-title ${showTitle ? "is-visible" : ""}`}>{question}</div>
+      {phase === "finished" ? (
         <main className="final-stack">
           <section className="final-hero">
             <div className={`final-rail appear-slow${sealed ? " sealed" : ""}`}>
-              {[0, 1, 2].map((i) => (
-                <div key={`final-${i}`} className="final-card-outer">
-                  <div className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}>
-                    <div className="final-face final-back" />
-                    <div className="final-face final-front">
-                      {finalFaces[i] ? (
-                        <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
-                      ) : (
-                        <div className="final-front-placeholder">Carte {i + 1}</div>
-                      )}
+              {[0, 1, 2].map(i => (
+                <div key={`final-${i}`} className="final-card-wrap">
+                  <div className="final-card-outer">
+                    <div className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}>
+                      <div className="final-face final-back" />
+                      <div className="final-face final-front">
+                        {finalFaces[i] ? <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} /> : <div className="final-front-placeholder">Carte {i + 1}</div>}
+                      </div>
                     </div>
                   </div>
-                  <div className="final-caption">{finalFlip[i] ? (finalNames[i] || `Carte ${i + 1}`) : ""}</div>
+                  <div className={`final-caption${finalFlip[i] ? " is-visible" : ""}`}>{finalNames[i] || `Carte ${i + 1}`}</div>
                 </div>
               ))}
             </div>
           </section>
-
-          {/* Chat */}
-          <section
-            className="chat-wrap show"
-            aria-live="polite"
-            onCopy={(e) => e.preventDefault()}
-            onCut={(e) => e.preventDefault()}
-            onContextMenu={(e) => e.preventDefault()}
-            onDragStart={(e) => e.preventDefault()}
-          >
-            {conv.map((m) => {
+          <section className="chat-wrap show" aria-live="polite" onCopy={e => e.preventDefault()} onCut={e => e.preventDefault()} onContextMenu={e => e.preventDefault()} onDragStart={e => e.preventDefault()}>
+            {conv.map(m => {
               if (m.role === "lyra") {
                 const segments = splitIntoBubbles(m.text, 3);
                 return (
@@ -669,11 +374,7 @@ useEffect(() => {
                     {segments.map((seg, idx) => (
                       <div key={`${m.id}-${idx}`} className={`bubble lyra${idx > 0 ? " stacked" : ""} lyra-fadein`}>
                         <div className="who">LYRA</div>
-                        <div className="msg">
-                          {seg.split("\n").map((line, i) => (
-                            <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
-                          ))}
-                        </div>
+                        <div className="msg">{seg.split("\n").map((line, i) => <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>)}</div>
                       </div>
                     ))}
                   </React.Fragment>
@@ -682,107 +383,55 @@ useEffect(() => {
               return (
                 <div key={m.id} className="bubble you">
                   <div className="who">VOUS</div>
-                  <div className="msg">
-                    {m.text.split("\n").map((line, i) => (
-                      <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
-                    ))}
-                  </div>
+                  <div className="msg">{m.text.split("\n").map((line, i) => <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>)}</div>
                 </div>
               );
             })}
-
-            {/* Bulle “LYRA …” */}
-            {lyraTyping && (
-              <div className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire">
-                <div className="who">LYRA</div>
-                <div className="dots" role="status" aria-hidden="true">
-                  <span></span><span></span><span></span>
-                </div>
-              </div>
-            )}
-
-            {/* Lyra reply (fade-in) */}
-            {replyTyping && !lyraTyping && (
-              <>
-                {splitIntoBubbles(replyTyping, 3).map((seg, idx) => (
-                  <div
-                    key={`stream-${idx}`}
-                    className={`bubble lyra${idx > 0 ? " stacked" : ""} lyra-fadein`}
-                    style={{ animation: "fadeInSoft 800ms" }}
-                  >
-                    <div className="who">LYRA</div>
-                    <div className="msg">
-                      {seg.split("\n").map((line, i) => (
-                        <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </>
-            )}
+            {lyraTyping && <div className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire"><div className="who">LYRA</div><div className="dots" role="status" aria-hidden="true"><span /><span /><span /></div></div>}
+            {replyTyping && !lyraTyping && <> {splitIntoBubbles(replyTyping, 3).map((seg, idx) => (<div key={`stream-${idx}`} className={`bubble lyra${idx > 0 ? " stacked" : ""} lyra-fadein`} style={{ animation: "fadeInSoft 800ms" }}><div className="who">LYRA</div><div className="msg">{seg.split("\n").map((line, i) => <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>)}</div></div>))} </>}
           </section>
         </main>
+      ) : (
+        <div className="page4-wrap">
+          <div className={`p4-fixed-instructions ${showInstructions ? "is-visible" : ""} ${isExiting ? "is-exiting" : ""}`}>
+            <div className="p4-instruction">Continue de te concentrer sur ta demande, et pioche 3 cartes.</div>
+          </div>
+          <div className={`board-shell ${isExiting ? "is-exiting" : ""}`}>
+            <div className={`board${isLandscape ? "" : " col"}`}>
+              <div className={`deck-block ${showDeck ? "is-visible" : ""}`}>
+                <div ref={deckRef} className={`deck-area${shuffleActive ? " shuffling" : ""}`} onClick={() => pickCardTo(availableSlots[0] ?? 0)} role="button" tabIndex={0} aria-label="Jeu de cartes : touchez pour piocher (séquentiel)">
+                  {[...Array(deckCount)].map((_, i) => <div key={`deck-${i}`} className="card card-back stack" style={{ zIndex: i }} />)}
+                </div>
+              </div>
+              <div className={`chosen-rail ${showRail ? "is-visible" : ""}`}>
+                {[0, 1, 2].map(i => {
+                  const isChosen = chosen.includes(i);
+                  const isPopped = i === popIndex;
+                  return (
+                    <div key={`slotwrap-${i}`} ref={slotRefs[i]} className="slot-wrap">
+                      {isChosen ? <div className={`card card-back chosen${isPopped ? " pop" : ""}`} /> : <div className="card slot-ghost" />}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
-
-      {/* VOUS + CTA */}
       <div className={`you-block${youInputShown ? " show" : ""}`}>
         <div className="bubble you input">
           <div className="who">VOUS</div>
           <div className="msg">
             <form onSubmit={onYouSubmit} className="you-form">
-              <input
-                className="you-input"
-                placeholder="Message à Lyra"
-                value={youMessage}
-                onChange={(e) => setYouMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    onYouSubmit();
-                  }
-                }}
-              />
-              <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer">
-                <span className="material-symbols-outlined">send</span>
-              </button>
+              <input className="you-input" placeholder="Message à Lyra" value={youMessage} onChange={e => setYouMessage(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); onYouSubmit(); } }} />
+              <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer"><span className="material-symbols-outlined">send</span></button>
             </form>
           </div>
         </div>
-
-        <button
-          type="button"
-          className="newdraw-btn"
-          onClick={() => {
-            localStorage.removeItem("lyra:conv");
-            nav("/question", { state: { name } });
-          }}
-        >
-          Je souhaite réaliser un nouveau tirage
-        </button>
+        <button type="button" className="newdraw-btn" onClick={() => { localStorage.removeItem("lyra:conv"); nav("/question", { state: { name } }); }}>Je souhaite réaliser un nouveau tirage</button>
       </div>
-
       <div ref={endRef} aria-hidden="true" />
-
-      {/* Vol physique */}
-      {flight && (
-        <div
-          key={flight.key}
-          className="fly-phys"
-          style={{
-            left: `${flight.left}px`,
-            top: `${flight.top}px`,
-            width: `${flight.width}px`,
-            height: `${flight.height}px`,
-            "--dx": `${flight.dx}px`,
-            "--dy": `${flight.dy}px`,
-            "--scale": flight.scale,
-            animationDuration: `${DUR.fly}ms`,
-          }}
-        >
-          <div className="card card-back" />
-        </div>
-      )}
-      <DebugBar />
+      {flight && <div key={flight.key} className="fly-phys" style={{ left: `${flight.left}px`, top: `${flight.top}px`, width: `${flight.width}px`, height: `${flight.height}px`, "--dx": `${flight.dx}px`, "--dy": `${flight.dy}px`, "--scale": flight.scale, animationDuration: `${DUR.fly}ms`, }}><div className="card card-back" /></div>}
     </div>
   );
 }
