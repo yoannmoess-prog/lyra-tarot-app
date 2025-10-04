@@ -578,40 +578,21 @@ useEffect(() => {
       }}
     >
 
-      {/* Header rail block (title, instructions, rail) */}
+      {/* Drawing phase UI */}
       {phase !== "finished" && (
-        <div
-          className={`header-rail-block${showHeaderRail ? " fade-in-soft" : " pre-fade"}`}
-        >
-          <div className="title-block">
-            <div className="p4-fixed-title">{question}</div>
-            <div className="p4-fixed-instructions instr-reveal" aria-live="polite">
-              <div className="p4-instruction">
-                Continue de te concentrer sur ta demande, et pioche 3 cartes.
+        <div className="page4-wrap with-title-offset">
+          <div
+            className={`header-rail-block${showHeaderRail ? " fade-in-soft" : " pre-fade"}`}
+          >
+            <div className="title-block">
+              <div className="p4-fixed-title">{question}</div>
+              <div className="p4-fixed-instructions instr-reveal" aria-live="polite">
+                <div className="p4-instruction">
+                  Continue de te concentrer sur ta demande, et pioche 3 cartes.
+                </div>
               </div>
             </div>
           </div>
-          <div className="chosen-rail">
-            {[0, 1, 2].map((i) => {
-              const isChosen = chosen.includes(i);
-              const isPopped = i === popIndex;
-              return (
-                <div key={`slotwrap-${i}`} ref={slotRefs[i]} className="slot-wrap">
-                  {isChosen ? (
-                    <div className={`card card-back chosen${isPopped ? " pop" : ""}`} />
-                  ) : (
-                    <div className="card slot-ghost" />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Board/deck area */}
-      {phase !== "finished" && (
-        <div className="page4-wrap with-title-offset">
           <div className={`board-shell${boardFading ? " fade-out-2s" : ""}`}>
             <div className={`board${isLandscape ? "" : " col"}`}>
               <div className="deck-block">
@@ -627,6 +608,21 @@ useEffect(() => {
                     <div key={`deck-${i}`} className="card card-back stack" style={{ zIndex: i }} />
                   ))}
                 </div>
+              </div>
+              <div className="chosen-rail">
+                {[0, 1, 2].map((i) => {
+                  const isChosen = chosen.includes(i);
+                  const isPopped = i === popIndex;
+                  return (
+                    <div key={`slotwrap-${i}`} ref={slotRefs[i]} className="slot-wrap">
+                      {isChosen ? (
+                        <div className={`card card-back chosen${isPopped ? " pop" : ""}`} />
+                      ) : (
+                        <div className="card slot-ghost" />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
