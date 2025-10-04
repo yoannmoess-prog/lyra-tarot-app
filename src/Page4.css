@@ -7,39 +7,31 @@
 .fade-out-soft { opacity: 0; transform: translateY(6px) scale(.985); transition: opacity .55s ease, transform .55s ease; }
 .pre-fade { opacity: 0; transform: translateY(6px) scale(.985); }
 
-/* Bloc titre + instructions groupés */
-.title-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6em;
-  width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
-  /* Le padding/margin vertical est géré par les enfants ou le parent */
-}
-
-/* Titre intégré dans le flow */
+/* Titre Fixe */
 .p4-fixed-title {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: max(20px, env(safe-area-inset-top)) 20px 0;
   text-align: center;
   font-family: 'Sorts Mill Goudy', serif;
   color: #F8F5E1;
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-size: clamp(1.4rem, 3vw, 2rem);
   line-height: 1.25;
-  padding: 0 4vw;
-  margin: 0;
-  opacity: 1;
-  position: static;
-  pointer-events: auto;
-  z-index: auto;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  pointer-events: none;
 }
-.title-reveal{ animation: titleFade .6s ease forwards; }
-@keyframes titleFade{
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
+.p4-fixed-title.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
-/* Instructions intégrées dans le flow */
+/* Instructions */
 .p4-fixed-instructions {
   text-align: center;
   font-family: 'Sorts Mill Goudy', serif;
@@ -48,75 +40,28 @@
   line-height: 1.4;
   padding: 0 4vw;
   margin: 0;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  will-change: opacity, transform;
+}
+.p4-fixed-instructions.is-visible {
   opacity: 1;
-  position: static;
-  pointer-events: auto;
-  z-index: auto;
+  transform: translateY(0);
 }
-.instr-reveal {
-  animation: fadeIn 1.4s ease-out;
-  will-change: opacity;
+.p4-fixed-instructions.is-exiting {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition-duration: 1.2s;
 }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.p4-instruction{
-  font-family:'Sorts Mill Goudy', serif;
-  color:#F8F5E1;
-  font-size: clamp(1.05rem, 1.7vw, 1.5rem);
-  opacity:.95;
-  margin:0;
-}
-
-/* Décalage sous le titre + instructions */
-.with-title-offset{
-  --top-fixed: calc(
-    clamp(56px, 12vh, 120px) +
-    clamp(24px, 6vh, 64px)
-  );
-  padding-top: var(--top-fixed);
-}
-.with-title-only{ --top-fixed: clamp(56px, 12vh, 120px); }
 
 /* Root */
-.page4-mask {
-  position: fixed;
-  inset: 0;
-  background: #0c0b0b; /* ou un dégradé sombre pour coller au fond */
-  z-index: 9999;
-  animation: maskFadeOut 0.8s ease forwards;
-}
-
-@keyframes maskFadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
 .page4-root{ overscroll-behavior-y: contain; min-height: 100vh; }
 @supports (height: 100svh){ .page4-root{ min-height: 100svh; } }
 
-.page4-fadein {
-  opacity: 0;
-  animation: page4FadeIn 1.8s ease-out forwards;
-}
-
-@keyframes page4FadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* Board (deck + slots) */
-/* Ajout d'un padding-top plus grand pour donner plus de marge sous les instructions */
 .page4-wrap {
-  min-height: calc(100vh - var(--top-fixed, 0px) - max(env(safe-area-inset-bottom), var(--kb, 0px)));
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -124,23 +69,42 @@
   gap: clamp(18px, 4vh, 36px);
   text-align: center;
   padding: 6vh 4vw;
-  padding-top: calc(var(--top-fixed) + 4vh);
+  padding-top: calc(clamp(56px, 12vh, 120px) + 4vh);
 }
 @supports (height: 100lvh){
-  .page4-wrap{ min-height: calc(100lvh - var(--top-fixed, 0px) - max(env(safe-area-inset-bottom), var(--kb, 0px))); }
+  .page4-wrap{ min-height: 100lvh; }
 }
-.board-shell{ will-change: opacity, transform; }
 
-/* Fade-out 2s du board (rail+deck) */
-.board-shell.fade-out-2s{ opacity: 0; transition: opacity 2s ease; }
+.board-shell {
+  will-change: opacity, transform;
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+.board-shell.is-exiting {
+  opacity: 0;
+  transform: scale(0.95);
+}
 
 .board{
   margin: 0 auto;
-  display:flex; align-items:center; justify-content:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   gap:clamp(22px, 4vw, 64px);
-  width:100%; max-width: min(1100px, 94vw);
+  width:100%;
+  max-width: min(1100px, 94vw);
+  flex-direction: column; /* Default: Portrait layout */
 }
-.board.col{ flex-direction: column; }
+
+.deck-block, .chosen-rail {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s; /* Add delay */
+}
+.deck-block.is-visible, .chosen-rail.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 
 .deck-block{ display:flex; flex-direction: column; align-items:center; gap: clamp(18px, 4vh, 36px); }
 
@@ -195,7 +159,6 @@
 }
 
 /* Rail des cartes tirées */
-/* Rail des cartes tirées - responsive, non-overlapping cards and labels */
 .chosen-rail {
   display: flex;
   justify-content: center;
@@ -210,11 +173,6 @@
   aspect-ratio: 9.27 / 16;
   position: relative;
   height: auto;
-}
-/* Fade-out 2s for header-rail-block */
-.header-rail-block.fade-out-2s {
-  opacity: 0;
-  transition: opacity 2s ease;
 }
 .slot-ghost{
   position:absolute; inset:0; border-radius:12px;
@@ -241,16 +199,9 @@
   max-width: min(1100px, 94vw);
   margin: 0 auto;
   padding: 6vh clamp(16px,4vw,56px) 8vh;
+  padding-top: calc(clamp(56px, 12vh, 120px) + 4vh);
   display: grid;
   gap: clamp(18px, 3.5vw, 28px);
-}
-
-.flow-title{
-  font-family:'Sorts Mill Goudy', serif;
-  color:#F8F5E1;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  margin: 0 auto;
-  text-align: center;
 }
 
 /* Cartes finales — GRID 3 pour ne jamais se toucher */
@@ -281,6 +232,12 @@
 }
 
 /* Taille constante dos/face + responsive safe */
+.final-card-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8em;
+}
 .final-card-outer{
   width: min(28vw, 26vh, 200px);
   aspect-ratio: 9.27 / 16; perspective: 1100px;
@@ -322,16 +279,15 @@
 
 /* Légendes sous les cartes */
 .final-caption{
-  margin-top: clamp(26px, 4vh, 36px);
-  padding-top: 2px;
   font-family:'Sorts Mill Goudy', serif;
   color:#F8F5E1;
   opacity: 0;
-  transform: translateY(-2px);
-  transition: opacity .35s ease .15s, transform .35s ease .15s;
+  transform: translateY(-4px);
+  transition: opacity .45s ease .2s, transform .45s ease .2s;
   pointer-events: none;
+  font-size: clamp(0.8rem, 1.8vw, 1.1rem);
 }
-.final-card-flip.is-flipped + .final-caption{
+.final-caption.is-visible{
   opacity: 1;
   transform: translateY(0);
 }
@@ -339,17 +295,13 @@
 .final-rail {
   display: flex;
   justify-content: center;
-  gap: clamp(8px, 2vw, 24px); /* espace adaptatif */
+  align-items: flex-start; /* Aligne les wraps en haut */
+  gap: clamp(12px, 2.5vw, 24px); /* espace adaptatif */
   flex-wrap: wrap; /* sur petits écrans */
 }
 
-.final-card-outer {
-  flex: 1 1 30%;
-  min-width: 90px;
-}
-.final-caption {
-  margin-top: 0.3em;
-  font-size: clamp(0.7rem, 1vw, 1rem);
+.final-card-wrap {
+  flex: 1 1 auto;
 }
 
 /* --- Chat : alignements fermes à gauche/droite --- */
@@ -585,18 +537,10 @@
 
 /* ================= MOBILE (max-width: 520px) ================= */
 @media (max-width: 520px) {
-  .title-block {
-    gap: 0.6em;
-    width: 100%;
-    max-width: 100vw;
-    margin: 0 auto;
-    align-items: center;
-  }
   .p4-fixed-title {
     font-size: 1.2rem;
     line-height: 1.4;
     padding: 16px 12px 0;
-    margin: 0;
   }
   .p4-fixed-instructions {
     font-size: 0.95rem;
@@ -605,15 +549,8 @@
     line-height: 1.4;
     color: #E0E2D0;
   }
-  .p4-instruction {
-    font-size: 0.95rem;
-    line-height: 1.4;
-    color: #E0E2D0;
-    opacity: 0.95;
-    margin: 0;
-  }
   .page4-wrap {
-    padding-top: 4vh !important;
+    padding-top: calc(clamp(56px, 12vh, 120px) + 4vh) !important;
     gap: 4vh;
   }
   .deck-area {
@@ -622,12 +559,6 @@
   }
   .final-card-outer {
     width: min(34vw, 28vh, 168px);
-  }
-  .fade-in-soft,
-  .fade-out-soft,
-  .pre-fade {
-    transform: none !important;
-    transition: opacity 0.6s ease !important;
   }
   .you-block {
     border-top: none;
@@ -646,13 +577,8 @@
 
 /* ========== DESKTOP ≥ 821px ========== */
 @media screen and (min-width: 821px) {
-  .title-block {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6em;
-    width: 100%;
-    max-width: 960px;
-    margin: 0 auto;
+  .board {
+    flex-direction: row;
   }
   .p4-fixed-title {
     font-size: 1.8rem;
@@ -668,18 +594,10 @@
     padding: 0 4vw;
   }
   .page4-wrap {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     gap: 6vw !important;
     padding: 6vh 6vw !important;
-    margin-top: 6vh !important;
   }
   .deck-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     gap: 24px;
     flex: 0 0 auto;
   }
@@ -688,10 +606,7 @@
     height: auto;
   }
   .chosen-rail {
-    display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
     gap: 20px;
     flex-wrap: nowrap;
     flex: 1 1 auto;
