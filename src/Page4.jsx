@@ -5,7 +5,7 @@ import "./Page4.css";
 import background from "./assets/background.jpg";
 import DebugBar from "./components/DebugBar";
 
-/* ---------------- Chargement faces ---------------- */
+/* ---------------- Card Data Helpers ---------------- */
 const FACE_MODULES = import.meta.glob("./assets/cards/*.{png,jpg,jpeg,webp}", { eager: true });
 const asUrl = (m) => (typeof m === "string" ? m : m?.default ?? null);
 function buildFacePools() {
@@ -32,6 +32,7 @@ const MAJOR_LABELS = {
   "19": "Le Soleil", "20": "Le Jugement", "21": "Le Monde",
 };
 function labelFrom(fileName) {
+  if (!fileName) return "";
   const maj = fileName.match(/^([0-2]\d)_/);
   if (maj) return MAJOR_LABELS[maj[1]] || fileName;
   const m = fileName.match(/^([DEBC])(0[1-9]|1[0-4])_/);
@@ -48,53 +49,43 @@ const pick = (arr) => (arr?.length ? arr[Math.floor(Math.random() * arr.length)]
 export default function Page4() {
   const { state } = useLocation();
   const nav = useNavigate();
-  const name = (state?.name || "voyageur").trim();
-  const question = (state?.question || "").trim();
+  const name = state?.name || "voyageur";
+  const question = state?.question || "";
+
   const [isLandscape, setIsLandscape] = useState(window.innerWidth > window.innerHeight);
-
-  useEffect(() => {
-    const handleResize = () => setIsLandscape(window.innerWidth > window.innerHeight);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const [pageLoaded, setPageLoaded] = useState(false);
-  useEffect(() => {
-    const timer = requestAnimationFrame(() => setTimeout(() => setPageLoaded(true), 80));
-    return () => cancelAnimationFrame(timer);
-  }, []);
+  const [arrive, setArrive] = useState(false);
+  const [boardFading, setBoardFading] = useState(false);
+  const [shuffleActive, setShuffleActive] = useState(false);
+  const [deckCount, setDeckCount] = useState(14);
+  const [chosenSlots, setChosenSlots] = useState([]);
+  const [popIndex, setPopIndex] = useState(null);
+  const pickingRef = useRef(false);
+  const deckRef = useRef(null);
+  const slotRefs = [useRef(null), useRef(null), useRef(null)];
+  const [flight, setFlight] = useState(null);
 
   const prefersReduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const DUR = useMemo(() => ({
-    titleIn: prefersReduced ? 150 : 1000,
-    instrIn: prefersReduced ? 150 : 1000,
     fly: prefersReduced ? 60 : 600,
     waitBeforeRedirect: prefersReduced ? 200 : 1000,
     boardFade: prefersReduced ? 300 : 2000,
   }), [prefersReduced]);
 
-  const [showHeaderRail, setShowHeaderRail] = useState(false);
-  const [showBoard, setShowBoard] = useState(false);
-  const [shuffleActive, setShuffleActive] = useState(false);
-  const [boardFading, setBoardFading] = useState(false);
-
   useEffect(() => {
-    const t1 = setTimeout(() => setShowHeaderRail(true), 0);
-    const t2 = setTimeout(() => {
-      setShowBoard(true);
+    const handleResize = () => setIsLandscape(window.innerWidth > window.innerHeight);
+    window.addEventListener("resize", handleResize);
+    const pageLoadTimer = requestAnimationFrame(() => setTimeout(() => setPageLoaded(true), 80));
+    const arriveTimer = requestAnimationFrame(() => {
+      setArrive(true);
       setShuffleActive(true);
-    }, DUR.titleIn + DUR.instrIn);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, [DUR]);
-
-  const [deckCount, setDeckCount] = useState(14);
-  const [chosenSlots, setChosenSlots] = useState([]);
-  const [popIndex, setPopIndex] = useState(null);
-  const pickingRef = useRef(false);
-
-  const deckRef = useRef(null);
-  const slotRefs = [useRef(null), useRef(null), useRef(null)];
-  const [flight, setFlight] = useState(null);
+    });
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      cancelAnimationFrame(pageLoadTimer);
+      cancelAnimationFrame(arriveTimer);
+    };
+  }, []);
 
   const computeFlight = (targetIndex) => {
     const deckEl = deckRef.current;
@@ -108,17 +99,11 @@ export default function Page4() {
     return { key: Date.now(), left: d.left, top: d.top, dx, dy, scale, width: d.width, height: d.height };
   };
 
-  const allSlots = [0, 1, 2];
-  const availableSlots = allSlots.filter((i) => !chosenSlots.includes(i));
-  const firstAvailable = availableSlots[0] ?? 0;
-
-  const onClickDeck = () => {
-    if (chosenSlots.length >= 3) return;
-    pickCardTo(firstAvailable);
-  };
-
   const pickCardTo = (targetIndex) => {
-    if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0 || !availableSlots.includes(targetIndex)) return;
+    if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) return;
+    const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
+    if (!availableSlots.includes(targetIndex)) return;
+
     pickingRef.current = true;
     const fl = computeFlight(targetIndex);
     if (fl) setFlight(fl);
@@ -138,14 +123,11 @@ export default function Page4() {
             const card2 = pick(FACE_POOLS.minorsValues);
             const card3 = pick(FACE_POOLS.minorsCourt);
             const finalCards = [
-              { src: card1?.src, name: labelFrom(card1?.name || "") },
-              { src: card2?.src, name: labelFrom(card2?.name || "") },
-              { src: card3?.src, name: labelFrom(card3?.name || "") },
+              { src: card1?.src, name: labelFrom(card1?.name) },
+              { src: card2?.src, name: labelFrom(card2?.name) },
+              { src: card3?.src, name: labelFrom(card3?.name) },
             ];
-
-            setTimeout(() => {
-              nav("/chat", { state: { name, question, cards: finalCards } });
-            }, DUR.boardFade);
+            setTimeout(() => nav("/chat", { state: { name, question, cards: finalCards } }), DUR.boardFade);
           }, DUR.waitBeforeRedirect);
         }
         return newSlots;
@@ -156,48 +138,49 @@ export default function Page4() {
     }, DUR.fly);
   };
 
+  const onClickDeck = () => {
+    if (chosenSlots.length >= 3) return;
+    const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
+    pickCardTo(availableSlots[0]);
+  };
+
+  const animationClass = boardFading ? "fade-out-2s" : arrive ? "fade-in-soft" : "pre-fade";
+
   return (
-    <div
-      className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}
-      style={{ backgroundImage: `url(${background})` }}
-    >
-      <div className={`header-rail-block${showHeaderRail ? " fade-in-soft" : ""}${boardFading ? " fade-out-2s" : " pre-fade"}`}>
+    <div className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`} style={{ backgroundImage: `url(${background})` }}>
+      <div className={`page4-container ${animationClass}`}>
         <div className="title-block">
           <div className="p4-fixed-title">{question}</div>
-          <div className="p4-fixed-instructions instr-reveal" aria-live="polite">
+          <div className="p4-fixed-instructions">
             <div className="p4-instruction">Continue de te concentrer sur ta demande, et pioche 3 cartes.</div>
           </div>
         </div>
-        <div className="chosen-rail">
-          {[0, 1, 2].map((i) => (
-            <div key={`slotwrap-${i}`} ref={slotRefs[i]} className="slot-wrap">
-              {chosenSlots.includes(i) ? (
-                <div className={`card card-back chosen${i === popIndex ? " pop" : ""}`} />
-              ) : (
-                <div className="card slot-ghost" />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
 
-      <div className="page4-wrap with-title-offset">
-        <div className={`board-shell${boardFading ? " fade-out-2s" : ""}`}>
-          <div className={`board${isLandscape ? "" : " col"}`}>
-            <div className="deck-block">
-              <div
-                ref={deckRef}
-                className={`deck-area${shuffleActive ? " shuffling" : ""}${showBoard ? " fade-in-soft" : " pre-fade"}`}
-                onClick={onClickDeck}
-                role="button"
-                tabIndex={0}
-                aria-label="Jeu de cartes : touchez pour piocher (séquentiel)"
-              >
-                {[...Array(deckCount)].map((_, i) => (
-                  <div key={`deck-${i}`} className="card card-back stack" style={{ zIndex: i }} />
-                ))}
-              </div>
+        <div className={`board ${isLandscape ? "" : "col"}`}>
+          <div className="deck-block">
+            <div
+              ref={deckRef}
+              className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
+              onClick={onClickDeck}
+              role="button"
+              tabIndex={0}
+              aria-label="Jeu de cartes : touchez pour piocher (séquentiel)"
+            >
+              {[...Array(deckCount)].map((_, i) => (
+                <div key={`deck-${i}`} className="card card-back stack" style={{ zIndex: i }} />
+              ))}
             </div>
+          </div>
+          <div className="chosen-rail">
+            {[0, 1, 2].map((i) => (
+              <div key={`slotwrap-${i}`} ref={slotRefs[i]} className="slot-wrap" onClick={() => pickCardTo(i)}>
+                {chosenSlots.includes(i) ? (
+                  <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
+                ) : (
+                  <div className="card slot-ghost" />
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </div>
