@@ -1,60 +1,44 @@
-// Exponentiel + jitter
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const backoff = (attempt, base = 300) =>
-  Math.round(base * Math.pow(2, attempt - 1) + Math.random() * 120);
+// src/utils/net.js
 
-// src/utils/net ou dans Page4.jsx helper fetchLyra
-async function fetchLyra({ name, question, cards, userMessage, history }) {
+/** Affiche un toast simple en haut de l'écran */
+export function toast(msg, dur = 3500) {
   try {
-    const data = await postJson("/api/lyra",
-      { name, question, cards, userMessage, history },
-      { tries: 3, base: 300, timeout: 15000 }
-    );
-    if (!data?.ok) throw new Error("lyra_error"); // force le catch
-    return data.text || "";
-  } catch (err) {
-    toast("Lyra a du mal à répondre (clé/API indisponible).");
-    return "Je réfléchis… (réponse momentanément indisponible).";
+    const el = document.createElement("div");
+    el.className = "toast";
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.classList.add("show"), 50);
+    setTimeout(() => {
+      el.classList.remove("show");
+      setTimeout(() => el.remove(), 500);
+    }, dur);
+  } catch {
+    // ignore
   }
 }
 
-// POST JSON avec retries (3) + timeout par tentative
-export async function postJson(url, body, { tries = 3, base = 300, timeout = 15000 } = {}) {
-  let lastErr;
-  for (let a = 1; a <= tries; a++) {
-    const ac = new AbortController();
-    const t = setTimeout(() => ac.abort(), timeout);
+/** POST JSON avec retries et timeout */
+export async function postJson(url, body, opts = {}) {
+  const { tries = 1, base = 200, signal, timeout = 8000 } = opts;
+  for (let i = 0; i < tries; i++) {
     try {
+      const ac = new AbortController();
+      const id = setTimeout(() => ac.abort(), timeout);
       const r = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-        signal: ac.signal,
+        signal: signal || ac.signal,
       });
-      clearTimeout(t);
-      if (r.ok) return r.json();
-      // On ne retry que sur 429/5xx
-      if (![429, 500, 502, 503, 504].includes(r.status)) {
-        throw new Error(`http_${r.status}`);
+      clearTimeout(id);
+      if (!r.ok) {
+        const errText = await r.text().catch(() => "");
+        throw new Error(`http_${r.status}` + (errText ? `_${errText}` : ""));
       }
-      lastErr = new Error(`retryable_${r.status}`);
-    } catch (e) {
-      lastErr = e;
+      return await r.json();
+    } catch (err) {
+      if (i === tries - 1) throw err;
+      await new Promise((res) => setTimeout(res, base * (i + 1)));
     }
-    if (a < tries) await sleep(backoff(a, base));
   }
-  throw lastErr;
-}
-
-// Toast minimaliste
-export function toast(msg, { type = "error" } = {}) {
-  const el = document.createElement("div");
-  el.className = `toast ${type}`;
-  el.textContent = msg;
-  document.body.appendChild(el);
-  requestAnimationFrame(() => el.classList.add("show"));
-  setTimeout(() => {
-    el.classList.remove("show");
-    setTimeout(() => el.remove(), 300);
-  }, 3000);
 }

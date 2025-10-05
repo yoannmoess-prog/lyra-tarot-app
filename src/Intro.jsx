@@ -40,7 +40,7 @@ export default function Intro() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [go]);
+  }, [go, leaving]);
 
   const begin = (x, y) => {
     startRef.current = { x, y, t: Date.now() };

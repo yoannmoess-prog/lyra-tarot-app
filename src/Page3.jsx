@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./Page3.css";
 
 const questionIntros = [
@@ -46,6 +46,8 @@ function looksInvalid(input) {
 
 function Page3() {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const name = state?.name;
   const [question, setQuestion] = useState("");
   const [checking, setChecking] = useState(false);
   const [arrive, setArrive] = useState(false);
@@ -58,6 +60,36 @@ function Page3() {
     return () => clearTimeout(timer);
   }, []);
 
+  const onSubmit = useCallback(() => {
+    if (checking) return;
+    const q = question.trim();
+    if (!q || looksInvalid(q)) return;
+
+    setChecking(true);
+    setArrive(false);
+
+    // Lancement de la transition visuelle
+    setTimeout(() => {
+      setTransition("Très bien. Voyons ce que les cartes ont à révéler...");
+      overlayRef.current?.classList.add("overlay-in");
+    }, 300);
+
+    // 🔁 NAVIGATION VERS /draw IMMÉDIATE (non bloquante)
+    setTimeout(() => {
+      navigate("/draw", { state: { name, question: q } });
+    }, 2600); // On garde les 2.6s d'animation comme avant
+
+    // 🔄 Appel à l’IA en arrière-plan (sans bloquer le front)
+    fetch("/api/question", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: q }),
+    }).catch((err) => {
+      console.error("Erreur IA : ", err); // ← utile en dev
+      // TODO : gérer un fallback plus tard si besoin
+    });
+  }, [checking, question, navigate, name]);
+
   useEffect(() => {
     const down = (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
@@ -67,37 +99,7 @@ function Page3() {
     };
     window.addEventListener("keydown", down);
     return () => window.removeEventListener("keydown", down);
-  }, [question, checking]);
-
-  const onSubmit = () => {
-  if (checking) return;
-  const q = question.trim();
-  if (!q || looksInvalid(q)) return;
-
-  setChecking(true);
-  setArrive(false);
-
-  // Lancement de la transition visuelle
-  setTimeout(() => {
-    setTransition("Très bien. Voyons ce que les cartes ont à révéler...");
-    overlayRef.current?.classList.add("overlay-in");
-  }, 300);
-
-  // 🔁 NAVIGATION VERS /draw IMMÉDIATE (non bloquante)
-  setTimeout(() => {
-    navigate("/draw", { state: { name, question } });
-  }, 2600); // On garde les 2.6s d'animation comme avant
-
-  // 🔄 Appel à l’IA en arrière-plan (sans bloquer le front)
-  fetch("/api/question", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question: q }),
-  }).catch((err) => {
-    console.error("Erreur IA : ", err); // ← utile en dev
-    // TODO : gérer un fallback plus tard si besoin
-  });
-};
+  }, [onSubmit]);
 
   const handleClickExample = (q) => {
     setQuestion(q);
@@ -105,13 +107,13 @@ function Page3() {
   };
 
   const randomIntro = useMemo(() => {
-  return questionIntros[Math.floor(Math.random() * questionIntros.length)];
-}, []);
+    return questionIntros[Math.floor(Math.random() * questionIntros.length)];
+  }, []);
 
-const randomExamples = useMemo(() => {
-  const shuffled = [...ALL_EXAMPLES].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, 5);
-}, []);
+  const randomExamples = useMemo(() => {
+    const shuffled = [...ALL_EXAMPLES].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 5);
+  }, []);
 
   return (
     <div className="question-wrap fp-wrap">
@@ -122,9 +124,9 @@ const randomExamples = useMemo(() => {
           onSubmit();
         }}
       >
-      <div className="question-title">
-  {randomIntro}
-</div>
+        <div className="question-title">
+          {randomIntro}
+        </div>
 
         <div className="q-shuffle is-on">
           {[...Array(5)].map((_, i) => (
@@ -157,15 +159,15 @@ const randomExamples = useMemo(() => {
 
         <div className="question-examples">
           {randomExamples.map((ex, i) => (
-  <button
-    key={i}
-    type="button"
-    className="question-example"
-    onClick={() => handleClickExample(ex)}
-  >
-    {ex}
-  </button>
-))}
+            <button
+              key={i}
+              type="button"
+              className="question-example"
+              onClick={() => handleClickExample(ex)}
+            >
+              {ex}
+            </button>
+          ))}
         </div>
       </form>
 

@@ -14,19 +14,22 @@ const LLM_BASE_URL = (process.env.LLM_BASE_URL || "https://api.openai.com").repl
 const LLM_API_KEY = process.env.LLM_API_KEY || "";
 const EMB_MODEL   = process.env.RAG_EMBED_MODEL || "text-embedding-3-small";
 
-if (!LLM_API_KEY) {
-  console.error("[embed] LLM_API_KEY manquante dans server/.env");
-  process.exit(1);
-}
-
 const [,, inFile, outFile] = process.argv;
 if (!inFile || !outFile) {
   console.error("Usage: node scripts/embed.mjs <input.jsonl> <output.jsonl>");
   process.exit(1);
 }
 
-const inAbs  = path.resolve(process.cwd(), inFile);
 const outAbs = path.resolve(process.cwd(), outFile);
+
+if (!LLM_API_KEY) {
+  console.warn("[embed] LLM_API_KEY manquante dans server/.env, le fichier d'embeddings ne sera pas généré.");
+  // Crée un fichier vide pour ne pas casser le build et quitte proprement.
+  fs.writeFileSync(outAbs, "");
+  process.exit(0);
+}
+
+const inAbs  = path.resolve(process.cwd(), inFile);
 
 async function embedOne(text) {
   const r = await fetch(`${LLM_BASE_URL}/v1/embeddings`, {
