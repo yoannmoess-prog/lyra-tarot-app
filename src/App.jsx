@@ -8,6 +8,7 @@ import Page2 from "./Page2";
 // Ton flow historique
 import Page3 from "./Page3";   // /question
 import Page4 from "./Page4";   // /draw
+import Page5 from "./Page5";   // /chat
 
 // Démo spreads en sandbox (optionnelle)
 import SpreadsDemo from "./pages/SpreadsDemo";
@@ -23,6 +24,7 @@ export default function App() {
         {/* Flow prod */}
         <Route path="/question" element={<Page3 />} />
         <Route path="/draw" element={<Page4 />} />
+        <Route path="/chat" element={<Page5 />} />
 
         {/* Démo isolée */}
         <Route path="/spreads-demo" element={<SpreadsDemo />} />

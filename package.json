@@ -27,6 +27,7 @@
     "yaml": "^2.8.1"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.4.0",
     "@eslint/js": "^9.33.0",
     "@types/node": "^24.4.0",
     "@types/react": "^19.1.10",
@@ -34,6 +35,7 @@
     "@vitejs/plugin-react": "^5.0.0",
     "concurrently": "^9.2.1",
     "eslint": "^9.33.0",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",

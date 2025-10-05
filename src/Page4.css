@@ -1,37 +1,49 @@
-/* src/Page4.css — final grid 3 cartes, chat, VOUS+CTA simplifiés */
+/* src/Page4.css — deck, rail, tirage */
 
 /* Fades */
-.fade-in  { opacity: 1; transition: opacity .6s ease; }
-.fade-out { opacity: 0; transition: opacity .6s ease; }
 .fade-in-soft  { opacity: 1; transform: translateY(0) scale(1); transition: opacity .6s ease, transform .6s ease; }
-.fade-out-soft { opacity: 0; transform: translateY(6px) scale(.985); transition: opacity .55s ease, transform .55s ease; }
+.fade-out-2s { opacity: 0; transition: opacity 2s ease; }
 .pre-fade { opacity: 0; transform: translateY(6px) scale(.985); }
 
-/* Titre Fixe */
+/* Root */
+.page4-root{
+  overscroll-behavior-y: contain;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+}
+@supports (height: 100svh){ .page4-root{ min-height: 100svh; } }
+
+/* Bloc titre + instructions + rail */
+.header-rail-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6em;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding-top: clamp(24px, 6vh, 64px);
+  will-change: opacity;
+}
+
+.title-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6em;
+  width: 100%;
+}
+
 .p4-fixed-title {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: max(20px, env(safe-area-inset-top)) 20px 0;
   text-align: center;
   font-family: 'Sorts Mill Goudy', serif;
   color: #F8F5E1;
-  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
   line-height: 1.25;
-  z-index: 10;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-  pointer-events: none;
-}
-.p4-fixed-title.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+  padding: 0 4vw;
 }
 
-/* Instructions */
 .p4-fixed-instructions {
   text-align: center;
   font-family: 'Sorts Mill Goudy', serif;
@@ -39,51 +51,24 @@
   font-size: clamp(1.05rem, 1.7vw, 1.5rem);
   line-height: 1.4;
   padding: 0 4vw;
-  margin: 0;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-  will-change: opacity, transform;
 }
-.p4-fixed-instructions.is-visible {
-  opacity: 1;
-  transform: translateY(0);
+.instr-reveal { animation: fadeIn 1.4s ease-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-.p4-fixed-instructions.is-exiting {
-  opacity: 0;
-  transform: translateY(-10px);
-  transition-duration: 1.2s;
-}
-
-/* Root */
-.page4-root{ overscroll-behavior-y: contain; min-height: 100vh; }
-@supports (height: 100svh){ .page4-root{ min-height: 100svh; } }
 
 /* Board (deck + slots) */
 .page4-wrap {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(18px, 4vh, 36px);
   text-align: center;
-  padding: 6vh 4vw;
-  padding-top: calc(clamp(56px, 12vh, 120px) + 4vh);
-}
-@supports (height: 100lvh){
-  .page4-wrap{ min-height: 100lvh; }
+  padding: 4vh 4vw;
 }
 
-.board-shell {
-  will-change: opacity, transform;
-  transition: opacity 1.2s ease, transform 1.2s ease;
-}
-.board-shell.is-exiting {
-  opacity: 0;
-  transform: scale(0.95);
-}
-
+.board-shell{ will-change: opacity, transform; }
 .board{
   margin: 0 auto;
   display:flex;
@@ -92,21 +77,15 @@
   gap:clamp(22px, 4vw, 64px);
   width:100%;
   max-width: min(1100px, 94vw);
-  flex-direction: column; /* Default: Portrait layout */
 }
+.board.col{ flex-direction: column; }
 
-.deck-block, .chosen-rail {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s; /* Add delay */
+.deck-block{
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  gap: clamp(18px, 4vh, 36px);
 }
-.deck-block.is-visible, .chosen-rail.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-
-.deck-block{ display:flex; flex-direction: column; align-items:center; gap: clamp(18px, 4vh, 36px); }
 
 /* Deck */
 .deck-area{
@@ -114,23 +93,28 @@
   width: min(16vw, 21vh, 160px);
   aspect-ratio: 9.27 / 16;
   height:auto;
-  cursor:pointer; user-select:none;
+  cursor:pointer;
+  user-select:none;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
 }
 .deck-area:focus { outline: none; }
 .deck-area:focus-visible{
   outline: 2px solid rgba(248,245,225,.85);
-  outline-offset: 4px; border-radius: 14px;
+  outline-offset: 4px;
+  border-radius: 14px;
 }
 
 /* Cartes génériques */
 .card{
-  position:absolute; inset:0;
+  position:absolute;
+  inset:0;
   border-radius:14px;
   box-shadow:0 8px 18px rgba(0,0,0,.33);
   transform-origin:50% 70%;
-  background-size: cover; background-position: center; background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   will-change: transform;
 }
 .card-back{
@@ -139,8 +123,7 @@
   background-position: center;
 }
 
-/* Shuffle zen (ombre douce) */
-.ghost{ pointer-events:none; opacity:1; border-radius:14px; }
+/* Shuffle */
 .shuffling .stack{
   animation: riffleLoop 1700ms ease-in-out infinite;
   box-shadow: 0 6px 14px rgba(0,0,0,.22);
@@ -167,7 +150,6 @@
   padding: 1vh 0;
   min-height: 120px;
 }
-/* Slot wrap - consistent spacing and size */
 .slot-wrap {
   width: min(30vw, 120px);
   aspect-ratio: 9.27 / 16;
@@ -175,13 +157,19 @@
   height: auto;
 }
 .slot-ghost{
-  position:absolute; inset:0; border-radius:12px;
+  position:absolute;
+  inset:0;
+  border-radius:12px;
   border: 2px dashed rgba(248,245,225,.35);
   background: rgba(248,245,225,.06);
 }
 .chosen{
-  position:absolute; inset:0; opacity:0; transform: translateY(8px) scale(.98);
-  border-radius:12px; animation: appear .35s ease forwards;
+  position:absolute;
+  inset:0;
+  opacity:0;
+  transform: translateY(8px) scale(.98);
+  border-radius:12px;
+  animation: appear .35s ease forwards;
 }
 @keyframes appear{ to { opacity:1; transform: translateY(0) scale(1); } }
 .chosen.pop{
@@ -194,325 +182,14 @@
   100% { transform: translateY(0) scale(1.00); box-shadow: 0 0 0 rgba(255,255,255,0); }
 }
 
-/* --- Bloc final défilant --- */
-.final-stack{
-  max-width: min(1100px, 94vw);
-  margin: 0 auto;
-  padding: 6vh clamp(16px,4vw,56px) 8vh;
-  padding-top: calc(clamp(56px, 12vh, 120px) + 4vh);
-  display: grid;
-  gap: clamp(18px, 3.5vw, 28px);
-}
-
-/* Cartes finales — GRID 3 pour ne jamais se toucher */
-.final-hero{
-  display:flex; align-items:center; justify-content:center;
-  text-align:center;
-}
-.final-rail{
-  width: 100%;
-  display:grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-  justify-items: center; align-items: start;
-  gap: clamp(16px, 3.4vw, 32px);
-  opacity: 0;
-}
-
-/* Apparition lente (2s) des 3 grandes cartes */
-.appear-slow{ animation: finalAppear 2s ease forwards; }
-@keyframes finalAppear{ from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: scale(1); } }
-
-/* Glow héroïque après flips */
-.final-rail.sealed .final-card-flip .final-front{
-  animation: cardGlowHero .95s ease-out both;
-}
-@keyframes cardGlowHero{
-  0%   { box-shadow: 0 0 0 rgba(255,255,255,0); filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
-  35%  { box-shadow: 0 0 90px rgba(255,255,255,0.98); filter: drop-shadow(0 0 62px rgba(255,255,255,0.98)); }
-  100% { box-shadow: 0 14px 34px rgba(0,0,0,.58); filter: none; }
-}
-
-/* Taille constante dos/face + responsive safe */
-.final-card-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.8em;
-}
-.final-card-outer{
-  width: min(28vw, 26vh, 200px);
-  aspect-ratio: 9.27 / 16; perspective: 1100px;
-  justify-self: center;
-}
-.final-card-flip{
-  position: relative; width: 100%; height: 100%;
-  transform-style: preserve-3d; transition: transform .62s cubic-bezier(.2,.7,.2,1);
-}
-.final-card-flip.is-flipped{ transform: rotateY(180deg); }
-.final-face{
-  position:absolute; inset:0; border-radius:14px; backface-visibility:hidden;
-  box-shadow:0 8px 18px rgba(0,0,0,.33); background-size:cover; background-position:center; background-repeat:no-repeat;
-}
-.final-back{ background-image: url("./assets/desk_01.png"); background-size:110% 110%; }
-.final-front{
-  transform: rotateY(180deg);
-  display:flex; align-items:center; justify-content:center;
-  background: rgba(15,15,15,.18);
-  border: 1px solid rgba(248,245,225,.12);
-  position: relative; overflow: hidden;
-}
-.final-front > img{
-  width: 100%; height: 100%;
-  object-fit: cover; display:block;
-  border-radius: inherit;
-}
-.final-front::before{
-  content:""; position:absolute; inset:-10%;
-  background: linear-gradient(100deg, rgba(255,255,255,.12), rgba(255,255,255,0) 60%);
-  transform: translateX(-120%) skewX(-12deg); filter: blur(1px);
-}
-.final-card-flip.is-flipped .final-front::before{ animation: foldSweep .62s cubic-bezier(.2,.7,.2,1) both; }
-@keyframes foldSweep{
-  0%   { transform: translateX(-120%) skewX(-12deg); opacity:.85; }
-  55%  { transform: translateX(0%)    skewX(-12deg); opacity:.35; }
-  100% { transform: translateX(120%)  skewX(-12deg); opacity:0; }
-}
-
-/* Légendes sous les cartes */
-.final-caption{
-  font-family:'Sorts Mill Goudy', serif;
-  color:#F8F5E1;
-  opacity: 0;
-  transform: translateY(-4px);
-  transition: opacity .45s ease .2s, transform .45s ease .2s;
-  pointer-events: none;
-  font-size: clamp(0.8rem, 1.8vw, 1.1rem);
-}
-.final-caption.is-visible{
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.final-rail {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; /* Aligne les wraps en haut */
-  gap: clamp(12px, 2.5vw, 24px); /* espace adaptatif */
-  flex-wrap: wrap; /* sur petits écrans */
-}
-
-.final-card-wrap {
-  flex: 1 1 auto;
-}
-
-/* --- Chat : alignements fermes à gauche/droite --- */
-.chat-wrap{
-  width: 100%;
-  max-width: min(900px, 92vw);
-  margin: 0 auto;
-  padding: 12px 8px max(env(safe-area-inset-bottom), 40px);
-  display:flex; flex-direction: column; gap: 10px;
-  opacity: 0; transform: translateY(8px);
-  transition: opacity .5s ease, transform .5s ease;
-  text-align: left;
-  align-items: flex-start;
-}
-.chat-wrap.show{ opacity: 1; transform: translateY(0); }
-
-.fade-in-bubble {
-  opacity: 0;
-  animation: fadeInBubble 0.8s ease forwards;
-}
-
-@keyframes fadeInBubble {
-  to {
-    opacity: 1;
-  }
-}
-
-.bubble{
-  max-width: 78%;
-  padding: 10px 14px;
-  border-radius: 18px;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  line-height: 1.35;
-  position: relative;
-  color: #101112;
-  background: #E9EDF2;
-  border: 1px solid rgba(0,0,0,.06);
-  box-shadow: 0 2px 10px rgba(0,0,0,.12);
-  text-align: left;
-}
-.bubble .who{
-  font-weight: 800; letter-spacing:.06em; text-transform: uppercase;
-  margin: 0 0 4px; font-size: .78rem; opacity: .7;
-}
-
-/* Coins demandés */
-.bubble.lyra{
-  align-self: flex-start;
-  border-top-left-radius: 0;
-}
-
-/* IMPORTANT : ne pas masquer globalement toutes les bulles VOUS */
-.bubble.you{
-  align-self: flex-end;
-  border-top-right-radius: 0;
-  overflow: hidden;
-}
-
-/* Bloc commun VOUS + CTA (apparition ensemble, disparition instant) */
-.you-block{
-  align-self: flex-end;
-  max-width: 78%;
-  width: 100%;
-   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  opacity: 0;
-  transform: translateY(6px);
-  /* pas de transition ici -> hide instantané */
-}
-
-/* Tous les enfants du bloc doivent prendre 100% de sa largeur */
-.you-block > *{
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.you-block.show{
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 600ms ease, transform 600ms ease; /* fade-in à l’apparition */
-}
-
-/* La bulle VOUS occupe 100% de la largeur du bloc */
-.you-block .bubble.you{
-  width: 100%;
-  max-width: 100%;
-}
-
-/* Le CTA occupe aussi 100% et a le même “ressenti” de largeur */
-.you-block .newdraw-btn{
-  display: block;               /* important pour remplir la largeur */
-  width: 100%;
-  padding: 10px 14px;           /* même padding horizontal que .bubble */
-  border-radius: 18px;          /* même galbe que la bulle */
-  border: 1px solid rgba(248,245,225,.6);
-  background: transparent;      /* fond 0% d’opacité */
-  color: rgba(248,245,225,.6);  /* texte clair à 60% */
-  font: 400 0.95rem/1.1 "Sorts Mill Goudy", serif;  /* pas gras + même fonte */
-  text-align: left;             /* cohérent avec le texte des bulles */
-  cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0,0,0,.12); /* même densité visuelle que bulle */
-}
-
-/* VOUS (input) */
-.you-form{
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-.you-input{
-  flex: 1 1 auto;
-  min-width: 0;
-  width: 100%;
-  box-sizing: border-box;
-  font-family:'Sorts Mill Goudy', serif !important;
-  font-weight: 400;
-  font-size: 1rem;
-  border: 1px solid rgba(0,0,0,.12);
-  border-radius: 12px;
-  padding: 10px 12px;
-  outline: none;
-  background: #fff;
-  color: #111;
-  padding-right: 46px;
-}
-
-/* Pas d’animation de sortie quand la bulle "..." arrive */
-.you-block.hide{
-  display: none;
-}
-
-.you-input::placeholder{
-  color: #666;
-  font-family:'Sorts Mill Goudy', serif !important;
-  font-weight: 400;
-}
-
-/* Bouton Send — zéro contour/fond + centrage vertical */
-.send-btn{
-  position: absolute;
-  right: 8px; top: 50%;
-  transform: translateY(-50%);
-  width: 36px; height: 36px;
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 0; margin: 0;
-  border: 0; background: transparent; box-shadow: none; outline: none;
-  -webkit-appearance: none; appearance: none;
-  cursor: pointer;
-  color: #111;
-}
-.send-btn:focus, .send-btn:focus-visible{ outline: none; box-shadow: none; }
-.send-btn .material-symbols-outlined{ font-size: 22px; line-height: 1; display: block; }
-
-/* CTA : même largeur que la bulle VOUS, aligné, fond transparent, 60% opacité */
-.newdraw-btn{
-  display: block;
-  width: 100%;
-  margin-top: 10px;
-  padding: 10px 14px;
-  border-radius: 9999px;
-  background: transparent;
-  border: 1px solid rgba(248,245,225,.6);
-  color: rgba(248,245,225,.6);
-  font: 400 0.8rem/1.1 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  text-align: center;
-  box-shadow: none;
-  cursor: pointer;
-}
-.newdraw-btn:focus,
-.newdraw-btn:focus-visible{
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(248,245,225,.55);
-}
-
-/* Police dans les bulles (fix “font qui lâche”) */
-.bubble .msg p{
-  font-family: 'Sorts Mill Goudy', serif !important;
-  font-weight: 400;
-}
-
-/* Bulle "LYRA tape…" (trois points animés) */
-.bubble.typing{
-  align-self: flex-start;
-}
-.dots{
-  display: inline-flex;
-  gap: 6px;
-  padding: 4px 2px 2px 2px;
-}
-.dots span{
-  width: 6px; height: 6px; border-radius: 50%;
-  background: #333;
-  opacity: .2;
-  animation: dotBlink 1.2s infinite ease-in-out;
-}
-.dots span:nth-child(2){ animation-delay: .2s; }
-.dots span:nth-child(3){ animation-delay: .4s; }
-@keyframes dotBlink{
-  0%, 20% { opacity: .2; transform: translateY(0); }
-  50%     { opacity: 1;  transform: translateY(-2px); }
-  100%    { opacity: .2; transform: translateY(0); }
-}
-
 /* Vol physique */
 .fly-phys{
-  position: fixed; z-index: 5; pointer-events: none;
+  position: fixed;
+  z-index: 5;
+  pointer-events: none;
   animation: flyPhys 600ms cubic-bezier(.2,.7,.2,1) forwards;
-  transform-origin: 50% 50%; perspective: 1000px;
+  transform-origin: 50% 50%;
+  perspective: 1000px;
 }
 @keyframes flyPhys{
   0%   { transform: translate(0,0) scale(1) rotateY(0deg); opacity: 1; }
@@ -530,158 +207,12 @@
 
 /* Mobile */
 @media (max-width:520px){
-  .with-title-offset{ padding-top: var(--top-fixed); }
   .deck-area{ width:min(28vw, 22vh, 150px); }
-  .final-card-outer{ width:min(30vw, 26vh, 156px); }
+  .slot-wrap { width: min(30vw, 100px); }
 }
 
-/* ================= MOBILE (max-width: 520px) ================= */
-@media (max-width: 520px) {
-  .p4-fixed-title {
-    font-size: 1.2rem;
-    line-height: 1.4;
-    padding: 16px 12px 0;
-  }
-  .p4-fixed-instructions {
-    font-size: 0.95rem;
-    padding: 0 12px;
-    margin: 0 0 3vh 0;
-    line-height: 1.4;
-    color: #E0E2D0;
-  }
-  .page4-wrap {
-    padding-top: calc(clamp(56px, 12vh, 120px) + 4vh) !important;
-    gap: 4vh;
-  }
-  .deck-area {
-    margin-top: 6px;
-    width: min(34vw, 24vh, 180px);
-  }
-  .final-card-outer {
-    width: min(34vw, 28vh, 168px);
-  }
-  .you-block {
-    border-top: none;
-    padding-top: 16px;
-  }
-  .newdraw-btn {
-    margin-top: 12px;
-    color: rgba(224, 226, 208, 0.5); /* #E0E2D0 à 50% */
-    background: none;
-    border: none;
-    text-decoration: underline;
-    font-size: 0.9rem;
-    cursor: pointer;
-  }
-}
-
-/* ========== DESKTOP ≥ 821px ========== */
+/* Desktop */
 @media screen and (min-width: 821px) {
-  .board {
-    flex-direction: row;
-  }
-  .p4-fixed-title {
-    font-size: 1.8rem;
-    line-height: 1.3;
-    margin: 0 0 0.6em 0;
-    padding: 0 4vw;
-  }
-  .p4-fixed-instructions {
-    font-size: 1rem !important;
-    line-height: 1.4;
-    color: #E0E2D0;
-    margin: 0 0 3vh 0;
-    padding: 0 4vw;
-  }
-  .page4-wrap {
-    gap: 6vw !important;
-    padding: 6vh 6vw !important;
-  }
-  .deck-block {
-    gap: 24px;
-    flex: 0 0 auto;
-  }
-  .deck-area {
-    width: min(20vw, 180px);
-    height: auto;
-  }
-  .chosen-rail {
-    flex-direction: row;
-    gap: 20px;
-    flex-wrap: nowrap;
-    flex: 1 1 auto;
-    min-height: min(22vh, 240px);
-  }
-  .slot-wrap {
-    width: min(12vw, 140px);
-    height: auto;
-  }
-}
-
-
-/* Lightbox: contour à 0% (si présent dans ton CSS) */
-.lb-frame{ border: none !important; }
-
-input:focus,
-input:focus-visible,
-textarea:focus,
-textarea:focus-visible {
-  outline: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-}
-
-/* Animation globale douce du corps de page */
-.fade-in-init {
-  opacity: 0;
-  transform: translateY(16px);
-  will-change: opacity, transform;
-}
-
-.fade-in-start {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 1.2s ease, transform 1.2s ease;
-}
-
-/* Ajout fade-in bulles + espacement adaptatif cartes finales */
-
-.lyra-fadein {
-  animation: fadeInSoft 0.8s ease;
-}
-
-@keyframes fadeInSoft {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Espacement cartes + légendes adaptatif */
-.final-rail {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-  gap: clamp(10px, 3vw, 28px);
-}
-
-.final-caption {
-  margin-top: 1.2em;
-  font-size: clamp(0.85rem, 1.2vw, 1.1rem);
-  line-height: 1.3;
-}
-@media (max-width: 520px) {
-  .chosen-rail {
-    gap: clamp(6px, 2vw, 18px);
-    padding: 1vh 0 2vh;
-  }
-  .slot-wrap {
-    width: min(30vw, 100px);
-  }
+  .deck-area { width: min(20vw, 180px); }
+  .slot-wrap { width: min(12vw, 140px); }
 }
