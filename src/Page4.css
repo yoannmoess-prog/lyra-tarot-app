@@ -1,218 +1,193 @@
 /* src/Page4.css — deck, rail, tirage */
 
-/* Fades */
-.fade-in-soft  { opacity: 1; transform: translateY(0) scale(1); transition: opacity .6s ease, transform .6s ease; }
-.fade-out-2s { opacity: 0; transition: opacity 2s ease; }
-.pre-fade { opacity: 0; transform: translateY(6px) scale(.985); }
+/* --- Animation Classes --- */
+.fade-in-soft {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+.fade-out-2s {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 2s ease, transform 2s ease;
+}
+.pre-fade {
+  opacity: 0;
+  transform: translateY(8px);
+}
 
-/* Root */
-.page4-root{
+/* --- Root Container --- */
+.page4-root {
   overscroll-behavior-y: contain;
   min-height: 100vh;
   background-size: cover;
   background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2vh 2vw;
 }
-@supports (height: 100svh){ .page4-root{ min-height: 100svh; } }
+@supports (height: 100svh) {
+  .page4-root {
+    min-height: 100svh;
+  }
+}
 
-/* Bloc titre + instructions + rail */
-.header-rail-block {
+/* --- Main Content Block (for animations) --- */
+.page4-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.6em;
+  gap: clamp(18px, 4vh, 36px);
   width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
-  padding-top: clamp(24px, 6vh, 64px);
-  will-change: opacity;
+  max-width: 1100px;
+  will-change: opacity, transform;
 }
 
+/* --- Title & Instructions --- */
 .title-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6em;
-  width: 100%;
-}
-
-.p4-fixed-title {
   text-align: center;
-  font-family: 'Sorts Mill Goudy', serif;
   color: #F8F5E1;
+  font-family: 'Sorts Mill Goudy', serif;
+}
+.p4-fixed-title {
   font-size: clamp(1.6rem, 3vw, 2.4rem);
   line-height: 1.25;
-  padding: 0 4vw;
+  margin-bottom: 0.5em;
 }
-
-.p4-fixed-instructions {
-  text-align: center;
-  font-family: 'Sorts Mill Goudy', serif;
-  color: #F8F5E1;
+.p4-instruction {
   font-size: clamp(1.05rem, 1.7vw, 1.5rem);
   line-height: 1.4;
-  padding: 0 4vw;
-}
-.instr-reveal { animation: fadeIn 1.4s ease-out; }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  opacity: 0.95;
 }
 
-/* Board (deck + slots) */
-.page4-wrap {
+/* --- Board: Deck + Rail --- */
+.board {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 4vh 4vw;
+  gap: clamp(22px, 4vw, 64px);
+  width: 100%;
 }
-
-.board-shell{ will-change: opacity, transform; }
-.board{
-  margin: 0 auto;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:clamp(22px, 4vw, 64px);
-  width:100%;
-  max-width: min(1100px, 94vw);
-}
-.board.col{ flex-direction: column; }
-
-.deck-block{
-  display:flex;
+.board.col {
   flex-direction: column;
-  align-items:center;
-  gap: clamp(18px, 4vh, 36px);
 }
 
-/* Deck */
-.deck-area{
-  position:relative;
+/* Deck Area */
+.deck-block {
+  display: flex;
+  justify-content: center;
+}
+.deck-area {
+  position: relative;
   width: min(16vw, 21vh, 160px);
   aspect-ratio: 9.27 / 16;
-  height:auto;
-  cursor:pointer;
-  user-select:none;
+  cursor: pointer;
+  user-select: none;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
 }
 .deck-area:focus { outline: none; }
-.deck-area:focus-visible{
-  outline: 2px solid rgba(248,245,225,.85);
+.deck-area:focus-visible {
+  outline: 2px solid rgba(248, 245, 225, 0.85);
   outline-offset: 4px;
   border-radius: 14px;
 }
 
-/* Cartes génériques */
-.card{
-  position:absolute;
-  inset:0;
-  border-radius:14px;
-  box-shadow:0 8px 18px rgba(0,0,0,.33);
-  transform-origin:50% 70%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  will-change: transform;
-}
-.card-back{
-  background-image: url("./assets/desk_01.png");
-  background-size: 110% 110%;
-  background-position: center;
-}
-
-/* Shuffle */
-.shuffling .stack{
-  animation: riffleLoop 1700ms ease-in-out infinite;
-  box-shadow: 0 6px 14px rgba(0,0,0,.22);
-}
-.shuffling .stack:nth-last-child(1){ animation-duration: 1700ms;  animation-delay: -260ms; }
-.shuffling .stack:nth-last-child(2){ animation-duration: 1900ms;  animation-delay: -420ms; }
-.shuffling .stack:nth-last-child(3){ animation-duration: 2100ms;  animation-delay: -580ms; }
-.shuffling .stack:nth-last-child(4){ animation-duration: 2300ms;  animation-delay: -740ms; }
-
-@keyframes riffleLoop{
-  0%   { transform: translate(0,0) rotate(0) scale(1.000); }
-  25%  { transform: translate(8px,10px) rotate(8deg) scale(1.018); }
-  50%  { transform: translate(0,2px) rotate(.2deg) scale(1.004); }
-  75%  { transform: translate(-8px,-8px) rotate(-7deg) scale(1.016); }
-  100% { transform: translate(0,0) rotate(0) scale(1.000); }
-}
-
-/* Rail des cartes tirées */
+/* Card Rail */
 .chosen-rail {
   display: flex;
   justify-content: center;
   gap: clamp(10px, 3vw, 26px);
   flex-wrap: wrap;
-  padding: 1vh 0;
-  min-height: 120px;
 }
 .slot-wrap {
-  width: min(30vw, 120px);
+  width: min(14vw, 120px);
   aspect-ratio: 9.27 / 16;
   position: relative;
-  height: auto;
-}
-.slot-ghost{
-  position:absolute;
-  inset:0;
-  border-radius:12px;
-  border: 2px dashed rgba(248,245,225,.35);
-  background: rgba(248,245,225,.06);
-}
-.chosen{
-  position:absolute;
-  inset:0;
-  opacity:0;
-  transform: translateY(8px) scale(.98);
-  border-radius:12px;
-  animation: appear .35s ease forwards;
-}
-@keyframes appear{ to { opacity:1; transform: translateY(0) scale(1); } }
-.chosen.pop{
-  animation: appear .35s ease forwards, popGlow .42s ease-out;
-  box-shadow: 0 0 0 rgba(255,255,255,0);
-}
-@keyframes popGlow{
-  0%   { transform: translateY(0) scale(1.00); box-shadow: 0 0 0 rgba(255,255,255,0); }
-  35%  { transform: translateY(-2px) scale(1.06); box-shadow: 0 0 22px rgba(255,255,255,.65); }
-  100% { transform: translateY(0) scale(1.00); box-shadow: 0 0 0 rgba(255,255,255,0); }
+  cursor: pointer;
 }
 
-/* Vol physique */
-.fly-phys{
+/* --- Card Styles --- */
+.card {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.33);
+  transform-origin: 50% 70%;
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+}
+.card-back {
+  background-image: url("./assets/desk_01.png");
+  background-size: 110% 110%;
+}
+.slot-ghost {
+  border: 2px dashed rgba(248, 245, 225, 0.35);
+  background: rgba(248, 245, 225, 0.06);
+}
+
+/* Shuffle Animation */
+.shuffling .stack {
+  animation: riffleLoop 1.7s ease-in-out infinite;
+}
+@keyframes riffleLoop {
+  0%, 100% { transform: translate(0, 0) rotate(0) scale(1); }
+  25% { transform: translate(8px, 10px) rotate(8deg) scale(1.02); }
+  50% { transform: translate(0, 2px) rotate(0.2deg) scale(1.005); }
+  75% { transform: translate(-8px, -8px) rotate(-7deg) scale(1.02); }
+}
+
+/* Chosen Card Animation */
+.chosen {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  animation: appear 0.35s ease forwards;
+}
+@keyframes appear {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.chosen.pop {
+  animation: appear 0.35s ease forwards, popGlow 0.42s ease-out;
+}
+@keyframes popGlow {
+  from { transform: scale(1); box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
+  to { transform: scale(1.06); box-shadow: 0 0 22px rgba(255, 255, 255, 0.65); }
+}
+
+/* --- Flying Card Animation --- */
+.fly-phys {
   position: fixed;
   z-index: 5;
   pointer-events: none;
-  animation: flyPhys 600ms cubic-bezier(.2,.7,.2,1) forwards;
-  transform-origin: 50% 50%;
+  animation: flyPhys 600ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
   perspective: 1000px;
 }
-@keyframes flyPhys{
-  0%   { transform: translate(0,0) scale(1) rotateY(0deg); opacity: 1; }
-  20%  { transform: translate(calc(var(--dx)*.2), calc(var(--dy)*.2)) scale(calc(1 + (var(--scale) - 1)*.2)) rotateY(12deg); opacity: 1; }
-  85%  { transform: translate(var(--dx), var(--dy)) scale(var(--scale)) rotateY(0deg); opacity: 1; }
-  100% { transform: translate(var(--dx), var(--dy)) scale(var(--scale)) rotateY(0deg); opacity: 0.999; }
+@keyframes flyPhys {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  85% { transform: translate(var(--dx), var(--dy)) scale(var(--scale)); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(var(--scale)); opacity: 0; }
 }
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce){
-  * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+/* --- Accessibility & Responsive --- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
   .shuffling .stack { animation: none !important; }
-  .fly-phys { animation: none !important; opacity: 0; }
+  .fly-phys { display: none; }
 }
 
-/* Mobile */
-@media (max-width:520px){
-  .deck-area{ width:min(28vw, 22vh, 150px); }
-  .slot-wrap { width: min(30vw, 100px); }
+@media (max-width: 520px) {
+  .deck-area { width: min(28vw, 22vh, 150px); }
+  .slot-wrap { width: min(28vw, 100px); }
 }
-
-/* Desktop */
-@media screen and (min-width: 821px) {
+@media (min-width: 821px) {
   .deck-area { width: min(20vw, 180px); }
   .slot-wrap { width: min(12vw, 140px); }
 }
