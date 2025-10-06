@@ -148,6 +148,7 @@ export default function Page5() {
   const [youMessage, setYouMessage] = useState("");
   const [lyraTyping, setLyraTyping] = useState(false);
   const [replyTyping, setReplyTyping] = useState("");
+  const [suggestedQuestions, setSuggestedQuestions] = useState([]);
 
   const endRef = useRef(null);
   const streamAbortRef = useRef(null);
@@ -174,72 +175,84 @@ export default function Page5() {
   }, [DUR]);
 
   useEffect(() => {
-    if (!chatVisible) return;
+    if (!chatVisible || conv.length > 0) return; // Should run only once
     (async () => {
+      // 1. Show "thinking" bubble and hide input
       setLyraTyping(true);
       setYouInputShown(false);
 
+      // 2. Wait for 3.5 seconds to simulate reflection
+      await new Promise(resolve => setTimeout(resolve, 3500));
+
+      // 3. Fetch the actual response from Lyra
       const cardNames = finalNames.filter(Boolean);
       const history = conv.map((m) => ({ role: m.role === "user" ? "user" : "assistant", content: m.text }));
 
       let streamed = false, streamedText = "";
       try {
-        streamAbortRef.current?.abort?.();
-        streamAbortRef.current = new AbortController();
+          streamAbortRef.current?.abort?.();
+          streamAbortRef.current = new AbortController();
 
-        for await (const chunk of fetchLyraStream({
-          name: niceName, question, cards: cardNames, userMessage: "", history,
-          signal: streamAbortRef.current.signal
-        })) {
-          if (!streamed) {
-            streamed = true;
-            setLyraTyping(false);
+          for await (const chunk of fetchLyraStream({
+              name: niceName, question, cards: cardNames, userMessage: "", history,
+              signal: streamAbortRef.current.signal
+          })) {
+              if (!streamed) {
+                  streamed = true;
+                  setLyraTyping(false); // First chunk arrived, hide "thinking" bubble
+              }
+              streamedText += chunk;
+              setReplyTyping((current) => current + chunk);
+              requestAnimationFrame(scrollToEnd);
           }
-          streamedText += chunk;
-          setReplyTyping((current) => current + chunk);
-          requestAnimationFrame(scrollToEnd);
-        }
-      } catch {} finally {
-        streamAbortRef.current = null;
+      } catch {
+           // Stream might fail (e.g. network issue), we'll fall back to regular fetch
+      } finally {
+          streamAbortRef.current = null;
       }
 
       if (streamed) {
-        const text = streamedText.trim();
-        setReplyTyping("");
-        setConv((_prev) => {
-          const next = [..._prev, { id: Date.now(), role: "lyra", text }];
-          saveConv(next);
-          return next;
-        });
-        setYouInputShown(true);
-        requestAnimationFrame(scrollToEnd);
-        return;
-      }
-
-      const MIN_DOTS = 1200;
-      const t0 = Date.now();
-      let text = "";
-      try {
-        text = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: "", history });
-      } catch {
-        text = "Je réfléchis… (réponse momentanément indisponible).";
-      }
-      const wait = Math.max(0, MIN_DOTS - (Date.now() - t0));
-      setTimeout(() => {
-        setLyraTyping(false);
-        typewrite(text, setReplyTyping, () => requestAnimationFrame(scrollToEnd), () => {
-            setReplyTyping("");
-            setConv((_prev) => {
+          const text = streamedText.trim();
+          setReplyTyping("");
+          setConv((_prev) => {
               const next = [..._prev, { id: Date.now(), role: "lyra", text }];
               saveConv(next);
               return next;
-            });
-            setYouInputShown(true);
-            requestAnimationFrame(scrollToEnd);
-          }, 22);
-      }, wait);
+          });
+        setSuggestedQuestions([
+          "Peux-tu approfondir ce point ?",
+          "Quel est le conseil principal ?",
+        ]);
+          setYouInputShown(true);
+          requestAnimationFrame(scrollToEnd);
+          return; // End here if stream was successful
+      }
+
+      // Fallback to non-streamed fetch
+      let text = "";
+      try {
+          text = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: "", history });
+      } catch {
+          text = "Je réfléchis… (réponse momentanément indisponible).";
+      }
+      
+      setLyraTyping(false); 
+      typewrite(text, setReplyTyping, () => requestAnimationFrame(scrollToEnd), () => {
+          setReplyTyping("");
+          setConv((_prev) => {
+              const next = [..._prev, { id: Date.now(), role: "lyra", text }];
+              saveConv(next);
+              return next;
+          });
+          setSuggestedQuestions([
+            "Peux-tu approfondir ce point ?",
+            "Quel est le conseil principal ?",
+          ]);
+          setYouInputShown(true);
+          requestAnimationFrame(scrollToEnd);
+      }, 22);
     })();
-  }, [chatVisible, finalNames, niceName, question, conv]);
+  }, [chatVisible, finalNames, niceName, question]);
 
   useEffect(() => {
     if (chatVisible) requestAnimationFrame(scrollToEnd);
@@ -307,6 +320,10 @@ export default function Page5() {
         saveConv(next);
         return next;
       });
+      setSuggestedQuestions([
+        "Peux-tu développer ce dernier point ?",
+        "Comment puis-je appliquer ce conseil ?",
+      ]);
       setYouInputShown(true);
       requestAnimationFrame(scrollToEnd);
       return;
@@ -331,6 +348,10 @@ export default function Page5() {
             saveConv(next);
             return next;
           });
+          setSuggestedQuestions([
+            "Peux-tu développer ce dernier point ?",
+            "Comment puis-je appliquer ce conseil ?",
+          ]);
           setYouInputShown(true);
           requestAnimationFrame(scrollToEnd);
         }, 22);
@@ -343,6 +364,9 @@ export default function Page5() {
       style={{ backgroundImage: `url(${background})` }}
     >
       <main className="final-stack">
+        <div className="title-block">
+          <div className="p4-fixed-title">{question}</div>
+        </div>
         <section className="final-hero">
           <div className={`final-rail appear-slow${sealed ? " sealed" : ""}`}>
             {[0, 1, 2].map((i) => (
@@ -443,17 +467,23 @@ export default function Page5() {
             </form>
           </div>
         </div>
-
-        <button
-          type="button"
-          className="newdraw-btn"
-          onClick={() => {
-            localStorage.removeItem("lyra:conv");
-            nav("/question", { state: { name } });
-          }}
-        >
-          Je souhaite réaliser un nouveau tirage
-        </button>
+        <div className="cta-block">
+          {suggestedQuestions.map((q, i) => (
+            <button key={i} type="button" className="cta-btn" onClick={() => setYouMessage(q)}>
+              {q}
+            </button>
+          ))}
+          <button
+            type="button"
+            className="newdraw-btn"
+            onClick={() => {
+              localStorage.removeItem("lyra:conv");
+              nav("/question", { state: { name } });
+            }}
+          >
+            Je souhaite réaliser un nouveau tirage
+          </button>
+        </div>
       </div>
 
       <div ref={endRef} aria-hidden="true" />
