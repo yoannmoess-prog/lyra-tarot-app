@@ -16,6 +16,7 @@
 
 /* --- Title copied from Page4 --- */
 .title-block {
+  width: 100%; /* <-- FIX: s'assurer que le titre peut se centrer */
   text-align: center;
   color: #F8F5E1;
   font-family: 'Sorts Mill Goudy', serif;
@@ -174,6 +175,10 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.you-fadein {
+  animation: fadeInSoft 0.5s ease; /* Plus rapide pour la bulle utilisateur */
+}
+
 .bubble{
   max-width: 78%;
   padding: 10px 14px;
@@ -317,26 +322,35 @@
   color: #F5F3DA;
 }
 
-/* CTA nouveau tirage */
-.newdraw-btn{
-  display: block;
+/* CTA nouveau tirage (style harmonisé) */
+.newdraw-btn {
+  /* Harmonisation avec .cta-btn */
+  background: rgba(255, 255, 255, 0.08); /* Fond blanc léger pour distinction */
+  border: 1px solid #E0E0CF;
+  color: #E0E0CF;
+  font-family: 'Sorts Mill Goudy', serif;
+  border-radius: 22px;
+  padding: 10px 16px;
+  font-size: clamp(0.9rem, 1.4vw, 1.1rem);
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background 180ms ease, color 180ms ease;
   width: fit-content;
   max-width: 100%;
-  margin-top: 10px;
-  padding: 10px 14px;
-  border-radius: 9999px;
-  background: transparent;
-  border: 1px solid rgba(248,245,225,.6);
-  color: rgba(248,245,225,.6);
-  font: 400 0.8rem/1.1 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   text-align: center;
+  margin-top: 12px;
   box-shadow: none;
-  cursor: pointer;
 }
+
+.newdraw-btn:hover {
+  background: rgba(224, 224, 207, 0.2); /* Un peu plus visible */
+  color: #F5F3DA;
+}
+
 .newdraw-btn:focus,
-.newdraw-btn:focus-visible{
+.newdraw-btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(248,245,225,.55);
+  box-shadow: 0 0 0 2px rgba(224, 224, 207, 0.7); /* Ombre de focus assortie */
 }
 
 .bubble .msg p{

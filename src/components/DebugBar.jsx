@@ -4,7 +4,6 @@ import { getSessionId } from "../utils/session";
 
 export default function DebugBar() {
   const [sid, setSid] = useState("");
-  const [copied, setCopied] = useState(false);
   const [ux, setUx] = useState({ count: 0, avg: 0 });
 
   useEffect(() => {
@@ -25,21 +24,9 @@ export default function DebugBar() {
 
   return (
     <div className="debugbar">
-      <button
-        className="debugbar-btn"
-        onClick={async () => {
-          await navigator.clipboard.writeText(sid);
-          setCopied(true);
-          setTimeout(() => setCopied(false), 1200);
-        }}
-        title="Copier l’ID de session"
-      >
-        Copier ID session
-      </button>
       <span className="debugbar-info">
         VOUS: {ux.count} msg · {ux.avg} car. moy.
       </span>
-      {copied && <span className="debugbar-toast">Copié !</span>}
     </div>
   );
 }
