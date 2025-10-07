@@ -160,40 +160,53 @@ export default function Page5() {
       : window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
   };
 
-  // Effet principal pour l'initialisation et la logique du chat.
-  // Gère à la fois une nouvelle session (après le tirage) et une session reprise (rechargement de la page).
+  // Effet #1: Gère la reprise de session ou le lancement de l'animation pour une nouvelle session.
   useEffect(() => {
-    const isNewSession = state?.isNew; // Marqueur explicite depuis Page4
+    const isNewSession = state?.isNew;
     const savedConv = loadConv();
 
-    // S'il y a une conversation sauvegardée et que ce n'est pas une nouvelle session, on la charge.
+    // Si une conversation est sauvegardée et que ce n'est pas une nouvelle session, on la charge.
     if (savedConv.length > 0 && !isNewSession) {
       setConv(savedConv);
       setFinalFlip([true, true, true]);
       setSealed(true);
       setChatVisible(true);
       setYouInputShown(true);
-      return;
+      return; // On ne fait rien d'autre.
     }
 
-    // Logique pour une NOUVELLE session de chat
+    // Logique pour une NOUVELLE session : on réinitialise tout et on lance les animations.
     setConv([]);
-    saveConv([]); // On efface l'ancienne conversation
+    saveConv([]);
+    setFinalFlip([false, false, false]); // Important de réinitialiser l'état des cartes
+    setSealed(false);
+    setChatVisible(false);
     setYouInputShown(false);
     setLyraTyping(false);
     setReplyTyping("");
 
-    // Animation des cartes
+    // Animation des cartes, qui ne sera plus jamais ré-exécutée.
     const t1 = setTimeout(() => setFinalFlip([true, false, false]), DUR.finalPauseBefore);
     const t2 = setTimeout(() => setFinalFlip([true, true, false]), DUR.finalPauseBefore + DUR.finalGap);
     const t3 = setTimeout(() => setFinalFlip([true, true, true]), DUR.finalPauseBefore + DUR.finalGap * 2);
     const t4 = setTimeout(() => setSealed(true), DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 120);
     const tChat = setTimeout(() => setChatVisible(true), DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 1000);
 
-    // Une fois que le chat est visible, Lyra "réfléchit" puis envoie le premier message.
-    const fetchInitialLyraResponse = async () => {
-      if (!chatVisible) return; // Ne s'exécute que lorsque le chat devient visible
+    return () => {
+      // Nettoyage des timers si le composant est démonté pendant l'animation.
+      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(tChat);
+    };
+  }, [DUR, state?.isNew]); // Dépendances minimales pour ne s'exécuter qu'une fois par session.
 
+
+  // Effet #2: Gère la récupération de la réponse initiale de Lyra quand le chat devient visible.
+  useEffect(() => {
+    // Ne s'active que si le chat est visible ET qu'il n'y a pas encore de messages (cas d'une nouvelle session).
+    if (!chatVisible || conv.length > 0) {
+      return;
+    }
+
+    const fetchInitialLyraResponse = async () => {
       setLyraTyping(true);
       await new Promise(resolve => setTimeout(resolve, 3500)); // Simule la réflexion
 
@@ -259,27 +272,12 @@ export default function Page5() {
       }, 22);
     };
 
-    // On observe `chatVisible` pour déclencher la récupération de la réponse initiale.
-    // C'est un peu un hack, mais ça permet de coupler la logique à l'animation.
-    if (chatVisible) {
-      fetchInitialLyraResponse();
-    } else {
-      // Si le chat n'est pas encore visible, on attend qu'il le devienne.
-      // C'est un peu redondant avec le setTimeout de `tChat` mais assure la robustesse.
-      const checkChatVisibility = setInterval(() => {
-        if (document.querySelector('.chat-wrap.show')) {
-          fetchInitialLyraResponse();
-          clearInterval(checkChatVisibility);
-        }
-      }, 100);
-    }
-
+    fetchInitialLyraResponse();
 
     return () => {
-      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(tChat);
       streamAbortRef.current?.abort();
     };
-  }, [DUR, state, niceName, question, finalNames, chatVisible]); // Dépendances importantes
+  }, [chatVisible, conv.length, niceName, question, finalNames]); // Dépendances pour la requête.
 
   // Effets pour le défilement automatique
   useEffect(() => {

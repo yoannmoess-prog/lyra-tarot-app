@@ -50,7 +50,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   justify-items: center;
   align-items: start;
-  gap: clamp(16px, 3.4vw, 32px);
+  gap: 24px; /* MODIF: Espacement fixe entre les cartes */
   opacity: 0;
 }
 
@@ -208,17 +208,21 @@
 
 /* Bloc commun VOUS + CTA */
 .you-block{
-  align-self: flex-end;
-  max-width: 78%;
+  /* MODIF: Centré comme chat-wrap, pour aligner le contenu à droite */
+  max-width: min(900px, 92vw);
+  margin: 0 auto;
+  padding-bottom: max(env(safe-area-inset-bottom), 24px);
+
   width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: flex-end; /* Aligne les enfants (bulle + CTAs) à droite */
   gap: 8px;
   opacity: 0;
   transform: translateY(6px);
 }
 .you-block > *{
-  width: 100%;
+  /* MODIF: Laisser les enfants déterminer leur propre largeur, sans forcer 100% */
   max-width: 100%;
   box-sizing: border-box;
 }
@@ -228,8 +232,9 @@
   transition: opacity 600ms ease, transform 600ms ease;
 }
 .you-block .bubble.you{
+  /* MODIF: La bulle d'input ne prend plus toute la largeur et correspond aux autres bulles */
   width: 100%;
-  max-width: 100%;
+  max-width: 78%;
 }
 
 /* Formulaire de réponse */
