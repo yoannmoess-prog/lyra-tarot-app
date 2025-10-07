@@ -119,10 +119,11 @@ function splitIntoBubbles(text, max = 3) {
 export default function Page5() {
   const { state } = useLocation();
   const nav = useNavigate();
-  const name = (state?.name || "voyageur").trim();
+  // On mémoïze les props qui viennent du state de la navigation pour éviter des re-render inutiles
+  const name = useMemo(() => (state?.name || "voyageur").trim(), [state?.name]);
   const niceName = useMemo(() => firstNameNice(name), [name]);
-  const question = (state?.question || "").trim();
-  const cards = useMemo(() => state?.cards || [], [state]);
+  const question = useMemo(() => (state?.question || "").trim(), [state?.question]);
+  const cards = useMemo(() => state?.cards || [], [state?.cards]);
 
   const [pageLoaded, setPageLoaded] = useState(false);
   useEffect(() => {
@@ -159,203 +160,229 @@ export default function Page5() {
       : window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
   };
 
+  // Effet principal pour l'initialisation et la logique du chat.
+  // Gère à la fois une nouvelle session (après le tirage) et une session reprise (rechargement de la page).
   useEffect(() => {
+    const isNewSession = state?.isNew; // Marqueur explicite depuis Page4
+    const savedConv = loadConv();
+
+    // S'il y a une conversation sauvegardée et que ce n'est pas une nouvelle session, on la charge.
+    if (savedConv.length > 0 && !isNewSession) {
+      setConv(savedConv);
+      setFinalFlip([true, true, true]);
+      setSealed(true);
+      setChatVisible(true);
+      setYouInputShown(true);
+      return;
+    }
+
+    // Logique pour une NOUVELLE session de chat
     setConv([]);
+    saveConv([]); // On efface l'ancienne conversation
     setYouInputShown(false);
     setLyraTyping(false);
     setReplyTyping("");
 
-    const t1 = setTimeout(() => setFinalFlip(_prev => [true, _prev[1], _prev[2]]), DUR.finalPauseBefore);
-    const t2 = setTimeout(() => setFinalFlip(_prev => [true, true, _prev[2]]), DUR.finalPauseBefore + DUR.finalGap);
-    const t3 = setTimeout(() => setFinalFlip(_prev => [true, true, true]), DUR.finalPauseBefore + DUR.finalGap * 2);
+    // Animation des cartes
+    const t1 = setTimeout(() => setFinalFlip([true, false, false]), DUR.finalPauseBefore);
+    const t2 = setTimeout(() => setFinalFlip([true, true, false]), DUR.finalPauseBefore + DUR.finalGap);
+    const t3 = setTimeout(() => setFinalFlip([true, true, true]), DUR.finalPauseBefore + DUR.finalGap * 2);
     const t4 = setTimeout(() => setSealed(true), DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 120);
     const tChat = setTimeout(() => setChatVisible(true), DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 1000);
 
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(tChat); };
-  }, [DUR]);
+    // Une fois que le chat est visible, Lyra "réfléchit" puis envoie le premier message.
+    const fetchInitialLyraResponse = async () => {
+      if (!chatVisible) return; // Ne s'exécute que lorsque le chat devient visible
 
-  useEffect(() => {
-    if (!chatVisible || conv.length > 0) return; // Should run only once
-    (async () => {
-      // 1. Show "thinking" bubble and hide input
       setLyraTyping(true);
-      setYouInputShown(false);
+      await new Promise(resolve => setTimeout(resolve, 3500)); // Simule la réflexion
 
-      // 2. Wait for 3.5 seconds to simulate reflection
-      await new Promise(resolve => setTimeout(resolve, 3500));
-
-      // 3. Fetch the actual response from Lyra
       const cardNames = finalNames.filter(Boolean);
-      const history = conv.map((m) => ({ role: m.role === "user" ? "user" : "assistant", content: m.text }));
+      const history = []; // L'historique est vide pour la première requête
 
       let streamed = false, streamedText = "";
       try {
-          streamAbortRef.current?.abort?.();
-          streamAbortRef.current = new AbortController();
+        streamAbortRef.current?.abort();
+        streamAbortRef.current = new AbortController();
 
-          for await (const chunk of fetchLyraStream({
-              name: niceName, question, cards: cardNames, userMessage: "", history,
-              signal: streamAbortRef.current.signal
-          })) {
-              if (!streamed) {
-                  streamed = true;
-                  setLyraTyping(false); // First chunk arrived, hide "thinking" bubble
-              }
-              streamedText += chunk;
-              setReplyTyping((current) => current + chunk);
-              requestAnimationFrame(scrollToEnd);
+        for await (const chunk of fetchLyraStream({
+          name: niceName, question, cards: cardNames, userMessage: "", history,
+          signal: streamAbortRef.current.signal
+        })) {
+          if (!streamed) {
+            streamed = true;
+            setLyraTyping(false);
           }
+          streamedText += chunk;
+          setReplyTyping(current => current + chunk);
+          requestAnimationFrame(scrollToEnd);
+        }
       } catch {
-           // Stream might fail (e.g. network issue), we'll fall back to regular fetch
+        // Fallback en cas d'échec du stream
       } finally {
-          streamAbortRef.current = null;
+        streamAbortRef.current = null;
       }
 
       if (streamed) {
-          const text = streamedText.trim();
-          setReplyTyping("");
-          setConv((_prev) => {
-              const next = [..._prev, { id: Date.now(), role: "lyra", text }];
-              saveConv(next);
-              return next;
-          });
-        setSuggestedQuestions([
-          "Peux-tu approfondir ce point ?",
-          "Quel est le conseil principal ?",
-        ]);
-          setYouInputShown(true);
-          requestAnimationFrame(scrollToEnd);
-          return; // End here if stream was successful
+        const text = streamedText.trim();
+        setReplyTyping("");
+        setConv(prev => {
+          const next = [...prev, { id: Date.now(), role: "lyra", text }];
+          saveConv(next);
+          return next;
+        });
+        setSuggestedQuestions(["Peux-tu approfondir ce point ?", "Quel est le conseil principal ?"]);
+        setYouInputShown(true);
+        requestAnimationFrame(scrollToEnd);
+        return;
       }
 
-      // Fallback to non-streamed fetch
+      // Fallback au fetch non-streamé
       let text = "";
       try {
-          text = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: "", history });
+        text = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: "", history });
       } catch {
-          text = "Je réfléchis… (réponse momentanément indisponible).";
+        text = "Je réfléchis… (réponse momentanément indisponible).";
       }
-      
-      setLyraTyping(false); 
-      typewrite(text, setReplyTyping, () => requestAnimationFrame(scrollToEnd), () => {
-          setReplyTyping("");
-          setConv((_prev) => {
-              const next = [..._prev, { id: Date.now(), role: "lyra", text }];
-              saveConv(next);
-              return next;
-          });
-          setSuggestedQuestions([
-            "Peux-tu approfondir ce point ?",
-            "Quel est le conseil principal ?",
-          ]);
-          setYouInputShown(true);
-          requestAnimationFrame(scrollToEnd);
-      }, 22);
-    })();
-  }, [chatVisible, finalNames, niceName, question]);
 
+      setLyraTyping(false);
+      typewrite(text, setReplyTyping, () => requestAnimationFrame(scrollToEnd), () => {
+        setReplyTyping("");
+        setConv(prev => {
+          const next = [...prev, { id: Date.now(), role: "lyra", text }];
+          saveConv(next);
+          return next;
+        });
+        setSuggestedQuestions(["Peux-tu approfondir ce point ?", "Quel est le conseil principal ?"]);
+        setYouInputShown(true);
+        requestAnimationFrame(scrollToEnd);
+      }, 22);
+    };
+
+    // On observe `chatVisible` pour déclencher la récupération de la réponse initiale.
+    // C'est un peu un hack, mais ça permet de coupler la logique à l'animation.
+    if (chatVisible) {
+      fetchInitialLyraResponse();
+    } else {
+      // Si le chat n'est pas encore visible, on attend qu'il le devienne.
+      // C'est un peu redondant avec le setTimeout de `tChat` mais assure la robustesse.
+      const checkChatVisibility = setInterval(() => {
+        if (document.querySelector('.chat-wrap.show')) {
+          fetchInitialLyraResponse();
+          clearInterval(checkChatVisibility);
+        }
+      }, 100);
+    }
+
+
+    return () => {
+      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(tChat);
+      streamAbortRef.current?.abort();
+    };
+  }, [DUR, state, niceName, question, finalNames, chatVisible]); // Dépendances importantes
+
+  // Effets pour le défilement automatique
   useEffect(() => {
     if (chatVisible) requestAnimationFrame(scrollToEnd);
   }, [chatVisible]);
+
   useEffect(() => {
     requestAnimationFrame(scrollToEnd);
   }, [conv.length, lyraTyping, replyTyping, youInputShown]);
 
-  useEffect(() => {
-    const saved = loadConv();
-    if (saved.length) setConv(saved);
-  }, []);
-
-  const onYouSubmit = async (e) => {
+  const onYouSubmit = (e) => {
     if (e) e.preventDefault();
     const msg = youMessage.trim();
     if (!msg) return;
 
     recordUserMsg(msg.length);
+    setYouMessage(""); // Clear input field immediately
 
     const userBubble = { id: Date.now(), role: "user", text: msg };
+
     setConv(currentConv => {
-      const next = [...currentConv, userBubble];
-      saveConv(next);
-      return next;
-    });
-    requestAnimationFrame(scrollToEnd);
+      const nextConv = [...currentConv, userBubble];
+      saveConv(nextConv);
 
-    setYouMessage("");
-    setYouInputShown(false);
-    setLyraTyping(true);
-    requestAnimationFrame(scrollToEnd);
-
-    const cardNames = finalNames.filter(Boolean);
-    const history = [...conv, userBubble].map((m) => ({ role: m.role === "user" ? "user" : "assistant", content: m.text }));
-
-    let streamed = false, streamedText = "";
-    try {
-      streamAbortRef.current?.abort?.();
-      streamAbortRef.current = new AbortController();
-
-      for await (const chunk of fetchLyraStream({
-        name: niceName, question, cards: cardNames, userMessage: msg, history,
-        signal: streamAbortRef.current.signal
-      })) {
-        if (!streamed) {
-          streamed = true;
-          setLyraTyping(false);
-        }
-        streamedText += chunk;
-        setReplyTyping((current) => current + chunk);
+      // --- Start of async logic, now guaranteed to have the correct state ---
+      const handleResponse = async () => {
+        setYouInputShown(false);
+        setLyraTyping(true);
         requestAnimationFrame(scrollToEnd);
-      }
-    } catch {
-      toast("Connexion instable — passage au mode non-stream.");
-    } finally {
-      streamAbortRef.current = null;
-    }
 
-    if (streamed) {
-      const text = streamedText;
-      setReplyTyping("");
-      setConv((_prev) => {
-        const next = [..._prev, { id: Date.now() + 1, role: "lyra", text }];
-        saveConv(next);
-        return next;
-      });
-      setSuggestedQuestions([
-        "Peux-tu développer ce dernier point ?",
-        "Comment puis-je appliquer ce conseil ?",
-      ]);
-      setYouInputShown(true);
-      requestAnimationFrame(scrollToEnd);
-      return;
-    }
+        const cardNames = finalNames.filter(Boolean);
+        const history = nextConv.map((m) => ({ role: m.role === "user" ? "user" : "assistant", content: m.text }));
 
-    const MIN_DOTS = 2000;
-    const t0 = Date.now();
-    let text = "";
-    try {
-      text = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: msg, history });
-    } catch {
-      text = "Je réfléchis… (réponse momentanément indisponible).";
-    }
-    const wait = Math.max(0, MIN_DOTS - (Date.now() - t0));
+        let streamed = false, streamedText = "";
+        try {
+          streamAbortRef.current?.abort?.();
+          streamAbortRef.current = new AbortController();
 
-    setTimeout(() => {
-      setLyraTyping(false);
-      typewrite(text, setReplyTyping, () => requestAnimationFrame(scrollToEnd), () => {
+          for await (const chunk of fetchLyraStream({
+            name: niceName, question, cards: cardNames, userMessage: msg, history,
+            signal: streamAbortRef.current.signal
+          })) {
+            if (!streamed) {
+              streamed = true;
+              setLyraTyping(false);
+            }
+            streamedText += chunk;
+            setReplyTyping((current) => current + chunk);
+            requestAnimationFrame(scrollToEnd);
+          }
+        } catch {
+          toast("Connexion instable — passage au mode non-stream.");
+        } finally {
+          streamAbortRef.current = null;
+        }
+
+        if (streamed) {
+          const text = streamedText;
           setReplyTyping("");
-          setConv((_prev) => {
-            const next = [..._prev, { id: Date.now() + 1, role: "lyra", text }];
+          setConv((prev) => {
+            const next = [...prev, { id: Date.now() + 1, role: "lyra", text }];
             saveConv(next);
             return next;
           });
-          setSuggestedQuestions([
-            "Peux-tu développer ce dernier point ?",
-            "Comment puis-je appliquer ce conseil ?",
-          ]);
+          setSuggestedQuestions(["Peux-tu développer ce dernier point ?", "Comment puis-je appliquer ce conseil ?"]);
           setYouInputShown(true);
           requestAnimationFrame(scrollToEnd);
-        }, 22);
-    }, wait);
+          return;
+        }
+
+        const MIN_DOTS = 2000;
+        const t0 = Date.now();
+        let text = "";
+        try {
+          text = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: msg, history });
+        } catch {
+          text = "Je réfléchis… (réponse momentanément indisponible).";
+        }
+        const wait = Math.max(0, MIN_DOTS - (Date.now() - t0));
+
+        setTimeout(() => {
+          setLyraTyping(false);
+          typewrite(text, setReplyTyping, () => requestAnimationFrame(scrollToEnd), () => {
+            setReplyTyping("");
+            setConv((prev) => {
+              const next = [...prev, { id: Date.now() + 1, role: "lyra", text }];
+              saveConv(next);
+              return next;
+            });
+            setSuggestedQuestions(["Peux-tu développer ce dernier point ?", "Comment puis-je appliquer ce conseil ?"]);
+            setYouInputShown(true);
+            requestAnimationFrame(scrollToEnd);
+          }, 22);
+        }, wait);
+      };
+
+      handleResponse();
+      // --- End of async logic ---
+
+      return nextConv;
+    });
+
+    requestAnimationFrame(scrollToEnd);
   };
 
   return (

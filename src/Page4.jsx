@@ -127,7 +127,7 @@ export default function Page4() {
               { src: card2?.src, name: labelFrom(card2?.name) },
               { src: card3?.src, name: labelFrom(card3?.name) },
             ];
-            setTimeout(() => nav("/chat", { state: { name, question, cards: finalCards } }), DUR.boardFade);
+            setTimeout(() => nav("/chat", { state: { name, question, cards: finalCards, isNew: true } }), DUR.boardFade);
           }, DUR.waitBeforeRedirect);
         }
         return newSlots;
