@@ -65,7 +65,7 @@ function splitIntoBubbles(text, max = 3) {
 }
 
 function getRandomThinkingTime() {
-  return Math.floor(Math.random() * 2001) + 3000; // 3–5 sec
+  return Math.floor(Math.random() * 4001) + 4000; // 4–8 sec
 }
 
 /* ---------------- Component ---------------- */
@@ -202,7 +202,8 @@ export default function Page5() {
 
     const fetchInitialLyraResponse = async () => {
       setLyraTyping(true);
-      await new Promise((resolve) => setTimeout(resolve, 5000)); // Délai initial de 5s
+      // Délai initial de 3-5s
+      await new Promise((resolve) => setTimeout(resolve, Math.floor(Math.random() * 2001) + 3000));
 
       const cardNames = finalNames.filter(Boolean);
       const history = [];
