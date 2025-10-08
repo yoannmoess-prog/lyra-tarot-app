@@ -154,13 +154,55 @@ export default function Page5() {
     };
   }, [DUR, state?.isNew]);
 
+/* ---------------- Logique de conversation ---------------- */
+
+  // Helper pour afficher la réponse de Lyra séquentiellement, bulle par bulle
+  const showLyraResponseSequentially = async (responseText, baseConv) => {
+    const bubbles = splitIntoBubbles(responseText, 3);
+    if (bubbles.length === 0) {
+      setYouInputShown(true);
+      return;
+    }
+
+    const lyraMessageId = Date.now();
+    let accumulatedText = "";
+    let tempConv = [...baseConv];
+
+    for (let i = 0; i < bubbles.length; i++) {
+      accumulatedText += (i > 0 ? "\n\n" : "") + bubbles[i];
+      const lyraMessage = { id: lyraMessageId, role: "lyra", text: accumulatedText };
+
+      // Remplacer le message précédent de Lyra ou l'ajouter pour la première fois
+      const existingIndex = tempConv.findIndex((m) => m.id === lyraMessageId);
+      if (existingIndex > -1) {
+        tempConv[existingIndex] = lyraMessage;
+      } else {
+        tempConv.push(lyraMessage);
+      }
+
+      setConv([...tempConv]);
+        requestAnimationFrame(scrollToEnd);
+
+      if (i < bubbles.length - 1) {
+        setLyraTyping(true);
+        await new Promise((r) => setTimeout(r, getRandomThinkingTime())); // 3-5 sec delay
+        setLyraTyping(false);
+      }
+      }
+
+    // Sauvegarde finale avec le texte complet
+    saveConv(tempConv);
+    setYouInputShown(true);
+    requestAnimationFrame(scrollToEnd);
+    };
+
   /* ---------------- Première réponse IA ---------------- */
   useEffect(() => {
     if (!chatVisible || conv.length > 0) return;
 
     const fetchInitialLyraResponse = async () => {
       setLyraTyping(true);
-      await new Promise((resolve) => setTimeout(resolve, getRandomThinkingTime()));
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // Délai initial de 5s
 
       const cardNames = finalNames.filter(Boolean);
       const history = [];
@@ -169,13 +211,11 @@ export default function Page5() {
         const data = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: "", history });
         const responseText = data.text || "Je ressens une interférence... Pouvez-vous patienter un instant ?";
         setLyraTyping(false);
-        setConv([{ id: Date.now(), role: "lyra", text: responseText }]);
-        saveConv([{ id: Date.now(), role: "lyra", text: responseText }]);
-        setYouInputShown(true);
-        requestAnimationFrame(scrollToEnd);
+        await showLyraResponseSequentially(responseText, []);
       } catch (err) {
         console.error(err);
         setLyraTyping(false);
+        setYouInputShown(true);
       }
     };
 
@@ -202,13 +242,11 @@ export default function Page5() {
     const userBubble = { id: Date.now(), role: "user", text: msg };
     const newConv = [...conv, userBubble];
     setConv(newConv);
-    saveConv(newConv);
+    saveConv(newConv); // Sauvegarde temporaire du message utilisateur
     requestAnimationFrame(scrollToEnd);
 
     const handleResponse = async () => {
       setYouInputShown(false);
-      setLyraTyping(true);
-      await new Promise((resolve) => setTimeout(resolve, getRandomThinkingTime()));
 
       const cardNames = finalNames.filter(Boolean);
       const history = newConv.map((m) => ({
@@ -217,21 +255,18 @@ export default function Page5() {
       }));
 
       try {
+        // On n'attend plus ici, la fonction helper gère les pauses
         const data = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: msg, history });
         const responseText = data.text || "Désolée, ma concentration a été perturbée. Pouvez-vous reformuler ?";
-        setLyraTyping(false);
-        const nextConv = [...newConv, { id: Date.now() + 1, role: "lyra", text: responseText }];
-        setConv(nextConv);
-        saveConv(nextConv);
-        setYouInputShown(true);
-        requestAnimationFrame(scrollToEnd);
+        await showLyraResponseSequentially(responseText, newConv);
       } catch {
         setLyraTyping(false);
+        setYouInputShown(true);
       }
     };
 
     handleResponse();
-  };
+    };
 
   /* ---------------- Render ---------------- */
   return (
@@ -312,11 +347,10 @@ export default function Page5() {
               </div>
             </div>
           )}
-          <div ref={endRef} aria-hidden="true" />
         </section>
       </main>
 
-      <div className={`you-block${youInputShown ? " show" : ""}`}>
+      <div ref={endRef} className={`you-block${youInputShown ? " show" : ""}`}>
         <div className="bubble you input">
           <div className="who">VOUS</div>
           <div className="msg">
