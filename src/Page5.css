@@ -33,7 +33,7 @@
 .final-stack{
   max-width: min(1100px, 94vw);
   margin: 0 auto;
-  padding: 6vh clamp(16px,4vw,56px) 8vh;
+  padding: 9vh clamp(16px,4vw,56px) 8vh;
   display: grid;
   gap: clamp(18px, 3.5vw, 28px);
 }
