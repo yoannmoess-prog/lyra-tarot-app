@@ -1,12 +1,10 @@
-// src/Page5.jsx — version corrigée et prête à copier/coller
+// src/Page5.jsx — version finale sans DebugBar ni CTA secondaires
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Page5.css";
 import background from "./assets/background.jpg";
 import { postJson, toast } from "./utils/net";
 import "./toast.css";
-import DebugBar from "./components/DebugBar";
-import "./debugbar.css";
 import "./chat-ux.css";
 
 /* ---------------- Backend helpers ---------------- */
@@ -106,10 +104,8 @@ export default function Page5() {
   const [youInputShown, setYouInputShown] = useState(false);
   const [youMessage, setYouMessage] = useState("");
   const [lyraTyping, setLyraTyping] = useState(false);
-  const [suggestedQuestions, setSuggestedQuestions] = useState([]);
 
   const endRef = useRef(null);
-
   const scrollToEnd = () => {
     if (endRef.current) {
       endRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -171,17 +167,10 @@ export default function Page5() {
 
       try {
         const data = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: "", history });
-        const responseText =
-          data.text || "Je ressens une interférence... Pouvez-vous patienter un instant ?";
-        const responseSuggestions = data.suggestions || [];
+        const responseText = data.text || "Je ressens une interférence... Pouvez-vous patienter un instant ?";
         setLyraTyping(false);
         setConv([{ id: Date.now(), role: "lyra", text: responseText }]);
         saveConv([{ id: Date.now(), role: "lyra", text: responseText }]);
-        setSuggestedQuestions(
-          responseSuggestions.length > 0
-            ? responseSuggestions
-            : ["J'aimerais des précisions.", "Un autre conseil ?"]
-        );
         setYouInputShown(true);
         requestAnimationFrame(scrollToEnd);
       } catch (err) {
@@ -229,19 +218,11 @@ export default function Page5() {
 
       try {
         const data = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: msg, history });
-        const responseText =
-          data.text || "Désolée, ma concentration a été perturbée. Pouvez-vous reformuler ?";
-        const responseSuggestions = data.suggestions || [];
-
+        const responseText = data.text || "Désolée, ma concentration a été perturbée. Pouvez-vous reformuler ?";
         setLyraTyping(false);
         const nextConv = [...newConv, { id: Date.now() + 1, role: "lyra", text: responseText }];
         setConv(nextConv);
         saveConv(nextConv);
-        setSuggestedQuestions(
-          responseSuggestions.length > 0
-            ? responseSuggestions
-            : ["J'aimerais approfondir.", "Que dois-je faire maintenant ?"]
-        );
         setYouInputShown(true);
         requestAnimationFrame(scrollToEnd);
       } catch {
@@ -359,12 +340,8 @@ export default function Page5() {
           </div>
         </div>
 
-        <div className="cta-block">
-          {suggestedQuestions.map((q, i) => (
-            <button key={i} type="button" className="cta-btn" onClick={() => setYouMessage(q)}>
-              {q}
-            </button>
-          ))}
+        {/* CTA unique : nouveau tirage */}
+        <div className="cta-block single">
           <button
             type="button"
             className="newdraw-btn"
@@ -377,8 +354,6 @@ export default function Page5() {
           </button>
         </div>
       </div>
-
-      <DebugBar />
     </div>
   );
 }

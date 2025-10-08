@@ -1,9 +1,8 @@
-// src/Page4.jsx — deck → 3 cartes
+// src/Page4.jsx — deck → 3 cartes (DebugBar retirée)
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Page4.css";
 import background from "./assets/background.jpg";
-import DebugBar from "./components/DebugBar";
 
 /* ---------------- Card Data Helpers ---------------- */
 const FACE_MODULES = import.meta.glob("./assets/cards/*.{png,jpg,jpeg,webp}", { eager: true });
@@ -25,7 +24,7 @@ function buildFacePools() {
 const FACE_POOLS = buildFacePools();
 
 const MAJOR_LABELS = {
-  "00": "Le Mat", "01": "Le Bateleur", "02": "La Papesse", "03": "L’impératrice", "04": "L’Empereur",
+  "00": "Le Mat", "01": "Le Bateleur", "02": "La Papesse", "03": "L’Impératrice", "04": "L’Empereur",
   "05": "Le Pape", "06": "L’Amoureux", "07": "Le Chariot", "08": "La Justice", "09": "L’Hermite",
   "10": "La Roue de Fortune", "11": "La Force", "12": "Le Pendu", "13": "L’Arcane Sans Nom",
   "14": "Tempérance", "15": "Le Diable", "16": "La Maison Dieu", "17": "L’Étoile", "18": "La Lune",
@@ -37,7 +36,7 @@ function labelFrom(fileName) {
   if (maj) return MAJOR_LABELS[maj[1]] || fileName;
   const m = fileName.match(/^([DEBC])(0[1-9]|1[0-4])_/);
   if (!m) return fileName;
-  const suit = { D: "Deniers", E: "Épées", B: "Baton", C: "Coupe" }[m[1]];
+  const suit = { D: "Deniers", E: "Épées", B: "Bâtons", C: "Coupes" }[m[1]];
   const num = parseInt(m[2], 10);
   const prep = suit.startsWith("É") ? "d’" : "de ";
   if (num <= 10) return `${num === 1 ? "As" : num} ${prep}${suit}`;
@@ -113,7 +112,7 @@ export default function Page4() {
       setPopIndex(targetIndex);
       setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
 
-      setChosenSlots(prevSlots => {
+      setChosenSlots((prevSlots) => {
         const newSlots = [...prevSlots, targetIndex];
         if (newSlots.length === 3) {
           setShuffleActive(false);
@@ -198,7 +197,6 @@ export default function Page4() {
           <div className="card card-back" />
         </div>
       )}
-      <DebugBar />
     </div>
   );
 }
