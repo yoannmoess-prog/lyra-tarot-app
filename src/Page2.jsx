@@ -103,7 +103,7 @@ export default function Page2() {
                 aria-label="Ton prénom"
               />
               <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer">
-                <span className="material-symbols-outlined">send</span>
+                <span className="material-symbols-outlined">arrow_forward</span>
               </button>
             </div>
           </form>
