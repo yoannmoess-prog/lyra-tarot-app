@@ -176,75 +176,112 @@ Puis propose 2–3 CTA sous forme de questions reliées à ton interprétation. 
 app.get("/", (_, res) => res.type("text/plain").send("Lyra backend OK."));
 app.get("/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
 
-// ----- /api/lyra -----
-app.post("/api/lyra", async (req, res) => {
+
+// ----- /api/lyra/stream (SSE) -----
+app.post("/api/lyra/stream", async (req, res) => {
   try {
-    if (!LLM_API_KEY) return sendJsonError(res, 500, "missing_api_key", "LLM key absente", req.id);
-    if (LLM_API_KEY === "DUMMY_KEY_FOR_TESTING") return res.json({ ok: true, text: "Réponse de test simulée.", suggestions: ["Exemple 1", "Exemple 2"] });
+    if (!LLM_API_KEY) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      return res.end(JSON.stringify({ ok: false, error: { code: "missing_api_key", message: "LLM key absente" }}));
+    }
+
+    res.writeHead(200, {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      "Connection": "keep-alive",
+    });
+    res.write("data: [OPEN]\n\n");
+
+    if (LLM_API_KEY === "DUMMY_KEY_FOR_TESTING") {
+      const text = "Réponse de test simulée.";
+      for (const word of text.split(" ")) {
+        await new Promise(r => setTimeout(r, 120));
+        res.write(`data: ${JSON.stringify({ ok: true, content: word + " " })}\n\n`);
+      }
+      res.write("data: [DONE]\n\n");
+      return res.end();
+    }
 
     const { name, question, cards, userMessage, history } = req.body || {};
 
-    // --- RAG optionnel ---
+    // --- RAG ---
     let ragContext = "";
-    try {
-      if (process.env.RAG_ENABLE === "1") {
+    if (process.env.RAG_ENABLE === "1") {
+      try {
         const qForRag = [question && `Question: ${question}`, Array.isArray(cards) && cards.length ? `Cartes: ${cards.join(" · ")}` : null, userMessage && `Message: ${userMessage}`].filter(Boolean).join(" | ");
         const hits = await searchRag(qForRag || userMessage || question || "", 5, { minScore: 0.18 });
         ragContext = formatRagContext(hits);
+      } catch (e) {
+        console.warn("[rag] RAG search failed", e);
       }
-    } catch {}
+    }
 
     let messages = buildMessages({ name, question, cards, userMessage, history });
-    if (ragContext) messages.splice(1, 0, { role: "system", content: ragContext });
+    if (ragContext) {
+      messages.splice(1, 0, { role: "system", content: ragContext });
+    }
 
     const params = {
       model: LLM_MODEL,
       temperature: userMessage ? 0.5 : 0.6,
       top_p: 1,
       max_tokens: userMessage ? 400 : 700,
-      response_format: { type: "json_object" },
       messages,
+      stream: true,
     };
 
-    const upstream = await withTimeout(
-      (signal) =>
-        openai("/v1/chat/completions", {
-          method: "POST",
-          signal,
-          body: JSON.stringify(params),
-        }),
-      45_000
-    );
+    metrics.openai.calls++;
+    const upstream = await openai("/v1/chat/completions", {
+      method: "POST",
+      body: JSON.stringify(params),
+    });
 
     if (!upstream.ok) {
       const detail = await upstream.text().catch(() => "");
-      return sendJsonError(res, 502, "upstream_error", detail || "Bad upstream", req.id);
+      metrics.openai.errors++;
+      res.write(`data: ${JSON.stringify({ ok: false, error: { code: "upstream_error", message: detail }})}\n\n`);
+      res.write("data: [DONE]\n\n");
+      return res.end();
     }
 
-    const data = await upstream.json().catch(() => null);
-    const raw = data?.choices?.[0]?.message?.content?.trim?.() || "";
-    let parsed;
-    try {
-      parsed = JSON.parse(raw);
-    } catch {
-      parsed = { text: raw, suggestions: [] };
+    const decoder = new TextDecoder();
+    let buffer = "";
+    for await (const chunk of upstream.body) {
+      buffer += decoder.decode(chunk, { stream: true });
+      let boundary;
+      while ((boundary = buffer.indexOf("\n")) !== -1) {
+        const line = buffer.substring(0, boundary).trim();
+        buffer = buffer.substring(boundary + 1);
+        if (line.startsWith("data: ")) {
+          const data = line.substring(6).trim();
+          if (data === "[DONE]") {
+            res.write("data: [DONE]\n\n");
+            res.end();
+            return;
+          }
+          try {
+            const parsed = JSON.parse(data);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              res.write(`data: ${JSON.stringify({ ok: true, content })}\n\n`);
+            }
+          } catch (e) {
+            // Ignorer les erreurs de parsing (ex: lignes vides)
+          }
+        }
+      }
     }
 
-    const text = parsed.text || raw;
-    const suggestions = Array.isArray(parsed.suggestions) ? parsed.suggestions : [];
-
-    // Metrics
-    const usage = data?.usage || {};
-    metrics.openai.calls++;
-    metrics.openai.prompt_tokens += usage.prompt_tokens || 0;
-    metrics.openai.completion_tokens += usage.completion_tokens || 0;
-    metrics.openai.total_tokens += usage.total_tokens || 0;
-
-    return res.json({ ok: true, text, suggestions });
   } catch (err) {
-    console.error("[lyra] /api/lyra error:", err);
+    console.error("[lyra] /api/lyra/stream error:", err);
     metrics.openai.errors++;
-    return sendJsonError(res, 500, "server_error", "Erreur interne", req.id);
+    if (!res.headersSent) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: false, error: { code: "server_error", message: "Erreur interne" } }));
+    } else {
+      res.write("data: [DONE]\n\n");
+      res.end();
+    }
   }
 });
 
