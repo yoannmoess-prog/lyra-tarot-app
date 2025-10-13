@@ -248,6 +248,7 @@ export default function Page5() {
 
     const handleResponse = async () => {
       setYouInputShown(false);
+      setLyraTyping(true);
 
       const cardNames = finalNames.filter(Boolean);
       const history = newConv.map((m) => ({
@@ -258,6 +259,7 @@ export default function Page5() {
       try {
         // On n'attend plus ici, la fonction helper gère les pauses
         const data = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: msg, history });
+        setLyraTyping(false);
         const responseText = data.text || "Désolée, ma concentration a été perturbée. Pouvez-vous reformuler ?";
         await showLyraResponseSequentially(responseText, newConv);
       } catch {
@@ -275,120 +277,118 @@ export default function Page5() {
       className={`page5-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}
       style={{ backgroundImage: `url(${background})` }}
     >
-      <main className="final-stack">
-        <div className="title-block">
-          <div className="p4-fixed-title">{question}</div>
-        </div>
+      <header className="page5-header">
+        <div className="p5-fixed-title">{question}</div>
+      </header>
 
-        <section className="final-hero">
-          <div className={`final-rail appear-slow${sealed ? " sealed" : ""}`}>
-            {[0, 1, 2].map((i) => (
-              <div key={`final-${i}`} className="final-card-outer">
-                <div className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}>
-                  <div className="final-face final-back" />
-                  <div className="final-face final-front">
-                    {finalFaces[i] ? (
-                      <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
-                    ) : (
-                      <div className="final-front-placeholder">Carte {i + 1}</div>
-                    )}
-                  </div>
-                </div>
-                <div className="final-caption">{finalFlip[i] ? finalNames[i] || `Carte ${i + 1}` : ""}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section
-          className={`chat-wrap${chatVisible ? " show" : ""}`}
-          aria-live="polite"
-          onCopy={(e) => e.preventDefault()}
-          onCut={(e) => e.preventDefault()}
-          onContextMenu={(e) => e.preventDefault()}
-          onDragStart={(e) => e.preventDefault()}
-        >
-          {conv.map((m) =>
-            m.role === "lyra" ? (
-              <React.Fragment key={m.id}>
-                {splitIntoBubbles(m.text, 3).map((seg, idx) => (
-                  <div key={`${m.id}-${idx}`} className={`bubble lyra${idx > 0 ? " stacked" : ""} lyra-fadein`}>
-                    <div className="who">LYRA</div>
-                    <div className="msg">
-                      {seg.split("\n").map((line, i) => (
-                        <p key={i} style={{ margin: "6px 0" }}>
-                          {line || "\u00A0"}
-                        </p>
-                      ))}
+      <main className="page5-main-scroll">
+        <div className="final-stack">
+          <section className="final-hero">
+            <div className={`final-rail appear-slow${sealed ? " sealed" : ""}`}>
+              {[0, 1, 2].map((i) => (
+                <div key={`final-${i}`} className="final-card-outer">
+                  <div className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}>
+                    <div className="final-face final-back" />
+                    <div className="final-face final-front">
+                      {finalFaces[i] ? (
+                        <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
+                      ) : (
+                        <div className="final-front-placeholder">Carte {i + 1}</div>
+                      )}
                     </div>
                   </div>
-                ))}
-              </React.Fragment>
-            ) : (
-              <div key={m.id} className="bubble you you-fadein">
-                <div className="who">VOUS</div>
-                <div className="msg">
-                  {m.text.split("\n").map((line, i) => (
-                    <p key={i} style={{ margin: "6px 0" }}>
-                      {line || "\u00A0"}
-                    </p>
+                  <div className="final-caption">{finalFlip[i] ? finalNames[i] || `Carte ${i + 1}` : ""}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section
+            className={`chat-wrap${chatVisible ? " show" : ""}`}
+            aria-live="polite"
+            onCopy={(e) => e.preventDefault()}
+            onCut={(e) => e.preventDefault()}
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
+          >
+            {conv.map((m) =>
+              m.role === "lyra" ? (
+                <React.Fragment key={m.id}>
+                  {splitIntoBubbles(m.text, 3).map((seg, idx) => (
+                    <div key={`${m.id}-${idx}`} className={`bubble lyra${idx > 0 ? " stacked" : ""} lyra-fadein`}>
+                      <div className="who">LYRA</div>
+                      <div className="msg">
+                        {seg.split("\n").map((line, i) => (
+                          <p key={i} style={{ margin: "6px 0" }}>
+                            {line || "\u00A0"}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
                   ))}
+                </React.Fragment>
+              ) : (
+                <div key={m.id} className="bubble you you-fadein">
+                  <div className="who">VOUS</div>
+                  <div className="msg">
+                    {m.text.split("\n").map((line, i) => (
+                      <p key={i} style={{ margin: "6px 0" }}>
+                        {line || "\u00A0"}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )
+            )}
+
+            {lyraTyping && (
+              <div className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire">
+                <div className="who">LYRA</div>
+                <div className="dots" role="status" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                  <span></span>
                 </div>
               </div>
-            )
-          )}
-
-          {lyraTyping && (
-            <div className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire">
-              <div className="who">LYRA</div>
-              <div className="dots" role="status" aria-hidden="true">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-          )}
-        </section>
+            )}
+            <div ref={endRef} />
+          </section>
+        </div>
       </main>
 
-      <div ref={endRef} className={`you-block${youInputShown ? " show" : ""}`}>
-        <div className="bubble you input">
-          <div className="who">VOUS</div>
-          <div className="msg">
-            <form onSubmit={onYouSubmit} className="you-form">
-              <input
-                className="you-input"
-                placeholder="Message à Lyra"
-                value={youMessage}
-                onChange={(e) => setYouMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    onYouSubmit();
-                  }
-                }}
-              />
-              <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer">
-                <span className="material-symbols-outlined">send</span>
-              </button>
-            </form>
+      <footer className={`page5-footer ${chatVisible ? " show" : ""}`}>
+        <div className="you-block">
+          <div className="bubble you input">
+            <div className="who">VOUS</div>
+            <div className="msg">
+              <form onSubmit={onYouSubmit} className="you-form">
+                <input
+                  className="you-input"
+                  placeholder={!youInputShown ? "Lyra est en train d'écrire..." : "Message à Lyra"}
+                  value={youMessage}
+                  onChange={(e) => setYouMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      onYouSubmit();
+                    }
+                  }}
+                  disabled={!youInputShown}
+                />
+                <button
+                  type="submit"
+                  className="send-btn"
+                  aria-label="Envoyer"
+                  title="Envoyer"
+                  disabled={!youInputShown}
+                >
+                  <span className="material-symbols-outlined">send</span>
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-
-        {/* CTA unique : nouveau tirage */}
-        <div className="cta-block single">
-          <button
-            type="button"
-            className="newdraw-btn"
-            onClick={() => {
-              localStorage.removeItem("lyra:conv");
-              nav("/question", { state: { name } });
-            }}
-          >
-            Je souhaite réaliser un nouveau tirage
-          </button>
-        </div>
-      </div>
+      </footer>
     </div>
   );
 }
