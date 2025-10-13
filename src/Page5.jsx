@@ -5,25 +5,10 @@ import Modal from "./components/Modal";
 import "./components/Modal.css";
 import "./Page5.css";
 import background from "./assets/background.jpg";
-import { postJson, toast } from "./utils/net";
+import { toast } from "./utils/net";
+import { streamLyra } from "./utils/streamLyra"; // Import de la fonction de streaming
 import "./toast.css";
 import "./chat-ux.css";
-
-/* ---------------- Backend helpers ---------------- */
-async function fetchLyra({ name, question, cards, userMessage, history }) {
-  try {
-    const data = await postJson(
-      "/api/lyra",
-      { name, question, cards, userMessage, history },
-      { tries: 3, base: 300, timeout: 25000 }
-    );
-    if (!data?.ok) throw new Error("lyra_error");
-    return data;
-  } catch (err) {
-    toast("Lyra a du mal à répondre (réessais épuisés).");
-    throw err;
-  }
-}
 
 /* ---------------- Persistance conversation ---------------- */
 const STORAGE_KEY = "lyra:conv";
@@ -190,45 +175,6 @@ export default function Page5() {
 
 /* ---------------- Logique de conversation ---------------- */
 
-  // Helper pour afficher la réponse de Lyra séquentiellement, bulle par bulle
-  const showLyraResponseSequentially = async (responseText, baseConv) => {
-    const bubbles = splitIntoBubbles(responseText, 3);
-    if (bubbles.length === 0) {
-      setYouInputShown(true);
-      return;
-    }
-
-    const lyraMessageId = Date.now();
-    let accumulatedText = "";
-    let tempConv = [...baseConv];
-
-    for (let i = 0; i < bubbles.length; i++) {
-      accumulatedText += (i > 0 ? "\n\n" : "") + bubbles[i];
-      const lyraMessage = { id: lyraMessageId, role: "lyra", text: accumulatedText };
-
-      // Remplacer le message précédent de Lyra ou l'ajouter pour la première fois
-      const existingIndex = tempConv.findIndex((m) => m.id === lyraMessageId);
-      if (existingIndex > -1) {
-        tempConv[existingIndex] = lyraMessage;
-      } else {
-        tempConv.push(lyraMessage);
-      }
-
-      setConv([...tempConv]);
-        requestAnimationFrame(scrollToEnd);
-
-      if (i < bubbles.length - 1) {
-        setLyraTyping(true);
-        await new Promise((r) => setTimeout(r, getRandomThinkingTime())); // 3-5 sec delay
-        setLyraTyping(false);
-      }
-      }
-
-    // Sauvegarde finale avec le texte complet
-    saveConv(tempConv);
-    setYouInputShown(true);
-    requestAnimationFrame(scrollToEnd);
-    };
 
   /* ---------------- Première réponse IA ---------------- */
   useEffect(() => {
@@ -236,22 +182,36 @@ export default function Page5() {
 
     const fetchInitialLyraResponse = async () => {
       setLyraTyping(true);
-      // Délai initial de 3-5s
       await new Promise((resolve) => setTimeout(resolve, Math.floor(Math.random() * 2001) + 3000));
 
       const cardNames = finalNames.filter(Boolean);
-      const history = [];
+      const payload = { name: niceName, question, cards: cardNames, userMessage: "", history: [] };
 
-      try {
-        const data = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: "", history });
-        const responseText = data.text || "Je ressens une interférence... Pouvez-vous patienter un instant ?";
-        setLyraTyping(false);
-        await showLyraResponseSequentially(responseText, []);
-      } catch (err) {
-        console.error(err);
-        setLyraTyping(false);
-        setYouInputShown(true);
-      }
+      let fullResponse = "";
+      const lyraMessage = { id: Date.now(), role: "lyra", text: "" };
+      const baseConv = [lyraMessage];
+      setConv(baseConv);
+
+      streamLyra(
+        payload,
+        (chunk) => {
+          fullResponse += chunk;
+          lyraMessage.text = fullResponse;
+          setConv([...baseConv]);
+          requestAnimationFrame(scrollToEnd);
+        },
+        () => {
+          setLyraTyping(false);
+          setYouInputShown(true);
+          saveConv(baseConv);
+        },
+        (err) => {
+          console.error("Erreur de streaming:", err);
+          toast("Lyra a du mal à répondre.");
+          setLyraTyping(false);
+          setYouInputShown(true);
+        }
+      );
     };
 
     fetchInitialLyraResponse();
@@ -280,30 +240,43 @@ export default function Page5() {
     saveConv(newConv); // Sauvegarde temporaire du message utilisateur
     requestAnimationFrame(scrollToEnd);
 
-    const handleResponse = async () => {
-      setYouInputShown(false);
-      setLyraTyping(true);
+    setYouInputShown(false);
+    setLyraTyping(true);
 
-      const cardNames = finalNames.filter(Boolean);
-      const history = newConv.map((m) => ({
-        role: m.role === "user" ? "user" : "assistant",
-        content: m.text,
-      }));
+    const cardNames = finalNames.filter(Boolean);
+    const history = newConv.map((m) => ({
+      role: m.role === "user" ? "user" : "assistant",
+      content: m.text,
+    }));
 
-      try {
-        // On n'attend plus ici, la fonction helper gère les pauses
-        const data = await fetchLyra({ name: niceName, question, cards: cardNames, userMessage: msg, history });
+    const payload = { name: niceName, question, cards: cardNames, userMessage: msg, history };
+
+    let fullResponse = "";
+    const lyraMessage = { id: Date.now() + 1, role: "lyra", text: "" };
+    const finalConv = [...newConv, lyraMessage];
+    setConv(finalConv);
+
+    streamLyra(
+      payload,
+      (chunk) => {
+        fullResponse += chunk;
+        lyraMessage.text = fullResponse;
+        setConv([...finalConv]);
+        requestAnimationFrame(scrollToEnd);
+      },
+      () => {
         setLyraTyping(false);
-        const responseText = data.text || "Désolée, ma concentration a été perturbée. Pouvez-vous reformuler ?";
-        await showLyraResponseSequentially(responseText, newConv);
-      } catch {
+        setYouInputShown(true);
+        saveConv(finalConv);
+      },
+      (err) => {
+        console.error("Erreur de streaming:", err);
+        toast("Lyra a du mal à répondre.");
         setLyraTyping(false);
         setYouInputShown(true);
       }
-    };
-
-    handleResponse();
-    };
+    );
+  };
 
   /* ---------------- Render ---------------- */
   return (

@@ -25,8 +25,19 @@ export async function streamLyra(payload, onText, onDone, onError) {
       const data = line.slice(5).trim();
       if (data === "[OPEN]") continue;
       if (data === "[DONE]") { onDone?.(); return "done"; }
-      // chaque 'data: ...' contient une portion de texte prêt à afficher
-      onText?.(data);
+      try {
+        const parsed = JSON.parse(data);
+        if (parsed.ok === false) {
+          onError?.(new Error(parsed.error?.message || "Erreur inconnue du stream"));
+          return "done";
+        }
+        if (parsed.content) {
+          onText?.(parsed.content);
+        }
+      } catch (e) {
+        // Ignorer les erreurs de parsing, peut arriver si le message est partiel
+        console.warn("Erreur de parsing JSON dans le stream:", data);
+      }
     }
     return null;
   };
