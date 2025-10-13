@@ -1,6 +1,8 @@
 // src/Page5.jsx — version finale sans DebugBar ni CTA secondaires
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Modal from "./components/Modal";
+import "./components/Modal.css";
 import "./Page5.css";
 import background from "./assets/background.jpg";
 import { postJson, toast } from "./utils/net";
@@ -104,8 +106,40 @@ export default function Page5() {
   const [youInputShown, setYouInputShown] = useState(false);
   const [youMessage, setYouMessage] = useState("");
   const [lyraTyping, setLyraTyping] = useState(false);
+  const [zoomedCard, setZoomedCard] = useState(null); // null ou index de la carte
+  const [isSpreadVisible, setIsSpreadVisible] = useState(true);
+  const [isSpreadModalOpen, setIsSpreadModalOpen] = useState(false);
 
   const endRef = useRef(null);
+  const finalRailRef = useRef(null);
+  const spreadRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSpreadVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 } // Se déclenche si 10% de l'élément est visible
+    );
+
+    const currentRef = spreadRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, []);
+
+  const handleTitleClick = () => {
+    if (finalRailRef.current) {
+      finalRailRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   const scrollToEnd = () => {
     if (endRef.current) {
       endRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -278,16 +312,43 @@ export default function Page5() {
       style={{ backgroundImage: `url(${background})` }}
     >
       <header className="page5-header">
-        <div className="p5-fixed-title">{question}</div>
+        <div
+          className="p5-fixed-title"
+          onClick={handleTitleClick}
+          role="button"
+          tabIndex="0"
+          onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleTitleClick()}
+          style={{ cursor: "pointer" }}
+        >
+          {question}
+        </div>
+        <div className={`header-icon-container ${!isSpreadVisible ? "show" : ""}`}>
+          <button
+            className="header-icon-btn"
+            onClick={() => setIsSpreadModalOpen(true)}
+            aria-label="Afficher le tirage de cartes"
+            title="Afficher le tirage"
+          >
+            <span className="ms-icon material-symbols-outlined">playing_cards</span>
+          </button>
+        </div>
       </header>
 
       <main className="page5-main-scroll">
         <div className="final-stack">
-          <section className="final-hero">
-            <div className={`final-rail appear-slow${sealed ? " sealed" : ""}`}>
+          <section className="final-hero" ref={spreadRef}>
+            <div className={`final-rail appear-slow${sealed ? " sealed" : ""}`} ref={finalRailRef}>
               {[0, 1, 2].map((i) => (
                 <div key={`final-${i}`} className="final-card-outer">
-                  <div className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}>
+                  <div
+                    className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}
+                    onClick={() => finalFlip[i] && setZoomedCard(i)}
+                    onKeyDown={(e) => finalFlip[i] && (e.key === "Enter" || e.key === " ") && setZoomedCard(i)}
+                    role="button"
+                    tabIndex={finalFlip[i] ? 0 : -1}
+                    aria-label={`Agrandir la carte : ${finalNames[i] || `Carte ${i + 1}`}`}
+                    style={{ cursor: finalFlip[i] ? "pointer" : "default" }}
+                  >
                     <div className="final-face final-back" />
                     <div className="final-face final-front">
                       {finalFaces[i] ? (
@@ -302,6 +363,44 @@ export default function Page5() {
               ))}
             </div>
           </section>
+
+          {zoomedCard !== null && (
+            <Modal onClose={() => setZoomedCard(null)}>
+              <div className="zoomed-card-container">
+                <img
+                  src={finalFaces[zoomedCard]}
+                  alt={finalNames[zoomedCard] || `Carte ${zoomedCard + 1}`}
+                  className="zoomed-card-img"
+                />
+              </div>
+            </Modal>
+          )}
+
+          {isSpreadModalOpen && (
+            <Modal onClose={() => setIsSpreadModalOpen(false)}>
+              <div className="spread-modal-container">
+                <div className="final-rail sealed">
+                  {[0, 1, 2].map((i) => (
+                    <div key={`modal-final-${i}`} className="final-card-outer">
+                      <div className="final-card-flip is-flipped">
+                        <div className="final-face final-back" />
+                        <div className="final-face final-front">
+                          {finalFaces[i] ? (
+                            <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
+                          ) : (
+                            <div className="final-front-placeholder">Carte {i + 1}</div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="final-caption" style={{ opacity: 1, transform: "none" }}>
+                        {finalNames[i] || `Carte ${i + 1}`}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Modal>
+          )}
 
           <section
             className={`chat-wrap${chatVisible ? " show" : ""}`}
@@ -358,35 +457,30 @@ export default function Page5() {
 
       <footer className={`page5-footer ${chatVisible ? " show" : ""}`}>
         <div className="you-block">
-          <div className="bubble you input">
-            <div className="who">VOUS</div>
-            <div className="msg">
-              <form onSubmit={onYouSubmit} className="you-form">
-                <input
-                  className="you-input"
-                  placeholder={!youInputShown ? "Lyra est en train d'écrire..." : "Message à Lyra"}
-                  value={youMessage}
-                  onChange={(e) => setYouMessage(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      onYouSubmit();
-                    }
-                  }}
-                  disabled={!youInputShown}
-                />
-                <button
-                  type="submit"
-                  className="send-btn"
-                  aria-label="Envoyer"
-                  title="Envoyer"
-                  disabled={!youInputShown}
-                >
-                  <span className="material-symbols-outlined">send</span>
-                </button>
-              </form>
-            </div>
-          </div>
+          <form onSubmit={onYouSubmit} className="you-form">
+            <input
+              className="you-input"
+              placeholder={!youInputShown ? "Lyra est en train d'écrire..." : "Message à Lyra"}
+              value={youMessage}
+              onChange={(e) => setYouMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  onYouSubmit();
+                }
+              }}
+              disabled={!youInputShown}
+            />
+            <button
+              type="submit"
+              className="send-btn"
+              aria-label="Envoyer"
+              title="Envoyer"
+              disabled={!youInputShown}
+            >
+                  <span className="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </form>
         </div>
       </footer>
     </div>

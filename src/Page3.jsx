@@ -153,7 +153,7 @@ function Page3() {
             className="send-btn"
             aria-label="Envoyer la question"
           >
-            <span className="material-symbols-outlined">send</span>
+            <span className="material-symbols-outlined">arrow_forward</span>
           </button>
         </div>
 
