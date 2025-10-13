@@ -105,12 +105,23 @@ export default function Page5() {
   const [youMessage, setYouMessage] = useState("");
   const [lyraTyping, setLyraTyping] = useState(false);
 
+  const [zoomedCard, setZoomedCard] = useState(null); // Pour la carte agrandie
+  const [showDrawIcon, setShowDrawIcon] = useState(false);
+  const [showDrawOverlay, setShowDrawOverlay] = useState(false);
+  const drawRef = useRef(null);
+
   const endRef = useRef(null);
   const scrollToEnd = () => {
     if (endRef.current) {
       endRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     } else {
       window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+    }
+  };
+
+  const scrollToTop = () => {
+    if (drawRef.current) {
+      drawRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -231,6 +242,27 @@ export default function Page5() {
     requestAnimationFrame(scrollToEnd);
   }, [conv.length, lyraTyping, youInputShown]);
 
+  // Observer pour l'icône de tirage
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowDrawIcon(!entry.isIntersecting);
+      },
+      { rootMargin: "-100px 0px 0px 0px" } // Déclenche un peu avant que ça ne disparaisse complètement
+    );
+
+    const currentDrawRef = drawRef.current;
+    if (currentDrawRef) {
+      observer.observe(currentDrawRef);
+    }
+
+    return () => {
+      if (currentDrawRef) {
+        observer.unobserve(currentDrawRef);
+      }
+    };
+  }, [chatVisible]); // S'assurer que l'observateur est actif quand le chat est visible
+
   /* ---------------- Envoi message utilisateur ---------------- */
   const onYouSubmit = (e) => {
     if (e) e.preventDefault();
@@ -277,16 +309,70 @@ export default function Page5() {
       className={`page5-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}
       style={{ backgroundImage: `url(${background})` }}
     >
-      <header className="page5-header">
+      <header className="page5-header" onClick={scrollToTop}>
         <div className="p5-fixed-title">{question}</div>
+        <button
+          className={`draw-icon-btn ${showDrawIcon ? "visible" : ""}`}
+          onClick={(e) => {
+            e.stopPropagation(); // Empêche le défilement vers le haut
+            setShowDrawOverlay(true);
+          }}
+          aria-label="Afficher le tirage"
+        >
+          <span className="material-symbols-outlined">playing_cards</span>
+        </button>
       </header>
+
+      {showDrawOverlay && (
+        <div className="draw-overlay" onClick={() => setShowDrawOverlay(false)}>
+          <div className="draw-overlay-content">
+            <div className="final-rail is-overlay">
+              {[0, 1, 2].map((i) => (
+                <div key={`overlay-final-${i}`} className="final-card-outer">
+                  <div className="final-card-flip is-flipped">
+                    <div className="final-face final-back" />
+                    <div className="final-face final-front">
+                      {finalFaces[i] ? (
+                        <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
+                      ) : (
+                        <div className="final-front-placeholder">Carte {i + 1}</div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="final-caption" style={{ opacity: 1 }}>
+                    {finalNames[i] || `Carte ${i + 1}`}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <button className="close-zoom-btn" aria-label="Fermer le tirage">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      )}
+
+      {zoomedCard && (
+        <div className="card-zoom-overlay" onClick={() => setZoomedCard(null)}>
+          <img src={zoomedCard.src} alt={`Zoom sur ${zoomedCard.name}`} className="zoomed-card-img" />
+          <button className="close-zoom-btn" aria-label="Fermer le zoom">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      )}
 
       <main className="page5-main-scroll">
         <div className="final-stack">
-          <section className="final-hero">
+          <section className="final-hero" ref={drawRef}>
             <div className={`final-rail appear-slow${sealed ? " sealed" : ""}`}>
               {[0, 1, 2].map((i) => (
-                <div key={`final-${i}`} className="final-card-outer">
+                <div
+                  key={`final-${i}`}
+                  className="final-card-outer"
+                  onClick={() => finalFaces[i] && setZoomedCard({ src: finalFaces[i], name: finalNames[i] })}
+                  role="button"
+                  aria-label={`Agrandir la carte ${finalNames[i] || i + 1}`}
+                >
                   <div className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}>
                     <div className="final-face final-back" />
                     <div className="final-face final-front">
@@ -358,35 +444,42 @@ export default function Page5() {
 
       <footer className={`page5-footer ${chatVisible ? " show" : ""}`}>
         <div className="you-block">
-          <div className="bubble you input">
-            <div className="who">VOUS</div>
-            <div className="msg">
-              <form onSubmit={onYouSubmit} className="you-form">
-                <input
-                  className="you-input"
-                  placeholder={!youInputShown ? "Lyra est en train d'écrire..." : "Message à Lyra"}
-                  value={youMessage}
-                  onChange={(e) => setYouMessage(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      onYouSubmit();
-                    }
-                  }}
-                  disabled={!youInputShown}
-                />
-                <button
-                  type="submit"
-                  className="send-btn"
-                  aria-label="Envoyer"
-                  title="Envoyer"
-                  disabled={!youInputShown}
-                >
-                  <span className="material-symbols-outlined">send</span>
-                </button>
-              </form>
-            </div>
-          </div>
+          <form onSubmit={onYouSubmit} className="you-form">
+            <input
+              className="you-input"
+              placeholder={!youInputShown ? "Lyra est en train d'écrire..." : "Message à Lyra"}
+              value={youMessage}
+              onChange={(e) => setYouMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  onYouSubmit();
+                }
+              }}
+              disabled={!youInputShown}
+            />
+            <button
+              type="submit"
+              className="send-btn"
+              aria-label="Envoyer"
+              title="Envoyer"
+              disabled={!youInputShown}
+            >
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="send-icon"
+                  >
+                    <path
+                      d="M3.47826 2.33331L21.6666 12L3.47826 21.6666V13.6666L15.6522 12L3.47826 10.3333V2.33331Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+            </button>
+          </form>
         </div>
       </footer>
     </div>

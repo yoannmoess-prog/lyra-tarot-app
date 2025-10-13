@@ -21,11 +21,11 @@
   flex-shrink: 0; /* Empêche le header de rétrécir */
   padding: clamp(12px, 3vh, 20px) clamp(16px, 4vw, 56px);
   color: #F8F5E1;
-  font-family: 'Sorts Mill Goudy', serif;
+  font-family: var(--font-serif);
   text-align: center;
-  background: rgba(15, 17, 18, 0.6); /* Arrière-plan plus opaque */
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(9, 33, 62, 0.75); /* #09213E avec 75% d'opacité */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(248, 245, 225, 0.1);
   box-shadow: 0 2px 12px rgba(0,0,0,0.25);
   opacity: 0;
@@ -99,7 +99,7 @@
   55%  { transform: translateX(0%)    skewX(-12deg); opacity:.35; }
   100% { transform: translateX(120%)  skewX(-12deg); opacity:0; }
 }
-.final-caption{ margin-top: 1.2em; font-family:'Sorts Mill Goudy', serif; font-size: clamp(0.85rem, 1.2vw, 1.1rem); line-height: 1.3; color:#F8F5E1; opacity: 0; transform: translateY(-2px); transition: opacity .35s ease .15s, transform .35s ease .15s; pointer-events: none; padding-top: 2px; }
+.final-caption{ margin-top: 1.2em; font-family:var(--font-serif); font-size: clamp(0.85rem, 1.2vw, 1.1rem); line-height: 1.3; color:#F8F5E1; opacity: 0; transform: translateY(-2px); transition: opacity .35s ease .15s, transform .35s ease .15s; pointer-events: none; padding-top: 2px; }
 .final-card-flip.is-flipped + .final-caption{ opacity: 1; transform: translateY(0); }
 
 /* --- Chat --- */
@@ -123,11 +123,14 @@
 @keyframes fadeInSoft { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .you-fadein { animation: fadeInSoft 0.5s ease; }
 
-.bubble { max-width: 78%; padding: 10px 14px; border-radius: 18px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; line-height: 1.35; position: relative; color: #101112; background: #E9EDF2; border: 1px solid rgba(0,0,0,.06); box-shadow: 0 2px 10px rgba(0,0,0,.12); text-align: left; }
-.bubble .who { font-weight: 800; letter-spacing:.06em; text-transform: uppercase; margin: 0 0 4px; font-size: .78rem; opacity: .7; }
+.bubble { max-width: 78%; padding: 10px 14px; border-radius: 18px; font-family: var(--font-sans); line-height: 1.35; position: relative; color: #101112; background: #E9EDF2; border: 1px solid rgba(0,0,0,.06); box-shadow: 0 2px 10px rgba(0,0,0,.12); text-align: left; }
+@media (min-width: 768px) {
+  .bubble { max-width: 50%; }
+}
+.bubble .who { font-weight: 800; letter-spacing:.06em; text-transform: uppercase; margin: 0 0 4px; font-size: .78rem; opacity: .7; font-family: var(--font-serif); }
 .bubble.lyra { align-self: flex-start; border-top-left-radius: 0; }
 .bubble.you { align-self: flex-end; border-top-right-radius: 0; overflow: hidden; }
-.bubble .msg p { font-family: 'Sorts Mill Goudy', serif !important; font-weight: 400; }
+.bubble .msg p { font-family: var(--font-sans) !important; font-weight: 400; }
 .bubble.typing .dots { display: inline-flex; gap: 6px; padding: 4px 2px 2px 2px; }
 .bubble.typing .dots span { width: 6px; height: 6px; border-radius: 50%; background: #333; opacity: .2; animation: dotBlink 1.2s infinite ease-in-out; }
 .bubble.typing .dots span:nth-child(2) { animation-delay: .2s; }
@@ -141,7 +144,6 @@
   opacity: 0;
   transform: translateY(100%);
   transition: opacity 400ms ease-in-out, transform 400ms ease-in-out;
-  background: rgba(15, 17, 18, 0.2); /* Léger fond pour la zone d'input */
   padding-top: 4px; /* Espace au-dessus du you-block */
 }
 .page5-footer.show {
@@ -159,36 +161,67 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
+  background-image: url('/wave.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center bottom;
 }
-.you-block > * {
-  max-width: 100%;
-  box-sizing: border-box;
-}
-.you-block .bubble.you {
-  width: 100%;
-  max-width: 100%; /* La bulle prend toute la largeur du container .you-block */
-}
-
 /* Formulaire de réponse */
-.you-form { position: relative; display: flex; align-items: center; width: 100%; }
+.you-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: #E9EDF2;
+  border-radius: 18px; /* Match des bulles de chat */
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 2px 10px rgba(0,0,0,.12);
+  overflow: hidden; /* Pour que le bouton ne dépasse pas */
+}
 .you-input {
   flex: 1 1 auto;
   min-width: 0;
   width: 100%;
   box-sizing: border-box;
-  font-family:'Sorts Mill Goudy', serif !important;
+  font-family: var(--font-sans) !important;
   font-weight: 400;
   font-size: 1rem;
-  border: 1px solid rgba(0,0,0,.12);
-  border-radius: 12px;
-  padding: 10px 46px 10px 12px;
+  border: none;
+  padding: 12px 48px 12px 16px;
   outline: none;
-  background: #fff;
+  background: transparent;
   color: #111;
 }
-.you-input::placeholder { color: #666; font-family:'Sorts Mill Goudy', serif !important; font-weight: 400; }
-.send-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; padding: 0; margin: 0; border: 0; background: transparent; box-shadow: none; outline: none; cursor: pointer; color: #111; }
-.send-btn .material-symbols-outlined { font-size: 22px; line-height: 1; display: block; }
+.you-input::placeholder { color: #666; font-family: var(--font-sans) !important; font-weight: 400; }
+.send-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #09213E; /* Couleur du thème */
+  box-shadow: none;
+  outline: none;
+  cursor: pointer;
+  color: #111; /* Couleur du texte/icône */
+  transition: background-color 150ms ease;
+}
+.send-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+.send-btn .send-icon {
+  width: 20px;
+  height: 20px;
+}
 
 /* --- Media Queries --- */
 @media (prefers-reduced-motion: reduce) {
@@ -197,4 +230,121 @@
 @media (max-width:520px) {
   .final-card-outer { width:min(30vw, 26vh, 156px); }
   .p5-fixed-title { font-size: 1rem; }
+}
+
+/* --- Overlay de zoom sur carte --- */
+.card-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(9, 33, 62, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: zoomOverlayFadeIn 300ms ease-out;
+}
+
+@keyframes zoomOverlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.zoomed-card-img {
+  max-width: 90%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  animation: zoomCardIn 400ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+@keyframes zoomCardIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.close-zoom-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 50%;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.close-zoom-btn:hover {
+  background: rgba(0,0,0,0.7);
+}
+
+.close-zoom-btn .material-symbols-outlined {
+  font-size: 28px;
+}
+
+.final-card-outer[role="button"] {
+  cursor: pointer;
+}
+
+/* --- Icône de tirage dans le header --- */
+.page5-header {
+  position: relative; /* Pour positionner l'icône */
+}
+
+.draw-icon-btn {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #F8F5E1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+  cursor: pointer;
+}
+
+.draw-icon-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.draw-icon-btn .material-symbols-outlined {
+  font-size: 28px;
+}
+
+/* --- Overlay du tirage complet --- */
+.draw-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 110; /* Au-dessus de l'overlay de zoom */
+  background: rgba(9, 33, 62, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: zoomOverlayFadeIn 300ms ease-out;
+}
+
+.draw-overlay-content {
+  width: 100%;
+}
+
+.final-rail.is-overlay {
+  opacity: 1;
+  animation: none;
+  max-width: 800px;
+  margin: 0 auto;
 }
