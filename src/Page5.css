@@ -19,12 +19,12 @@
 /* --- Header Fixe --- */
 .page5-header {
   flex-shrink: 0; /* Empêche le header de rétrécir */
-  padding: clamp(12px, 3vh, 20px) clamp(16px, 4vw, 56px);
+  padding: clamp(20px, 4vh, 30px) clamp(16px, 4vw, 56px); /* Hauteur augmentée */
   color: #F8F5E1;
   text-align: center;
-  background: rgba(9, 33, 62, 0.75); /* Fond semi-transparent #09213E */
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: transparent; /* Fond supprimé */
+  backdrop-filter: blur(24px); /* Flou plus intense */
+  -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid rgba(248, 245, 225, 0.1);
   box-shadow: 0 2px 12px rgba(0,0,0,0.25);
   opacity: 0;
@@ -95,6 +95,16 @@
 }
 .spread-modal-container .final-rail {
   opacity: 1; /* S'assurer que le tirage est visible */
+  gap: 16px; /* Ajout d'un gap pour espacer les cartes */
+}
+
+@media (max-width: 520px) {
+  .spread-modal-container .final-rail {
+    gap: 8px; /* Gap plus petit pour mobile */
+  }
+  .spread-modal-container .final-card-outer {
+    width: min(28vw, 24vh, 140px); /* Taille des cartes réduite pour la modale mobile */
+  }
 }
 
 /* --- Contenu principal défilable --- */
@@ -179,15 +189,18 @@
 @keyframes fadeInSoft { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .you-fadein { animation: fadeInSoft 0.5s ease; }
 
-.bubble { max-width: 78%; padding: 10px 14px; border-radius: 18px; font-family: var(--font-system); line-height: 1.35; position: relative; color: #101112; background: #E9EDF2; border: 1px solid rgba(0,0,0,.06); box-shadow: 0 2px 10px rgba(0,0,0,.12); text-align: left; }
+.bubble { max-width: 78%; padding: 10px 14px; border-radius: 18px; font-family: var(--font-sans); line-height: 1.35; position: relative; color: #101112; background: #E9EDF2; border: 1px solid rgba(0,0,0,.06); box-shadow: 0 2px 10px rgba(0,0,0,.12); text-align: left; }
 
 @media (min-width: 961px) {
   .bubble { max-width: 50%; }
 }
 .bubble .who { font-family: var(--font-serif); font-weight: 400; letter-spacing:.03em; text-transform: uppercase; margin: 0 0 4px; font-size: .8rem; opacity: .8; }
 .bubble.lyra { align-self: flex-start; border-top-left-radius: 0; }
-.bubble.you { align-self: flex-end; border-top-right-radius: 0; overflow: hidden; }
-.bubble .msg p { font-family: var(--font-system) !important; font-weight: 400; }
+.bubble.lyra .msg p { color: #1E1E1E; }
+.bubble.you { align-self: flex-end; border-top-right-radius: 0; overflow: hidden; background-color: #0A1B36; border-color: rgba(255,255,255,0.2); }
+.bubble.you .msg p { color: #FFFFFF; }
+.bubble.you .who { color: #FFFFFF; opacity: 0.7; }
+.bubble .msg p { font-family: var(--font-sans) !important; font-weight: 400; }
 .bubble.typing .dots { display: inline-flex; gap: 6px; padding: 4px 2px 2px 2px; }
 .bubble.typing .dots span { width: 6px; height: 6px; border-radius: 50%; background: #333; opacity: .2; animation: dotBlink 1.2s infinite ease-in-out; }
 .bubble.typing .dots span:nth-child(2) { animation-delay: .2s; }
@@ -236,7 +249,7 @@
   min-width: 0;
   width: 100%;
   box-sizing: border-box;
-  font-family: var(--font-system);
+  font-family: var(--font-sans);
   font-weight: 400;
   font-size: 1rem;
   border: 1px solid rgba(248, 245, 225, 0.2);
@@ -251,7 +264,7 @@
   background: rgba(248, 245, 225, 0.15);
   border-color: rgba(248, 245, 225, 0.4);
 }
-.you-input::placeholder { color: rgba(248, 245, 225, 0.5); font-family: var(--font-system); font-weight: 400; }
+.you-input::placeholder { color: rgba(248, 245, 225, 0.5); font-family: var(--font-sans); font-weight: 400; }
 .send-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; padding: 0; margin: 0; border: 0; background: transparent; box-shadow: none; outline: none; cursor: pointer; color: #F8F5E1; opacity: 0.8; transition: opacity .2s ease; }
 .send-btn:hover { opacity: 1; }
 .send-btn .material-symbols-outlined { font-size: 24px; line-height: 1; display: block; }
