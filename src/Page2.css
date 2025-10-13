@@ -48,15 +48,15 @@
   border: none;
   outline: none;
   background: transparent;
-  caret-color: #191A1C !important;
-  color: #191A1C !important;
-  font-family: var(--font-system);
+  caret-color: #1E1E1E !important;
+  color: #1E1E1E !important;
+  font-family: var(--font-sans);
   font-size: clamp(1.05rem, 1.8vw, 1.25rem);
   line-height: 1.4;
 }
 .input-bubble input::placeholder {
-  color: #191A1C !important;
-  opacity: 1;
+  color: #1E1E1E !important;
+  opacity: 0.6;
 }
 
 /* Icône Send */
@@ -80,7 +80,7 @@
 .send-btn .material-symbols-outlined {
   font-size: 24px;
   line-height: 1;
-  color: #191A1C;
+  color: #1E1E1E;
 }
 .send-btn:focus-visible {
   outline: 2px solid rgba(0,0,0,.35);

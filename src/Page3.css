@@ -46,9 +46,9 @@
 .input-bubble textarea{
   width: 100%;
   border: none; outline: none; background: transparent;
-  color: #191A1C !important;
-  caret-color: #191A1C !important;
-  font-family: var(--font-system);
+  color: #1E1E1E !important;
+  caret-color: #1E1E1E !important;
+  font-family: var(--font-sans);
   font-size: clamp(1.05rem, 1.8vw, 1.25rem);
   line-height: 1.5;
   resize: vertical;
@@ -56,8 +56,8 @@
 }
 
 .input-bubble textarea::placeholder {
-  color: #191A1C !important;
-  opacity: 1 !important;
+  color: #1E1E1E !important;
+  opacity: 0.6 !important;
 }
 
 /* icône Send unique, centrée verticalement, sans cadre */
@@ -67,7 +67,7 @@
   border: none; background: transparent; padding: 0; cursor: pointer;
   border-radius: 50%; -webkit-tap-highlight-color: transparent;
 }
-.send-btn .material-symbols-outlined{ font-size: 24px; line-height: 1; color: #191A1C !important; }
+.send-btn .material-symbols-outlined{ font-size: 24px; line-height: 1; color: #1E1E1E !important; }
 .send-btn:focus-visible{ outline: 2px solid rgba(0,0,0,.35); outline-offset: 2px; }
 
 /* Questions proposées */
