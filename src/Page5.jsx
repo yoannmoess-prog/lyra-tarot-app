@@ -182,11 +182,12 @@ export default function Page5() {
 
     const fetchInitialLyraResponse = async () => {
       setLyraTyping(true);
-      await new Promise((resolve) => setTimeout(resolve, Math.floor(Math.random() * 2001) + 3000));
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // Délai de 5 secondes
 
       const cardNames = finalNames.filter(Boolean);
       const payload = { name: niceName, question, cards: cardNames, userMessage: "", history: [] };
 
+      setLyraTyping(false); // Cacher la bulle de chargement avant de streamer
       let fullResponse = "";
       const lyraMessage = { id: Date.now(), role: "lyra", text: "" };
       const baseConv = [lyraMessage];
@@ -201,14 +202,12 @@ export default function Page5() {
           requestAnimationFrame(scrollToEnd);
         },
         () => {
-          setLyraTyping(false);
           setYouInputShown(true);
           saveConv(baseConv);
         },
         (err) => {
           console.error("Erreur de streaming:", err);
           toast("Lyra a du mal à répondre.");
-          setLyraTyping(false);
           setYouInputShown(true);
         }
       );
@@ -243,39 +242,44 @@ export default function Page5() {
     setYouInputShown(false);
     setLyraTyping(true);
 
-    const cardNames = finalNames.filter(Boolean);
-    const history = newConv.map((m) => ({
-      role: m.role === "user" ? "user" : "assistant",
-      content: m.text,
-    }));
+    const handleStream = async () => {
+      await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 4001) + 4000)); // Délai de 4-8 secondes
+      setLyraTyping(false);
 
-    const payload = { name: niceName, question, cards: cardNames, userMessage: msg, history };
+      const cardNames = finalNames.filter(Boolean);
+      const history = newConv.map((m) => ({
+        role: m.role === "user" ? "user" : "assistant",
+        content: m.text,
+      }));
 
-    let fullResponse = "";
-    const lyraMessage = { id: Date.now() + 1, role: "lyra", text: "" };
-    const finalConv = [...newConv, lyraMessage];
-    setConv(finalConv);
+      const payload = { name: niceName, question, cards: cardNames, userMessage: msg, history };
 
-    streamLyra(
-      payload,
-      (chunk) => {
-        fullResponse += chunk;
-        lyraMessage.text = fullResponse;
-        setConv([...finalConv]);
-        requestAnimationFrame(scrollToEnd);
-      },
-      () => {
-        setLyraTyping(false);
-        setYouInputShown(true);
-        saveConv(finalConv);
-      },
-      (err) => {
-        console.error("Erreur de streaming:", err);
-        toast("Lyra a du mal à répondre.");
-        setLyraTyping(false);
-        setYouInputShown(true);
-      }
-    );
+      let fullResponse = "";
+      const lyraMessage = { id: Date.now() + 1, role: "lyra", text: "" };
+      const finalConv = [...newConv, lyraMessage];
+      setConv(finalConv);
+
+      streamLyra(
+        payload,
+        (chunk) => {
+          fullResponse += chunk;
+          lyraMessage.text = fullResponse;
+          setConv([...finalConv]);
+          requestAnimationFrame(scrollToEnd);
+        },
+        () => {
+          setYouInputShown(true);
+          saveConv(finalConv);
+        },
+        (err) => {
+          console.error("Erreur de streaming:", err);
+          toast("Lyra a du mal à répondre.");
+          setYouInputShown(true);
+        }
+      );
+    };
+
+    handleStream();
   };
 
   /* ---------------- Render ---------------- */
