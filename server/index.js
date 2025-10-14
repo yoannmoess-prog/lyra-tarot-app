@@ -31,6 +31,15 @@ initRag().catch((e) => console.warn("[rag] init error:", e));
 // --- Middlewares ---
 app.use(cors({ origin: "*", credentials: false }));
 app.use(express.json({ limit: "1mb" }));
+
+// --- Service des fichiers statiques du frontend ---
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const staticPath = path.join(__dirname, '..', 'dist');
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(staticPath));
+}
+
 app.use(
   "/api/",
   rateLimit({
@@ -128,8 +137,15 @@ app.post("/api/lyra/stream", async (req, res) => {
 });
 
 // --- Routes secondaires (pour RAG, etc. si nécessaire) ---
-app.get("/", (_, res) => res.type("text/plain").send("Lyra backend OK."));
 app.get("/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
+
+// --- Route "Catch-all" pour l'application React ---
+// Doit être après les routes API
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(staticPath, 'index.html'));
+  });
+}
 
 // --- Lancement du serveur ---
 app.listen(PORT, () => {
