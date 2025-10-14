@@ -1,16 +1,173 @@
-/* Bouton copier dans une bulle LYRA */
-.bubble.lyra { position: relative; }
+/* src/chat-ux.css - Styles pour l'interface de conversation */
 
-/* DebugBar petit plus */
-.debugbar-info { margin-left: 8px; opacity: .7; }
+/* Conteneur principal du chat */
+.chat-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 8px;
+  -webkit-touch-callout: none; /* Empêche les callouts sur iOS */
+}
 
-/* Empilement doux quand une réponse de LYRA est scindée en plusieurs bulles */
-.bubble.lyra.stacked { margin-top: 8px; }
+/* Style de base pour toutes les bulles */
+.bubble {
+  padding: 12px 18px;
+  border-radius: 24px;
+  max-width: 90%;
+  width: fit-content;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
+}
 
-/* Empêche les callouts (iOS) dans le chat */
-.chat-wrap { -webkit-touch-callout: none; }
+/* Alignement des bulles */
+.bubble.lyra {
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  background-color: rgba(248, 245, 225, 0.9); /* #F8F5E1 avec 90% opacité */
+  color: #1E1E1E;
+}
 
-/* Texte des bulles : non sélectionnable */
+.bubble.you {
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  background-color: rgba(10, 27, 54, 0.5); /* #0A1B36 avec 50% opacité */
+  color: #FFFFFF;
+}
+
+/* Étiquettes "LYRA" et "VOUS" */
+.bubble .who {
+  font-family: var(--font-serif);
+  font-size: 0.8rem;
+  font-weight: bold;
+  opacity: 0.8;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+/* Contenu du message */
+.bubble .msg {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-wrap; /* Conserve les sauts de ligne */
+}
+
+.bubble .msg p {
+  margin: 0;
+  font-family: var(--font-sans); /* Assure la cohérence */
+}
+
+/* Style pour la bulle de "réflexion" */
+.bubble.typing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dots span {
+  width: 8px;
+  height: 8px;
+  background-color: currentColor;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite both;
+}
+
+.dots span:nth-child(2) { animation-delay: 0.2s; }
+.dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.0); }
+}
+
+/* Empilement des bulles de Lyra */
+.bubble.lyra.stacked {
+  margin-top: -8px; /* Réduit l'espace pour un effet d'empilement */
+}
+
+/* Animation de fondu pour les nouvelles bulles */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.lyra-fadein { animation: fadeIn 0.5s ease-out forwards; }
+.you-fadein { animation: fadeIn 0.5s ease-out forwards; }
+
+
+/* Styles pour les écrans larges */
+@media (min-width: 768px) {
+  .bubble {
+    max-width: 50%; /* Limite la largeur des bulles sur desktop */
+  }
+}
+
+/* Styles pour le formulaire de saisie */
+.you-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background-color: transparent;
+}
+
+.you-input {
+  flex-grow: 1;
+  padding: 12px 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #FFFFFF;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.you-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.you-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background-color: #F8F5E1;
+  color: #1E1E1E;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.send-btn:not(:disabled):hover {
+  background-color: #E0DBCB;
+}
+
+.send-btn .material-symbols-outlined {
+  font-size: 24px;
+  font-variation-settings: 'wght' 400;
+}
+
+/* Texte non sélectionnable pour l'UX */
 .chat-wrap .bubble .msg,
 .chat-wrap .bubble .who {
   user-select: none;
@@ -19,5 +176,7 @@
   -ms-user-select: none;
 }
 
-/* Évite le drag d'images dans le chat (Chrome/Safari) */
-.chat-wrap img { -webkit-user-drag: none; }
+/* Empêche le drag d'images dans le chat */
+.chat-wrap img {
+  -webkit-user-drag: none;
+}

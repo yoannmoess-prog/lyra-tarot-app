@@ -18,23 +18,20 @@
 
 /* --- Header Fixe --- */
 .page5-header {
-  flex-shrink: 0; /* Empêche le header de rétrécir */
-  padding: clamp(20px, 4vh, 30px) clamp(16px, 4vw, 56px); /* Hauteur augmentée */
+  flex-shrink: 0;
+  padding: clamp(24px, 5vh, 40px) clamp(16px, 4vw, 56px); /* Padding vertical augmenté */
   color: #F8F5E1;
   text-align: center;
-  background: rgba(255, 255, 255, 0.1); /* Fond blanc translucide */
-  backdrop-filter: blur(32px); /* Flou encore plus intense */
-  -webkit-backdrop-filter: blur(32px);
+  background: transparent; /* Pas de couleur de fond */
+  backdrop-filter: blur(24px); /* Effet de flou intense */
+  -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid rgba(248, 245, 225, 0.1);
   box-shadow: 0 2px 12px rgba(0,0,0,0.25);
   opacity: 0;
   animation: finalAppear 1.2s ease .2s forwards;
   z-index: 10;
-}
-.page5-header {
   position: relative;
-  pointer-events: none; /* Le header ignore les clics */
-  /* La hauteur est déterminée par le padding + la hauteur de ligne du titre */
+  pointer-events: none;
 }
 
 .p5-fixed-title {
@@ -100,12 +97,13 @@
 
 @media (max-width: 520px) {
   .spread-modal-container .final-rail {
-    gap: 12px; /* Gap pour mobile */
+    gap: 8px; /* Espace réduit entre les cartes */
     grid-template-columns: repeat(3, 1fr);
     width: 100%;
   }
   .spread-modal-container .final-card-outer {
-    width: 100%; /* Les cartes prennent la largeur de la colonne de la grille */
+    width: 95%; /* Légère réduction pour assurer le gap */
+    margin: 0 auto;
   }
 }
 
@@ -171,43 +169,21 @@
 .final-card-flip.is-flipped + .final-caption{ opacity: 1; transform: translateY(0); }
 
 /* --- Chat --- */
+/* Les styles du chat sont maintenant dans src/chat-ux.css */
+/* La section .chat-wrap est conservée pour le layout et l'animation d'apparition */
 .chat-wrap {
   width: 100%;
   max-width: min(900px, 92vw);
   margin: 0 auto;
-  padding: 12px 8px; /* Padding bottom géré par le footer */
-  display:flex;
-  flex-direction: column;
-  gap: 10px;
+  padding: 12px 8px;
   opacity: 0;
   transform: translateY(8px);
   transition: opacity .5s ease, transform .5s ease;
-  text-align: left;
-  align-items: flex-start;
 }
-.chat-wrap.show { opacity: 1; transform: translateY(0); }
-
-.lyra-fadein { animation: fadeInSoft 0.8s ease; }
-@keyframes fadeInSoft { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.you-fadein { animation: fadeInSoft 0.5s ease; }
-
-.bubble { max-width: 78%; padding: 10px 14px; border-radius: 18px; font-family: var(--font-sans); line-height: 1.35; position: relative; color: #101112; background: #E9EDF2; border: 1px solid rgba(0,0,0,.06); box-shadow: 0 2px 10px rgba(0,0,0,.12); text-align: left; }
-
-@media (min-width: 961px) {
-  .bubble { max-width: 50%; }
+.chat-wrap.show {
+  opacity: 1;
+  transform: translateY(0);
 }
-.bubble .who { font-family: var(--font-serif); font-weight: 400; letter-spacing:.03em; text-transform: uppercase; margin: 0 0 4px; font-size: .8rem; opacity: .8; }
-.bubble.lyra { align-self: flex-start; border-top-left-radius: 0; }
-.bubble.lyra .msg p { color: #1E1E1E !important; }
-.bubble.you { align-self: flex-end; border-top-right-radius: 0; overflow: hidden; background-color: #0A1B36 !important; border-color: rgba(255,255,255,0.2); }
-.bubble.you .msg p { color: #FFFFFF !important; }
-.bubble.you .who { color: #FFFFFF !important; opacity: 0.7; }
-.bubble .msg p { font-family: var(--font-sans) !important; font-weight: 400; }
-.bubble.typing .dots { display: inline-flex; gap: 6px; padding: 4px 2px 2px 2px; }
-.bubble.typing .dots span { width: 6px; height: 6px; border-radius: 50%; background: #333; opacity: .2; animation: dotBlink 1.2s infinite ease-in-out; }
-.bubble.typing .dots span:nth-child(2) { animation-delay: .2s; }
-.bubble.typing .dots span:nth-child(3) { animation-delay: .4s; }
-@keyframes dotBlink { 0%, 20% { opacity: .2; transform: translateY(0); } 50% { opacity: 1;  transform: translateY(-2px); } 100% { opacity: .2; transform: translateY(0); } }
 
 /* --- Footer Fixe --- */
 .page5-footer {
@@ -244,32 +220,14 @@
   max-width: 100%; /* La bulle prend toute la largeur du container .you-block */
 }
 
-/* Formulaire de réponse */
-.you-form { position: relative; display: flex; align-items: center; width: 100%; }
-.you-input {
-  flex: 1 1 auto;
-  min-width: 0;
+/* Formulaire de réponse - les styles sont maintenant dans src/chat-ux.css */
+/* La structure est conservée pour le positionnement */
+.you-form {
+  position: relative;
+  display: flex;
+  align-items: center;
   width: 100%;
-  box-sizing: border-box;
-  font-family: var(--font-sans);
-  font-weight: 400;
-  font-size: 1rem;
-  border: 1px solid rgba(248, 245, 225, 0.2);
-  border-radius: 18px; /* Match des bulles de chat */
-  padding: 10px 46px 10px 16px;
-  outline: none;
-  background: rgba(248, 245, 225, 0.1); /* Fond très subtil */
-  color: #F8F5E1;
-  transition: border-color .2s ease, background-color .2s ease;
 }
-.you-input:focus {
-  background: rgba(248, 245, 225, 0.15);
-  border-color: rgba(248, 245, 225, 0.4);
-}
-.you-input::placeholder { color: rgba(248, 245, 225, 0.5); font-family: var(--font-sans); font-weight: 400; }
-.send-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; padding: 0; margin: 0; border: 0; background: transparent; box-shadow: none; outline: none; cursor: pointer; color: #F8F5E1; transition: opacity .2s ease; }
-.send-btn:hover { opacity: 1; }
-.send-btn .material-symbols-outlined { font-size: 24px; line-height: 1; display: block; }
 
 /* --- Media Queries --- */
 @media (prefers-reduced-motion: reduce) {
