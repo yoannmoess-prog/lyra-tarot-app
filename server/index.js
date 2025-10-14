@@ -86,16 +86,6 @@ async function openai(pathname, opts = {}) {
   return fetch(url, { ...opts, headers });
 }
 
-// Timeout helper
-async function withTimeout(fn, ms = 45_000) {
-  const ac = new AbortController();
-  const t = setTimeout(() => ac.abort(), ms);
-  try {
-    return await fn(ac.signal);
-  } finally {
-    clearTimeout(t);
-  }
-}
 
 function sendJsonError(res, status, code, message, reqId) {
   res.status(status).json({ ok: false, error: { code, message }, reqId });
@@ -120,37 +110,43 @@ function buildMessages({ name, question, cards, userMessage, history }) {
   const system = {
     role: "system",
     content: `
-Tu es **LYRA**, voix féminine du Tarot de Marseille, confidente et conseillère.
-Ta mission : aider la personne à clarifier ce qu’elle vit et à passer à l’action, en t’appuyant sur les **3 cartes tirées** et sur une approche **jungienne / thérapeutique** — **jamais** de divination.
+Tu es un thérapeute tarologue expérimenté. Tu as une culture considérable du Tarot de Marseille et continue d'apprendre au fur et à mesure des tirages que tu réalises et des échanges que tu peux avoir avec tes consultants. Ton rôle premier est d’interpréter les tirages du Tarot de Marseille en respectant les structures suivantes :
 
-STYLE
-- Parle comme une amie proche : directe, précise, bienveillante. Zéro blabla.
-- Tutoiement par défaut ; si l’utilisateur te vouvoie, garde le vouvoiement.
-- Langage naturel, jamais mielleux. Chaque phrase doit compter.
+1. STRUCTURE D’INTERPRÉTATION (tirages en 3 cartes)
 
-CONTEXTE
-- Tarot de Marseille (Marteau, Jodorowsky, Costa, Ben-Dov, Camoin…)
-- Guidance thérapeutique, archétypale (Jung, Campbell…)
-- Arcane XIII ≠ “mort” → transformation, mue, renaissance.
+LE TIRAGE
+Carte 1 : Le véritable enjeu
+Carte 2 : Le message à entendre
+Carte 3 : La part de soi qui peut aider
 
-STYLE DE RÉPONSE
-- Pas de titres. Écris comme en conversation.
-- 1–3 phrases par paragraphe, 2–3 paragraphes max.
-- Premier tour : conseil global, lecture des 3 cartes (1: enjeu / 2: message / 3: part de soi qui aide), + 2 questions ouvertes + 1 piste d’action concrète (24–72h).
-- Tours suivants : 5–8 lignes max + 1 question de relance finale.
-- Sépare chaque bloc important par une ligne vide (double Entrée).
+Organise tes réponses selon ce plan :
 
-CTA INTELLIGENTS
-- À la fin de chaque réponse, inclus 2–3 **questions de suivi** (CTA) directement reliées aux **thèmes, symboles ou dynamiques** de ton interprétation.
-- Ces CTA doivent prolonger la réflexion du consultant (pas de “veux-tu en savoir plus ?”).
-- Exemples :
-  • "Qu’est-ce que cette carte t’invite à transformer aujourd’hui ?"
-  • "Comment pourrais-tu incarner cette énergie cette semaine ?"
-  • "Quelle première étape te semble la plus juste ?"
+Bulle 1 → Formule un conseil global simple et incarnée, langage naturel.
+Bulle 2 → Synthèse intuitive, en lien avec la posture intérieure demandée. Distingue les plans symboliques : arcane majeur = archétype / mineur = message / figure = dynamique personnelle.
+Bulle 3 → Ouvrir le dialogue avec l'utilisateur pour savoir si ça lui parle afin de préciser ensemble en discutant.
 
-ÉTHIQUE
-- Pas de santé, droit, argent. Redirige vers un pro et ramène au plan émotionnel.
-- Aucune voyance ni prédiction.
+2. PRINCIPE DE LECTURE DES CARTES
+- Arcanes majeurs : dynamique archétypale, fond du décor, étape du Voyage du Héros.
+- Arcanes mineurs : tonalité concrète, message pratique ou subtil, en lien avec un “centre” :
+→ Épées : mental, pensée, conflit, stratégie.
+→ Coupes : émotionnel, attachement, lien, besoin d’amour.
+→ Bâtons : énergie, volonté, élan, intuition.
+→ Deniers : corps, réalité, sécurité, argent, rythme.
+- Figures (Valet, Cavalier, Reine, Roi) : une facette de soi-même, une posture intérieure ou ressource à mobiliser. Lecture vivante, dynamique, non figée.
+
+3. LANGAGE ET STYLE
+- Utilise un langage simple, précis, bienveillant et incarné.
+- Évite les généralisations ou l’ésotérisme obscur.
+- Privilégie les métaphores vivantes et les verbes d’action.
+- Adopte un ton chaleureux, mature, complice, sans infantilisation.
+- Parle au présent, comme à une personne en face de toi.
+- On est amis, naturels, confiants et confidents.
+
+4. MISE EN LIEN THÉRAPEUTIQUE
+Tu es sensible aux problématiques psychocorporelles, aux addictions, à la régulation émotionnelle. Tu intègres :
+→ La temporalité du changement (et les résistances).
+→ La part du corps, du vécu sensoriel, de la mémoire affective.
+→ La guidance comme soutien au processus, pas comme vérité descendante.
 
 CONTEXTE À UTILISER
 - QUESTION: ${question || "(non précisée)"}
@@ -176,112 +172,75 @@ Puis propose 2–3 CTA sous forme de questions reliées à ton interprétation. 
 app.get("/", (_, res) => res.type("text/plain").send("Lyra backend OK."));
 app.get("/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
 
-
-// ----- /api/lyra/stream (SSE) -----
-app.post("/api/lyra/stream", async (req, res) => {
+// ----- /api/lyra -----
+app.post("/api/lyra", async (req, res) => {
   try {
-    if (!LLM_API_KEY) {
-      res.writeHead(500, { "Content-Type": "application/json" });
-      return res.end(JSON.stringify({ ok: false, error: { code: "missing_api_key", message: "LLM key absente" }}));
-    }
-
-    res.writeHead(200, {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      "Connection": "keep-alive",
-    });
-    res.write("data: [OPEN]\n\n");
-
-    if (LLM_API_KEY === "DUMMY_KEY_FOR_TESTING") {
-      const text = "Réponse de test simulée.";
-      for (const word of text.split(" ")) {
-        await new Promise(r => setTimeout(r, 120));
-        res.write(`data: ${JSON.stringify({ ok: true, content: word + " " })}\n\n`);
-      }
-      res.write("data: [DONE]\n\n");
-      return res.end();
-    }
+    if (!LLM_API_KEY) return sendJsonError(res, 500, "missing_api_key", "LLM key absente", req.id);
+    if (LLM_API_KEY === "DUMMY_KEY_FOR_TESTING") return res.json({ ok: true, text: "Réponse de test simulée.", suggestions: ["Exemple 1", "Exemple 2"] });
 
     const { name, question, cards, userMessage, history } = req.body || {};
 
-    // --- RAG ---
+    // --- RAG optionnel ---
     let ragContext = "";
-    if (process.env.RAG_ENABLE === "1") {
-      try {
+    try {
+      if (process.env.RAG_ENABLE === "1") {
         const qForRag = [question && `Question: ${question}`, Array.isArray(cards) && cards.length ? `Cartes: ${cards.join(" · ")}` : null, userMessage && `Message: ${userMessage}`].filter(Boolean).join(" | ");
         const hits = await searchRag(qForRag || userMessage || question || "", 5, { minScore: 0.18 });
         ragContext = formatRagContext(hits);
-      } catch (e) {
-        console.warn("[rag] RAG search failed", e);
       }
-    }
+    } catch {}
 
     let messages = buildMessages({ name, question, cards, userMessage, history });
-    if (ragContext) {
-      messages.splice(1, 0, { role: "system", content: ragContext });
-    }
+    if (ragContext) messages.splice(1, 0, { role: "system", content: ragContext });
 
     const params = {
       model: LLM_MODEL,
       temperature: userMessage ? 0.5 : 0.6,
       top_p: 1,
       max_tokens: userMessage ? 400 : 700,
+      response_format: { type: "json_object" },
       messages,
-      stream: true,
     };
 
-    metrics.openai.calls++;
-    const upstream = await openai("/v1/chat/completions", {
-      method: "POST",
-      body: JSON.stringify(params),
-    });
+    const upstream = await withTimeout(
+      (signal) =>
+        openai("/v1/chat/completions", {
+          method: "POST",
+          signal,
+          body: JSON.stringify(params),
+        }),
+      45_000
+    );
 
     if (!upstream.ok) {
       const detail = await upstream.text().catch(() => "");
-      metrics.openai.errors++;
-      res.write(`data: ${JSON.stringify({ ok: false, error: { code: "upstream_error", message: detail }})}\n\n`);
-      res.write("data: [DONE]\n\n");
-      return res.end();
+      return sendJsonError(res, 502, "upstream_error", detail || "Bad upstream", req.id);
     }
 
-    const decoder = new TextDecoder();
-    let buffer = "";
-    for await (const chunk of upstream.body) {
-      buffer += decoder.decode(chunk, { stream: true });
-      let boundary;
-      while ((boundary = buffer.indexOf("\n")) !== -1) {
-        const line = buffer.substring(0, boundary).trim();
-        buffer = buffer.substring(boundary + 1);
-        if (line.startsWith("data: ")) {
-          const data = line.substring(6).trim();
-          if (data === "[DONE]") {
-            res.write("data: [DONE]\n\n");
-            res.end();
-            return;
-          }
-          try {
-            const parsed = JSON.parse(data);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) {
-              res.write(`data: ${JSON.stringify({ ok: true, content })}\n\n`);
-            }
-          } catch (e) {
-            // Ignorer les erreurs de parsing (ex: lignes vides)
-          }
-        }
-      }
+    const data = await upstream.json().catch(() => null);
+    const raw = data?.choices?.[0]?.message?.content?.trim?.() || "";
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      parsed = { text: raw, suggestions: [] };
     }
 
+    const text = parsed.text || raw;
+    const suggestions = Array.isArray(parsed.suggestions) ? parsed.suggestions : [];
+
+    // Metrics
+    const usage = data?.usage || {};
+    metrics.openai.calls++;
+    metrics.openai.prompt_tokens += usage.prompt_tokens || 0;
+    metrics.openai.completion_tokens += usage.completion_tokens || 0;
+    metrics.openai.total_tokens += usage.total_tokens || 0;
+
+    return res.json({ ok: true, text, suggestions });
   } catch (err) {
-    console.error("[lyra] /api/lyra/stream error:", err);
+    console.error("[lyra] /api/lyra error:", err);
     metrics.openai.errors++;
-    if (!res.headersSent) {
-      res.writeHead(500, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ ok: false, error: { code: "server_error", message: "Erreur interne" } }));
-    } else {
-      res.write("data: [DONE]\n\n");
-      res.end();
-    }
+    return sendJsonError(res, 500, "server_error", "Erreur interne", req.id);
   }
 });
 
