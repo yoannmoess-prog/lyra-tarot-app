@@ -38,9 +38,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const staticPath = path.join(__dirname, '..', 'dist');
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(staticPath));
-}
+// Toujours servir les fichiers statiques
+app.use(express.static(staticPath));
 
 app.use(
   "/api/",
@@ -143,11 +142,9 @@ app.get("/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
 
 // --- Route "Catch-all" pour l'application React ---
 // Doit être après les routes API
-if (process.env.NODE_ENV === 'production') {
-  app.get(/^(?!\/api).*$/, (req, res) => {
-    res.sendFile(path.join(staticPath, 'index.html'));
-  });
-}
+app.get(/^(?!\/api).*$/, (req, res) => {
+  res.sendFile(path.join(staticPath, 'index.html'));
+});
 
 // --- Lancement du serveur ---
 app.listen(PORT, () => {
