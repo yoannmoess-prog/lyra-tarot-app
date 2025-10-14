@@ -9,7 +9,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import { randomUUID } from "node:crypto";
-import { initRag, searchRag, formatRagContext } from "./rag.js";
+// import { initRag, searchRag, formatRagContext } from "./rag.js";
 import OpenAI from "openai";
 
 // --- Configuration initiale ---
