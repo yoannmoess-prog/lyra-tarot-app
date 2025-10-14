@@ -1,6 +1,6 @@
 # Gérer les Clés API de Manière Sécurisée
 
-Ce document explique comment gérer votre clé API OpenAI (`OPENAI_API_KEY`) pour ce projet, en distinguant l'environnement de développement local de l'environnement de production (lorsque votre application est en ligne).
+Ce document explique comment gérer votre clé API (`LLM_API_KEY`) pour ce projet, en distinguant l'environnement de développement local de l'environnement de production (lorsque votre application est en ligne).
 
 ## Le Problème avec les Fichiers `.env`
 
@@ -17,12 +17,12 @@ La méthode standard et sécurisée pour gérer les clés API est d'utiliser des
 
 ### Comment ça fonctionne ?
 
-Le code de l'application (`server/index.js`) est déjà configuré pour lire la clé API depuis `process.env.OPENAI_API_KEY`.
+Le code de l'application (`server/index.js`) est configuré pour lire la clé API depuis `process.env.LLM_API_KEY`.
 
 ```javascript
 // server/index.js
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.LLM_API_KEY,
 });
 ```
 
@@ -38,7 +38,7 @@ Lorsque vous déploierez votre application, suivez ces étapes :
 1.  **Connectez-vous au tableau de bord de votre hébergeur** (par exemple, Vercel, Netlify, etc.).
 2.  **Trouvez la section "Environment Variables"** dans les paramètres de votre projet. On la trouve souvent sous des noms comme "Settings > Environment Variables" ou "Deploy > Environment".
 3.  **Ajoutez une nouvelle variable d'environnement** :
-    -   **Nom (Key)** : `OPENAI_API_KEY`
+    -   **Nom (Key)** : `LLM_API_KEY`
     -   **Valeur (Value)** : Collez ici votre clé API secrète (celle qui commence par `sk-...`).
 
 Une fois enregistrée, votre application redémarrera et utilisera automatiquement cette clé pour communiquer avec l'API d'OpenAI. Votre clé n'est jamais visible dans votre code et reste stockée de manière sécurisée chez votre hébergeur.
