@@ -1,6 +1,5 @@
 /* eslint-env node */
 // server/index.js — Lyra backend (JSON + SSE) + metrics
-// Démarrage: `npm run dev:server`
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,8 +7,6 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
-import { randomUUID } from "node:crypto";
-// import { initRag, searchRag, formatRagContext } from "./rag.js";
 import OpenAI from "openai";
 
 // --- Configuration initiale ---
@@ -31,15 +28,13 @@ app.use(cors({ origin: "*", credentials: false }));
 app.use(express.json({ limit: "1mb" }));
 
 // --- Rate Limiter pour l'API ---
-app.use(
-  "/api/",
-  rateLimit({
-    windowMs: 10 * 60 * 1000,
-    max: 50,
-    standardHeaders: true,
-    legacyHeaders: false,
-  })
-);
+const apiLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 50,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use("/api/", apiLimiter);
 
 // --- Prompt Builder ---
 function buildMessages({ name, question, cards, userMessage, history }) {
@@ -92,7 +87,7 @@ app.post("/api/lyra/stream", async (req, res) => {
   }
 });
 
-// --- Service des fichiers statiques et route "Catch-all" ---
+// --- Service des fichiers statiques et route "Catch-all" pour le Frontend ---
 // Doit être placé APRÈS les routes API pour ne pas les intercepter.
 const staticPath = path.resolve(__dirname, "..", "dist");
 app.use(express.static(staticPath));
