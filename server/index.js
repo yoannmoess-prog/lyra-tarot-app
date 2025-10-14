@@ -20,7 +20,7 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 const app = express();
 
 // --- Constantes et Variables d'environnement ---
-const PORT = Number(process.env.PORT || 8787);
+const PORT = process.env.PORT || 8787;
 const LLM_API_KEY = process.env.LLM_API_KEY || "";
 const LLM_MODEL = process.env.LLM_MODEL || "gpt-4o-mini";
 const IS_PROD = process.env.NODE_ENV === "production";
@@ -30,14 +30,6 @@ const openai = new OpenAI({ apiKey: LLM_API_KEY });
 // --- Middlewares principaux ---
 app.use(cors({ origin: "*", credentials: false }));
 app.use(express.json({ limit: "1mb" }));
-
-// --- Service des fichiers statiques pour la production (temporairement désactivé pour diagnostic) ---
-/*
-if (IS_PROD) {
-  const staticPath = path.resolve(__dirname, "..", "dist");
-  app.use(express.static(staticPath));
-}
-*/
 
 // --- Rate Limiter pour l'API ---
 app.use(
@@ -56,7 +48,6 @@ function buildMessages({ name, question, cards, userMessage, history }) {
 Tu es un thérapeute tarologue expérimenté. Ton rôle est d’interpréter les tirages du Tarot de Marseille en respectant les structures suivantes :
 ... (contenu du prompt inchangé) ...
   `.trim();
-  // ... (le reste de la fonction est inchangé)
   const safeHistory = Array.isArray(history) ? history.slice(-10) : [];
   const turn = userMessage
     ? [{ role: "user", content: userMessage }]
@@ -102,20 +93,18 @@ app.post("/api/lyra/stream", async (req, res) => {
   }
 });
 
-// --- Route "Catch-all" pour l'application React en production (temporairement désactivé pour diagnostic) ---
-/*
-if (IS_PROD) {
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "..", "dist", "index.html"));
-  });
-}
-*/
+// --- Service des fichiers statiques et route "Catch-all" ---
+// Doit être placé APRÈS les routes API pour ne pas les intercepter.
+const staticPath = path.resolve(__dirname, "..", "dist");
+app.use(express.static(staticPath));
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(staticPath, "index.html"));
+});
+
 
 // --- Lancement du serveur ---
 app.listen(PORT, () => {
   console.log(`Lyra backend on http://localhost:${PORT}`);
   console.log(`[lyra] LLM key: ${LLM_API_KEY ? "présente" : "absente"}`);
-  // if (IS_PROD) {
-  //   console.log(`[lyra] Serving frontend from: ${path.resolve(__dirname, "..", "dist")}`);
-  // }
+  console.log(`[lyra] Serving frontend from: ${staticPath}`);
 });
