@@ -31,11 +31,13 @@ const openai = new OpenAI({ apiKey: LLM_API_KEY });
 app.use(cors({ origin: "*", credentials: false }));
 app.use(express.json({ limit: "1mb" }));
 
-// --- Service des fichiers statiques pour la production ---
+// --- Service des fichiers statiques pour la production (temporairement désactivé pour diagnostic) ---
+/*
 if (IS_PROD) {
   const staticPath = path.resolve(__dirname, "..", "dist");
   app.use(express.static(staticPath));
 }
+*/
 
 // --- Rate Limiter pour l'API ---
 app.use(
@@ -100,18 +102,20 @@ app.post("/api/lyra/stream", async (req, res) => {
   }
 });
 
-// --- Route "Catch-all" pour l'application React en production ---
+// --- Route "Catch-all" pour l'application React en production (temporairement désactivé pour diagnostic) ---
+/*
 if (IS_PROD) {
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "..", "dist", "index.html"));
   });
 }
+*/
 
 // --- Lancement du serveur ---
 app.listen(PORT, () => {
   console.log(`Lyra backend on http://localhost:${PORT}`);
   console.log(`[lyra] LLM key: ${LLM_API_KEY ? "présente" : "absente"}`);
-  if (IS_PROD) {
-    console.log(`[lyra] Serving frontend from: ${path.resolve(__dirname, "..", "dist")}`);
-  }
+  // if (IS_PROD) {
+  //   console.log(`[lyra] Serving frontend from: ${path.resolve(__dirname, "..", "dist")}`);
+  // }
 });
