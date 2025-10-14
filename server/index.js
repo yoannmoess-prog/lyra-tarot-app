@@ -3,6 +3,7 @@
 // Démarrage: `npm run dev:server`
 
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -33,7 +34,8 @@ app.use(cors({ origin: "*", credentials: false }));
 app.use(express.json({ limit: "1mb" }));
 
 // --- Service des fichiers statiques du frontend ---
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const staticPath = path.join(__dirname, '..', 'dist');
 
 if (process.env.NODE_ENV === 'production') {
@@ -142,7 +144,7 @@ app.get("/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
 // --- Route "Catch-all" pour l'application React ---
 // Doit être après les routes API
 if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
+  app.get(/^(?!\/api).*$/, (req, res) => {
     res.sendFile(path.join(staticPath, 'index.html'));
   });
 }
