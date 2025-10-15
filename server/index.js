@@ -7,6 +7,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
+import { initRag } from "./rag.js";
 import OpenAI from "openai";
 
 // --- Configuration initiale ---
@@ -91,11 +92,12 @@ app.post("/api/lyra/stream", async (req, res) => {
 // Doit être placé APRÈS les routes API pour ne pas les intercepter.
 const staticPath = path.resolve(__dirname, "..", "dist");
 app.use(express.static(staticPath));
-app.get("*", (req, res) => {
+app.get("/*", (req, res) => {
   res.sendFile(path.resolve(staticPath, "index.html"));
 });
 
 // --- Lancement du serveur ---
+initRag().catch((e) => console.warn("[rag] init error:", e));
 app.listen(PORT, () => {
   console.log(`Lyra backend on http://localhost:${PORT}`);
   console.log(`[lyra] LLM key: ${LLM_API_KEY ? "présente" : "absente"}`);
