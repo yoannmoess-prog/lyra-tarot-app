@@ -268,11 +268,11 @@ Tu es LYRA, tu aides à formuler une bonne question pour un tirage thérapeutiqu
 
 // --- Service des fichiers statiques et route "Catch-all" pour le Frontend ---
 // Doit être placé APRÈS les routes API pour ne pas les intercepter.
-const staticPath = path.resolve(__dirname, "..", "dist");
-app.use(express.static(staticPath));
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(staticPath, "index.html"));
-});
+// const staticPath = path.resolve(__dirname, "..", "dist");
+// app.use(express.static(staticPath));
+// app.get("*", (req, res) => {
+//   res.sendFile(path.resolve(staticPath, "index.html"));
+// });
 
 // Lancement
 app.listen(PORT, () => {
