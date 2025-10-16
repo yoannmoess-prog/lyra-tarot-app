@@ -1,5 +1,5 @@
 /* eslint-env node */
-// server/index.js — Lyra backend (JSON + SSE) + metrics
+// server/index.js — Serveur de diagnostic avec routes API
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -57,6 +57,10 @@ Tu es un thérapeute tarologue expérimenté. Ton rôle est d’interpréter les
 }
 
 // --- Routes API ---
+app.get("/", (req, res) => {
+    res.send("Serveur avec API en ligne. Le service du frontend est désactivé pour le diagnostic.");
+});
+
 app.get("/api/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
 
 app.post("/api/lyra/stream", async (req, res) => {
@@ -91,18 +95,9 @@ app.post("/api/lyra/stream", async (req, res) => {
   }
 });
 
-// --- Service des fichiers statiques et route "Catch-all" ---
-// Doit être placé APRÈS les routes API pour ne pas les intercepter.
-const staticPath = path.resolve(__dirname, "..", "dist");
-app.use(express.static(staticPath));
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(staticPath, "index.html"));
-});
-
 // --- Lancement du serveur ---
 initRag().catch((e) => console.warn("[rag] init error:", e));
 app.listen(PORT, () => {
-  console.log(`Lyra backend on http://localhost:${PORT}`);
+  console.log(`Serveur de diagnostic (avec API) démarré sur le port ${PORT}`);
   console.log(`[lyra] LLM key: ${LLM_API_KEY ? "présente" : "absente"}`);
-  console.log(`[lyra] Serving frontend from: ${staticPath}`);
 });
