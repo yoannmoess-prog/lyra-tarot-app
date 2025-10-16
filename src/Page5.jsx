@@ -391,7 +391,6 @@ export default function Page5() {
 
             {lyraTyping && (
               <div className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire">
-                <div className="who">LYRA</div>
                 <div className="dots" role="status" aria-hidden="true">
                   <span></span>
                   <span></span>

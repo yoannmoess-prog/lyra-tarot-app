@@ -33,31 +33,31 @@
   position: relative;
   margin: 0 auto;
   width: min(720px, 92vw);
-  border-radius: 30px; /* Rounded corners */
-  background: rgba(248, 245, 225, 0.9); /* Light background */
-  border: 1px solid transparent;
+  border-radius: 22px; /* Rounded corners */
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 12px 24px; /* Adjust padding */
   transition: all 0.3s ease;
 }
 .input-bubble.textarea { padding-right: 60px; } /* Space for the button */
 .input-bubble:has(textarea:focus){
-  background: rgb(248, 245, 225);
-  border-color: rgba(30, 30, 30, 0.4);
+  background-color: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 .input-bubble textarea{
   width: 100%;
   border: none; outline: none; background: transparent;
-  color: #1E1E1E; /* Dark text color */
-  caret-color: #1E1E1E;
+  color: #FFFFFF; /* Light text color */
+  caret-color: #FFFFFF;
   font-family: var(--font-sans);
-  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+  font-size: clamp(0.9rem, 1.4vw, 1.1rem);
   line-height: 1.5;
   resize: vertical;
   min-height: 110px;
 }
 
 .input-bubble textarea::placeholder {
-  color: rgba(30, 30, 30, 0.5);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* icône Send unique, centrée verticalement, sans cadre */
@@ -65,7 +65,7 @@
   position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
   width: 44px; height: 44px; display: grid; place-items: center;
   border: none;
-  background: #F8F5E1; /* Light background */
+  background: transparent;
   padding: 0;
   cursor: pointer;
   border-radius: 50%;
@@ -73,9 +73,9 @@
   transition: background-color 0.3s ease;
 }
 .send-btn:hover {
-    background: #e0dbcb;
+    background: rgba(255, 255, 255, 0.1);
 }
-.send-btn .material-symbols-outlined{ font-size: 24px; line-height: 1; color: #1E1E1E !important; }
+.send-btn .material-symbols-outlined{ font-size: 24px; line-height: 1; color: #FFFFFF !important; }
 .send-btn:focus-visible{ outline: 2px solid rgba(0,0,0,.35); outline-offset: 2px; }
 
 /* Questions proposées */
@@ -134,13 +134,12 @@ button.question-example:hover {
   }
 
   .input-bubble {
-    border-radius: 16px;
     padding: 10px 48px 10px 14px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
   }
 
   .input-bubble textarea {
-    font-size: clamp(1rem, 4vw, 1.15rem);
+    font-size: clamp(0.9rem, 1.4vw, 1.1rem);
     min-height: 100px;
   }
 
@@ -271,13 +270,12 @@ button.question-example:hover {
   }
 
   .input-bubble {
-    border-radius: 26px;
     padding: 16px 60px 16px 20px;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.3);
   }
 
   .input-bubble textarea {
-    font-size: clamp(1.2rem, 1.4vw, 1.4rem);
+    font-size: clamp(0.9rem, 1.4vw, 1.1rem);
     min-height: 130px;
   }
 
