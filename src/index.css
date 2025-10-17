@@ -10,6 +10,7 @@ html, body, #root { height: 100%; }
   --kb: 0px;
   --font-serif: 'Sorts Mill Goudy', serif;
   --font-sans: 'Open Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-size-standard: clamp(0.9rem, 1.4vw, 1.1rem);
 }
 
 body{

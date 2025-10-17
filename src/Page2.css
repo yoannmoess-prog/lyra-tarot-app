@@ -52,7 +52,7 @@
   caret-color: #FFFFFF;
   color: #FFFFFF; /* Light text color */
   font-family: var(--font-sans);
-  font-size: clamp(0.9rem, 1.4vw, 1.1rem);
+  font-size: var(--font-size-standard);
   line-height: 1.4;
   padding-right: 52px; /* Space for the button */
 }
