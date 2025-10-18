@@ -45,7 +45,10 @@ app.use(
 
 // --- Prompt Builder ---
 function buildMessages({ name, question, cards, userMessage, history }) {
-  const cardNames = cards.map((c) => c.name).join(", ");
+  // S'assure que 'cards' est un tableau avant d'appeler .map()
+  const safeCards = Array.isArray(cards) ? cards : [];
+  const cardNames = safeCards.map((c) => c?.name || "Carte inconnue").join(", ");
+
   const systemContent = `
 Tu es Lyra, une intelligence artificielle (IA) spécialisée dans le Tarot de Marseille. Ton rôle est d'agir comme une guide et une coach de vie, aidant les utilisateurs à interpréter leurs tirages de manière introspective et thérapeutique.
 
@@ -91,7 +94,7 @@ app.get("/", (_, res) => {
 app.get("/api/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
 
 app.post("/api/lyra/stream", async (req, res) => {
-  console.log("[lyra] /api/lyra/stream: Requête reçue.");
+  console.log("[lyra] /api/lyra/stream: Requête reçue avec le corps:", JSON.stringify(req.body, null, 2));
   if (!LLM_API_KEY) {
     console.error("[lyra] Erreur: LLM_API_KEY est manquante.");
     return res.status(500).json({ error: { code: "missing_api_key", message: "La clé API LLM est absente." } });
