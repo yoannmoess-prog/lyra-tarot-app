@@ -36,10 +36,9 @@
   border-radius: 22px; /* Rounded corners */
   background-color: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 12px 24px; /* Adjust padding */
+  padding: 8px 8px 8px 24px; /* Adjust padding */
   transition: all 0.3s ease;
 }
-.input-bubble.textarea { padding-right: 60px; } /* Space for the button */
 .input-bubble:has(textarea:focus){
   background-color: rgba(0, 0, 0, 0.3);
   border-color: rgba(255, 255, 255, 0.5);
@@ -51,9 +50,10 @@
   caret-color: #FFFFFF;
   font-family: var(--font-sans);
   font-size: var(--font-size-standard);
-  line-height: 1.5;
-  resize: vertical;
-  min-height: 110px;
+  line-height: 1.4;
+  resize: none;
+  overflow-y: hidden;
+  padding-right: 52px; /* Space for the button */
 }
 
 .input-bubble textarea::placeholder {
@@ -140,7 +140,6 @@ button.question-example:hover {
 
   .input-bubble textarea {
     font-size: clamp(0.9rem, 1.4vw, 1.1rem);
-    min-height: 100px;
   }
 
   .send-btn {
@@ -276,7 +275,6 @@ button.question-example:hover {
 
   .input-bubble textarea {
     font-size: clamp(0.9rem, 1.4vw, 1.1rem);
-    min-height: 130px;
   }
 
   .send-btn {
