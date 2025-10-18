@@ -117,7 +117,9 @@
   transform-origin: 50% 70%;
   background-size: cover;
   background-position: center;
-  will-change: transform;
+  /* will-change: transform; */ /* Supprimé pour éviter la désynchronisation de l'ombre */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 .card-back {
   background-image: url("./assets/desk_01.png");

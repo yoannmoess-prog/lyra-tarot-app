@@ -142,19 +142,18 @@
   gap: 24px;
   opacity: 0;
 }
-.appear-slow { animation: finalAppear 2s ease forwards; }
+.appear-slow { animation: finalAppear 1.2s ease .2s forwards; }
 
 /* ... (styles des cartes inchangés) ... */
-.final-rail.sealed .final-card-flip .final-front{ animation: cardGlowHero .95s ease-out both; }
+.final-rail.sealed .final-card-flip .final-front{ animation: cardGlowHero 1s ease-out forwards; }
 @keyframes cardGlowHero{
-  0%   { box-shadow: 0 0 0 rgba(255,255,255,0); }
-  35%  { box-shadow: 0 0 90px rgba(255,255,255,0.98); }
-  100% { box-shadow: 0 14px 34px rgba(0,0,0,.58); }
+  from { box-shadow: 0 8px 18px rgba(0,0,0,.33); } /* Ombre de base */
+  to   { box-shadow: 0 14px 34px rgba(0,0,0,.58); } /* Ombre finale plus prononcée */
 }
 .final-card-outer{ display: flex; flex-direction: column; align-items: center; width: min(28vw, 26vh, 200px); perspective: 1100px; justify-self: center; }
 .final-card-flip{ position: relative; width: 100%; aspect-ratio: 9.27 / 16; transform-style: preserve-3d; transition: transform .62s cubic-bezier(.2,.7,.2,1); }
 .final-card-flip.is-flipped{ transform: rotateY(180deg); }
-.final-face{ position:absolute; inset:0; border-radius:14px; backface-visibility:hidden; box-shadow:0 8px 18px rgba(0,0,0,.33); background-size:cover; background-position:center; background-repeat:no-repeat; }
+.final-face{ position:absolute; inset:0; border-radius:14px; backface-visibility:hidden; -webkit-backface-visibility:hidden; box-shadow:0 8px 18px rgba(0,0,0,.33); background-size:cover; background-position:center; background-repeat:no-repeat; }
 .final-back{ background-image: url("./assets/desk_01.png"); background-size:110% 110%; }
 .final-front{ transform: rotateY(180deg); display:flex; align-items:center; justify-content:center; background: rgba(15,15,15,.18); border: 1px solid rgba(248,245,225,.12); position: relative; overflow: hidden; }
 .final-front > img{ width: 100%; height: 100%; object-fit: cover; display:block; border-radius: inherit; }

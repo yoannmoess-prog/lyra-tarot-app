@@ -101,6 +101,13 @@ function Page3() {
     return () => window.removeEventListener("keydown", down);
   }, [onSubmit]);
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = "auto";
+      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
+    }
+  }, [question]);
+
   const handleClickExample = (q) => {
     setQuestion(q);
     inputRef.current?.focus();
@@ -144,6 +151,7 @@ function Page3() {
         <div className="input-bubble textarea">
           <textarea
             ref={inputRef}
+            rows="1"
             placeholder="Écris ta question ici..."
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
