@@ -230,35 +230,6 @@
 {"id":"carte:XX:actions-24-72h:1","text":"→ 3 actions petites, concrètes, mesurables (pas de généralités).","meta":{"type":"carte","card_id":"XX","title":"Le Mat","section":"actions-24-72h","tags":["marseille","archetype:elan","element:air"]}}
 {"id":"carte:XX:rapprochements:1","text":"→ 3–6 liens courts avec d’autres arcanes/symboles (ex : “avec Le Bateleur, amorce concrète ; avec Tempérance, réguler le flux…”).","meta":{"type":"carte","card_id":"XX","title":"Le Mat","section":"rapprochements","tags":["marseille","archetype:elan","element:air"]}}
 {"id":"carte:XX:evidences-citations-25-mots-sourcees:1","text":"“Citation courte…” — (marteau1949, p.126)\n“Citation courte…” — (jodorowsky2004, p.213)","meta":{"type":"carte","card_id":"XX","title":"Le Mat","section":"evidences-citations-25-mots-sourcees","tags":["marseille","archetype:elan","element:air"]}}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {"id":"carte:carte-d02-2-de-deniers:body:1","text":"type: carte\ncard_id: “D2”\ntitle: “2 de Deniers”\nsource_ids: [“marteau1949”, “jodorowsky2004”, “ybd2011”]\ntags: [“marseille”, “mineure”, “element:terre”, “nombre:2”, “dynamique:tension”, “archetype:alchimiste”]","meta":{"type":"carte","section":"body","tags":[]}}
 {"id":"carte:carte-d02-2-de-deniers:resume:1","text":"→ Le 2 de Deniers évoque une mise en lien, une circulation féconde entre deux pôles matériels ou psychiques. Quelque chose se tisse, s’équilibre, s’apprivoise. Ce n’est pas encore stable, mais c’est vivant : c’est le mouvement juste entre deux formes, deux réalités, deux choix.","meta":{"type":"carte","section":"resume","tags":[]}}
 {"id":"carte:carte-d02-2-de-deniers:iconographie-symboles-cles:1","text":"•\tLes deux deniers identiques : deux entités équilibrées, mises en miroir, soulignent une tension entre deux forces égales en potentiel.\n\t•\tLa bande rubanée en forme de lemniscate : circulation d’énergie, dynamique continue. Elle indique que la solution vient d’un ajustement, pas d’une rupture.\n\t•\tLes feuilles bleues et rouges : polarités vivantes, entre inspiration (bleu) et action (rouge), entre sensibilité et efficacité.\n\t•\tLes fleurs à 5 pétales : principe d’harmonie naturelle. Les cycles de la nature, l’ordre caché sous la dualité apparente.\n\t•\tLe cadre épais noir et blanc : ancrage dans le réel, limites nettes à l’intérieur desquelles le mouvement peut s’exercer.","meta":{"type":"carte","section":"iconographie-symboles-cles","tags":[]}}
@@ -268,32 +239,6 @@
 {"id":"carte:carte-d02-2-de-deniers:actions-24-72h:1","text":"•\tObserver un domaine où deux besoins se croisent, et noter ce qu’ils ont en commun.\n\t•\tPrendre une pause consciente avant de prendre une décision importante.\n\t•\tEssayer un petit ajustement dans une habitude quotidienne (ex : heure de lever, alimentation…).","meta":{"type":"carte","section":"actions-24-72h","tags":[]}}
 {"id":"carte:carte-d02-2-de-deniers:rapprochements:1","text":"•\tAvec La Justice : recherche d’équilibre, mais ici en mouvement, pas en jugement.\n\t•\tAvec Tempérance : même geste d’alchimie fluide, ici ancré dans la matière concrète.\n\t•\tAvec Le Bateleur : un début de maîtrise de l’outil, du geste.\n\t•\tAvec Le Monde : le lemniscate en écho au mouvement des figures dans les angles.\n\t•\tAvec 6 de Deniers : donner et recevoir en juste proportion – ici encore en apprentissage.","meta":{"type":"carte","section":"rapprochements","tags":[]}}
 {"id":"carte:carte-d02-2-de-deniers:evidences-citations-25-mots:1","text":"“L’arc-en-ciel du lemniscate relie ce qui semblait séparé. C’est un passage entre deux mondes.” — (jodorowsky2004, p.233)\n“Dans le Deux, rien n’est encore joué, mais tout est en mouvement.” — (marteau1949, p.128)","meta":{"type":"carte","section":"evidences-citations-25-mots","tags":[]}}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {"id":"ouvrage-transversal:campbell1949:reference-courte:1","text":"Campbell, *Le héros aux mille et un visages* (*The Hero with a Thousand Faces*), Princeton/Bollingen, 1949. [id:campbell1949]\nMythologie comparée : structure “monomythe” (séparation → initiation → retour).","meta":{"type":"ouvrage-transversal","id":"campbell1949","title":"Joseph Campbell — Le héros aux mille et un visages (1949)","section":"reference-courte","tags":["mythologie","comparative","monomythe","structure-narrative","jung","psychologie","quête-du-fou","initiation","séparation-initiation-retour"]}}
 {"id":"ouvrage-transversal:campbell1949:editions:1","text":"Édition originale — Bollingen Series XVII, 1949 (Princeton University Press / Pantheon selon tirage).\nÉditions ultérieures — 2e éd. révisée (Princeton/Bollingen, 1968) ; “Commemorative edition” (New World Library, 2008).\nTraductions FR — Le héros aux mille et un visages, divers éditeurs (renseigner ton exemplaire : ville/ISBN).","meta":{"type":"ouvrage-transversal","id":"campbell1949","title":"Joseph Campbell — Le héros aux mille et un visages (1949)","section":"editions","tags":["mythologie","comparative","monomythe","structure-narrative","jung","psychologie","quête-du-fou","initiation","séparation-initiation-retour"]}}
 {"id":"ouvrage-transversal:campbell1949:nature-de-l-ouvrage:1","text":"Essai de mythologie comparée articulant une structure universelle du récit initiatique (le “monomythe”) et une lecture psychologique (jungienne) des mythes comme cartes de transformation intérieure.","meta":{"type":"ouvrage-transversal","id":"campbell1949","title":"Joseph Campbell — Le héros aux mille et un visages (1949)","section":"nature-de-l-ouvrage","tags":["mythologie","comparative","monomythe","structure-narrative","jung","psychologie","quête-du-fou","initiation","séparation-initiation-retour"]}}
