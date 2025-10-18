@@ -57,7 +57,7 @@ const ALL_EXAMPLES = [
   "Qu’est-ce que je cherche à prouver ou compenser ?",
   "Quelle nouvelle voie professionnelle mérite d’être explorée ?",
   "Quelle fonction cachée a cette habitude dans ma vie ?",
-	"Quelle est la vraie blessure derrière ce comportement répétitif ?",
+  "Quelle est la vraie blessure derrière ce comportement répétitif ?",
   "Quelle image de moi-même suis-je en train de défendre ?",
   "Comment puis-je rompre avec ce schéma sans violence ?",
   "Quelle part de moi demande réparation à travers ma réaction ?",
