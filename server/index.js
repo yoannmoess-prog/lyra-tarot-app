@@ -18,6 +18,9 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const app = express();
 
+// Configuration pour faire confiance au premier proxy (essentiel pour Render)
+app.set('trust proxy', 1);
+
 // --- Constantes et Variables d'environnement ---
 const PORT = process.env.PORT || 8787;
 const LLM_API_KEY = process.env.LLM_API_KEY || "";
