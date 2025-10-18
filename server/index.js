@@ -91,12 +91,17 @@ app.get("/", (_, res) => {
 app.get("/api/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
 
 app.post("/api/lyra/stream", async (req, res) => {
+  console.log("[lyra] /api/lyra/stream: Requête reçue.");
   if (!LLM_API_KEY) {
+    console.error("[lyra] Erreur: LLM_API_KEY est manquante.");
     return res.status(500).json({ error: { code: "missing_api_key", message: "La clé API LLM est absente." } });
   }
   try {
     const { name, question, cards, userMessage, history } = req.body || {};
     const messages = buildMessages({ name, question, cards, userMessage, history });
+
+    console.log("[lyra] Envoi de la requête à OpenAI avec le message système:", messages[0].content);
+
     const stream = await openai.chat.completions.create({
       model: LLM_MODEL,
       messages: messages,
@@ -105,19 +110,27 @@ app.post("/api/lyra/stream", async (req, res) => {
       top_p: 1,
       max_tokens: 1024,
     });
+
+    console.log("[lyra] Stream OpenAI créé. Envoi des données au client.");
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
     res.flushHeaders();
+
+    let chunkCounter = 0;
     for await (const chunk of stream) {
+      chunkCounter++;
       const content = chunk.choices[0]?.delta?.content || "";
       if (content) {
         res.write(`data: ${JSON.stringify(content)}\n\n`);
       }
     }
+
+    console.log(`[lyra] Stream terminé. ${chunkCounter} chunks reçus d'OpenAI.`);
     res.end();
+
   } catch (error) {
-    console.error("[lyra] /api/lyra/stream error:", error);
+    console.error("[lyra] /api/lyra/stream - Erreur dans le bloc try/catch:", error);
     res.status(500).end("Stream error");
   }
 });
