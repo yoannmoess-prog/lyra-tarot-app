@@ -142,23 +142,21 @@ async function processFile(filePath) {
 
 async function main() {
   const files = await walk(ROOT);
-  if (!DRY) {
-    await fs.mkdir(path.dirname(OUTFILE), { recursive: true });
-    await fs.writeFile(OUTFILE, "", "utf8"); // reset
-  }
-  let count = 0;
+  const allRows = [];
 
   for (const f of files) {
     const rows = await processFile(f);
-    if (!DRY) {
-      const lines = rows.map((r) => JSON.stringify(r)).join("\n") + "\n";
-      await fs.appendFile(OUTFILE, lines, "utf8");
-    }
-    count += rows.length;
+    allRows.push(...rows);
     console.log(`• ${path.relative(process.cwd(), f)} → ${rows.length} chunks`);
   }
 
-  console.log(DRY ? `(dry) total chunks: ${count}` : `OK → ${OUTFILE} (${count} chunks)`);
+  if (!DRY) {
+    await fs.mkdir(path.dirname(OUTFILE), { recursive: true });
+    const content = allRows.map((r) => JSON.stringify(r)).join("\n") + "\n";
+    await fs.writeFile(OUTFILE, content, "utf8");
+  }
+
+  console.log(DRY ? `(dry) total chunks: ${allRows.length}` : `OK → ${OUTFILE} (${allRows.length} chunks)`);
 }
 
 main().catch((e) => {

@@ -12,8 +12,7 @@
     "preview": "vite preview",
     "rag:build": "node scripts/md2jsonl.mjs fiches build/rag/index.jsonl",
     "rag:embed": "node scripts/embed.mjs build/rag/index.jsonl build/rag/index.vec.jsonl",
-    "rag:fast": "node scripts/embed.mjs build/rag/index.jsonl build/rag/index.vec.jsonl --fast",
-    "rag:rebuild": "npm run rag:build && npm run rag:fast"
+    "rag:rebuild": "npm run rag:build && npm run rag:embed"
   },
   "dependencies": {
     "cors": "^2.8.5",
