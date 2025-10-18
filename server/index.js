@@ -77,6 +77,14 @@ Ton ton doit être rassurant mais stimulant, jamais fataliste. Tu n'es pas une v
 }
 
 // --- Routes API ---
+app.get("/", (_, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "Lyra backend is running",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.get("/api/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
 
 app.post("/api/lyra/stream", async (req, res) => {
