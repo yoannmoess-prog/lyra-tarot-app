@@ -36,7 +36,7 @@
 .sd-card img {
   display: block;
   width: 100%;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 1 / 1.76;
   object-fit: contain;
   background: #000;
 }

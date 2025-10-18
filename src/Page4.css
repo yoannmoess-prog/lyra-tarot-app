@@ -81,7 +81,7 @@
 .deck-area {
   position: relative;
   width: min(16vw, 21vh, 160px);
-  aspect-ratio: 9.27 / 16;
+  aspect-ratio: 1 / 1.76;
   cursor: pointer;
   user-select: none;
   touch-action: none;
@@ -103,7 +103,7 @@
 }
 .slot-wrap {
   width: min(14vw, 120px);
-  aspect-ratio: 9.27 / 16;
+  aspect-ratio: 1 / 1.76;
   position: relative;
   cursor: pointer;
 }
@@ -123,7 +123,7 @@
 }
 .card-back {
   background-image: url("./assets/desk_01.png");
-  background-size: 110% 110%;
+  background-size: cover;
   background-position: center;
 }
 .slot-ghost {
