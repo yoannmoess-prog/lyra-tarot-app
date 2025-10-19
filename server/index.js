@@ -47,7 +47,7 @@ app.use(
 function buildMessages({ name, question, cards, userMessage, history }) {
   // S'assure que 'cards' est un tableau avant d'appeler .map()
   const safeCards = Array.isArray(cards) ? cards : [];
-  const cardNames = safeCards.map((c) => c?.name || "Carte inconnue").join(", ");
+  const cardNames = safeCards.join(", ");
 
   const systemContent = `
 Tu es Lyra, une intelligence artificielle (IA) spécialisée dans le Tarot de Marseille. Ton rôle est d'agir comme une guide et une coach de vie, aidant les utilisateurs à interpréter leurs tirages de manière introspective et thérapeutique.
