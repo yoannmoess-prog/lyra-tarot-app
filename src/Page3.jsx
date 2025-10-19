@@ -208,7 +208,12 @@ function Page3() {
             className="send-btn"
             aria-label="Envoyer la question"
           >
-            <span className="material-symbols-outlined">arrow_forward</span>
+            <span
+              className="material-symbols-outlined"
+              style={{ color: question ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)' }}
+            >
+              arrow_forward
+            </span>
           </button>
         </div>
 
