@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Modal from "./components/Modal";
 import "./components/Modal.css";
 import "./Page5.css";
-import background from "./assets/background.webp";
+import background from "./assets/background.jpg";
 import { toast } from "./utils/net";
 import "./toast.css";
 import "./chat-ux.css";

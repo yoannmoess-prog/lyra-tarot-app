@@ -2,10 +2,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Page4.css";
-import background from "./assets/background.webp";
+import background from "./assets/background.jpg";
 
 /* ---------------- Card Data Helpers ---------------- */
-const FACE_MODULES = import.meta.glob("./assets/cards/*.{png,jpg,jpeg,webp}", { eager: true });
+const FACE_MODULES = import.meta.glob("./assets/cards/*.{png,jpeg,webp}", { eager: true });
 const asUrl = (m) => (typeof m === "string" ? m : m?.default ?? null);
 function buildFacePools() {
   const all = Object.keys(FACE_MODULES)

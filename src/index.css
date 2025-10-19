@@ -16,7 +16,7 @@ html, body, #root { height: 100%; }
 body{
   margin: 0;
   /* fond bleu + image en "infini" via cover (sans bandes) */
-  background: #003a6b url("./assets/background.webp") center / cover no-repeat fixed;
+  background: #003a6b url("./assets/background.jpg") center / cover no-repeat fixed;
   color: #F8F5E1;
   font-family: var(--font-serif);
 }
