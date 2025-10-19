@@ -47,7 +47,7 @@
 /* Contenu du message */
 .bubble .msg {
   font-family: var(--font-sans);
-  font-size: var(--font-size-bubbles);
+  font-size: var(--font-size-standard);
   line-height: 1.5;
   white-space: pre-wrap; /* Conserve les sauts de ligne */
 }
