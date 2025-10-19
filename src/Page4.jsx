@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Page4.css";
-import background from "./assets/background.jpg";
+import background from "./assets/background.webp";
 
 /* ---------------- Card Data Helpers ---------------- */
 const FACE_MODULES = import.meta.glob("./assets/cards/*.{png,jpg,jpeg,webp}", { eager: true });
