@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Page2.css";
+import background from "./assets/background.webp";
 
 export default function Page2() {
   const nav = useNavigate();
@@ -85,7 +86,12 @@ export default function Page2() {
   const showOverlay = phase === "ovIn" || phase === "ovHold" || phase === "ovOut";
 
   return (
-    <main className="name-wrap">
+    <main
+      className="name-wrap"
+      style={{
+        backgroundImage: `url(${background})`,
+      }}
+    >
       {showForm && (
         <div className={`name-inner ${arrive ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""}`}>
           <h1 className="name-title">{greeting}</h1>
