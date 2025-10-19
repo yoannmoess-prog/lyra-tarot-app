@@ -184,7 +184,7 @@ button.question-example:hover {
 .q-shuffle .card{
   position: absolute; inset: 0;
   border-radius: 14px;
-  background: url("./assets/desk_01.png") center / 110% 110% no-repeat;
+  background: url("./assets/desk_02.webp") center / 110% 110% no-repeat;
   box-shadow: 0 8px 18px rgba(0,0,0,.30);
   will-change: transform;
   opacity: .95;
@@ -227,7 +227,7 @@ button.question-example:hover {
   width: min(100px, 20vw);
   aspect-ratio: 9.27/18;
   border-radius: 12px;
-  background: url("./assets/desk_01.png") center/110% 110% no-repeat;
+  background: url("./assets/desk_02.webp") center/110% 110% no-repeat;
   box-shadow: 0 6px 14px rgba(0,0,0,.18);
   opacity: .95;
 
