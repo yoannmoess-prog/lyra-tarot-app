@@ -3,9 +3,10 @@
   min-height: 100dvh;
   display: grid; place-items: center;
   padding: max(20px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
-  background-position: center; background-size: cover;
-  background-repeat: repeat;    /* évite bandes */
-  background-attachment: fixed; /* évite micro-reflows */
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   touch-action: pan-y;
 }
 .intro-stack{
