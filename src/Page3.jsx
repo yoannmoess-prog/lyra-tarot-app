@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Page3.css";
+import background from "./assets/background.webp";
 
 const questionIntros = [
   "Quelle est ta question du jour ?",
@@ -170,7 +171,12 @@ function Page3() {
   }, []);
 
   return (
-    <div className="question-wrap fp-wrap">
+    <div
+      className="question-wrap fp-wrap"
+      style={{
+        backgroundImage: `url(${background})`,
+      }}
+    >
       <form
         className={`question-inner ${arrive ? "arrive" : "pre"} ${!arrive && checking ? "leaving" : ""}`}
         onSubmit={(e) => {
