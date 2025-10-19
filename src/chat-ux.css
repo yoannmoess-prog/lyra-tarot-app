@@ -23,7 +23,7 @@
 .bubble.lyra {
   align-self: flex-start;
   border-bottom-left-radius: 4px;
-  background-color: rgba(248, 245, 225, 0.9); /* #F8F5E1 avec 90% opacité */
+  background-color: rgba(248, 245, 225, 0.85); /* #F8F5E1 avec 85% opacité */
   color: #1E1E1E;
 }
 
@@ -31,7 +31,7 @@
   align-self: flex-end;
   border-bottom-right-radius: 4px;
   background-color: rgba(10, 27, 54, 0.5); /* #0A1B36 avec 50% opacité */
-  color: #FFFFFF;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Étiquettes "LYRA" et "VOUS" */
@@ -147,8 +147,8 @@
   height: 44px;
   border-radius: 50%;
   border: none;
-  background-color: #F8F5E1;
-  color: #1E1E1E;
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
