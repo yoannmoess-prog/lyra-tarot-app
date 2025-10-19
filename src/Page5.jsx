@@ -426,7 +426,12 @@ export default function Page5() {
               title="Envoyer"
               disabled={!youInputShown}
             >
-                  <span className="material-symbols-outlined">arrow_forward</span>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ color: youMessage ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)' }}
+                  >
+                    arrow_forward
+                  </span>
             </button>
           </form>
         </div>
