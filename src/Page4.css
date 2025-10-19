@@ -81,7 +81,7 @@
 .deck-area {
   position: relative;
   width: min(16vw, 21vh, 160px);
-  aspect-ratio: 1 / 1.76;
+  aspect-ratio: 9.27 / 18;
   cursor: pointer;
   user-select: none;
   touch-action: none;
@@ -103,7 +103,7 @@
 }
 .slot-wrap {
   width: min(14vw, 120px);
-  aspect-ratio: 1 / 1.76;
+  aspect-ratio: 9.27 / 18;
   position: relative;
   cursor: pointer;
 }
