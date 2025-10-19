@@ -14,7 +14,7 @@ function labelFromFilename(raw: string) {
 
 export function buildDeckFromAssets(): Deck {
   // Vite charge toutes les images présentes dans /src/assets/cards
-  const images = import.meta.glob("/src/assets/cards/*.jpg", {
+  const images = import.meta.glob("/src/assets/cards/*.webp", {
     eager: true,
     import: "default",
   }) as Record<string, string>;
@@ -24,8 +24,8 @@ export function buildDeckFromAssets(): Deck {
   for (const [path, url] of Object.entries(images)) {
     const file = path.split("/").pop()!;
 
-    // --- MAJEURS : "00_LeMat.jpg" .. "21_LeMonde.jpg"
-    let m = file.match(/^(\d{2})_([^\.]+)\.jpg$/i);
+    // --- MAJEURS : "00_LeMat.webp" .. "21_LeMonde.webp"
+    let m = file.match(/^(\d{2})_([^\.]+)\.webp$/i);
     if (m) {
       const num = parseInt(m[1], 10); // 00..21
       deck.push({
@@ -38,8 +38,8 @@ export function buildDeckFromAssets(): Deck {
       continue;
     }
 
-    // --- MINEURS : "B01_Asdebaton.jpg" ... "E14_Cavalierdepees.jpg"
-    m = file.match(/^([BCDE])(\d{2})_([^\.]+)\.jpg$/i);
+    // --- MINEURS : "B01_Asdebaton.webp" ... "E14_Cavalierdepees.webp"
+    m = file.match(/^([BCDE])(\d{2})_([^\.]+)\.webp$/i);
     if (m) {
       const suit = SUIT_MAP[m[1].toUpperCase()];
       const n = parseInt(m[2], 10);
