@@ -177,7 +177,7 @@ button.question-example:hover {
 .q-shuffle{
   position: relative;
   width: min(180px, 42vw);
-  aspect-ratio: 9.27 / 16;
+  aspect-ratio: 9.27 / 18;
   margin: 18px auto 8px;
   pointer-events: none;
 }
@@ -225,7 +225,7 @@ button.question-example:hover {
   left: 50%;
   top: 0;
   width: min(100px, 20vw);
-  aspect-ratio: 9.27/16;
+  aspect-ratio: 9.27/18;
   border-radius: 12px;
   background: url("./assets/desk_01.png") center/110% 110% no-repeat;
   box-shadow: 0 6px 14px rgba(0,0,0,.18);
