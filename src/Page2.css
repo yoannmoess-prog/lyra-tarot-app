@@ -84,7 +84,6 @@
 .send-btn .material-symbols-outlined {
   font-size: 24px;
   line-height: 1;
-  color: #FFFFFF; /* Light icon color */
 }
 .send-btn:focus-visible {
   outline: 2px solid rgba(0,0,0,.35);
