@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Intro.css";
 import logo from "./assets/logo.webp";
-import arrow from "./assets/arrowtoright_01.png";
+import arrow from "./assets/arrowtoright_01.webp";
 import bg from "./assets/background.jpg";
 
 export default function Intro() {
