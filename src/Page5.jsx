@@ -53,11 +53,11 @@ function splitIntoBubbles(text, max = 3) {
 }
 
 function getRandomInitialThinkingTime() {
-  return Math.floor(Math.random() * 2001) + 3000; // 3–5 sec
+  return Math.floor(Math.random() * 1001) + 1000; // 1–2 sec
 }
 
 function getRandomThinkingTime() {
-  return Math.floor(Math.random() * 4001) + 4000; // 4–8 sec
+  return Math.floor(Math.random() * 1501) + 1500; // 1.5–3 sec
 }
 
 /* ---------------- Component ---------------- */
@@ -184,28 +184,37 @@ export default function Page5() {
     setLyraTyping(true);
     const thinkingTime = baseConv.length > 0 ? getRandomThinkingTime() : getRandomInitialThinkingTime();
     await new Promise(resolve => setTimeout(resolve, thinkingTime));
-    setLyraTyping(false);
 
-    const lyraMessage = { id: Date.now(), role: "lyra", text: "" };
-    const nextConv = [...baseConv, lyraMessage];
-    setConv(nextConv);
+    let lyraMessage = null;
+    let nextConv = [...baseConv];
 
     try {
       const stream = streamLyra(payload);
       for await (const chunk of stream) {
+        if (!lyraMessage) {
+          // Premier chunk reçu : on masque la bulle "..." et on crée la bulle de message
+          setLyraTyping(false);
+          lyraMessage = { id: Date.now(), role: "lyra", text: "" };
+          nextConv = [...baseConv, lyraMessage];
+          setConv(nextConv);
+        }
         lyraMessage.text += chunk;
-        setConv([...nextConv]); // Update the conv state to re-render
+        setConv([...nextConv]);
         requestAnimationFrame(scrollToEnd);
       }
-      saveConv(nextConv); // Save final response
+      saveConv(nextConv); // Sauvegarde de la réponse finale
     } catch (err) {
       console.error("Erreur de streaming:", err);
       toast("Désolé, une erreur est survenue. Veuillez réessayer.");
-      // Restore previous conversation state if streaming fails
-      setConv(baseConv);
+      setLyraTyping(false); // S'assurer de masquer le typing en cas d'erreur
+      setConv(baseConv); // Restaurer l'état précédent
       saveConv(baseConv);
     } finally {
       setYouInputShown(true);
+      if (lyraTyping && !lyraMessage) {
+        // Si le stream se termine sans chunk (erreur silencieuse), on masque le typing
+        setLyraTyping(false);
+      }
     }
   };
 
