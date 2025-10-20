@@ -84,14 +84,14 @@ export default function Page2() {
   };
 
   const showForm = phase === "form" || phase === "formOut";
-  const isGone = !showForm;
   const showOverlay = phase === "ovIn" || phase === "ovHold" || phase === "ovOut";
 
   return (
     <main
       className="name-wrap"
     >
-        <div className={`name-inner ${arrive ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""} ${isGone ? "gone" : ""}`} style={{pointerEvents: showForm ? 'auto' : 'none'}}>
+      {showForm && (
+        <div className={`name-inner ${arrive ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""}`} style={{pointerEvents: showForm ? 'auto' : 'none'}}>
           <h1 className="name-title">{greeting}</h1>
 
           <form className="name-form" onSubmit={onSubmit} autoComplete="off">
@@ -117,6 +117,7 @@ export default function Page2() {
             </div>
           </form>
         </div>
+      )}
 
       {showOverlay && (
         <div
