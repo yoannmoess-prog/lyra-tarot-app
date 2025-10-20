@@ -23,8 +23,8 @@
 .bubble.lyra {
   align-self: flex-start;
   border-bottom-left-radius: 4px;
-  background-color: rgba(248, 245, 225, 0.85); /* #F8F5E1 avec 85% opacité */
-  color: #1E1E1E;
+  background-color: #0D305C;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .bubble.you {
@@ -47,7 +47,7 @@
 /* Contenu du message */
 .bubble .msg {
   font-family: var(--font-sans);
-  font-size: clamp(0.8rem, 1.3vw, 1rem);
+  font-size: clamp(0.7rem, 1.2vw, 0.9rem);
   line-height: 1.5;
   white-space: pre-wrap; /* Conserve les sauts de ligne */
 }
