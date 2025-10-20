@@ -149,9 +149,6 @@ export default function Page4() {
       <div className={`page4-container ${animationClass}`}>
         <div className="title-block">
           <div className="p4-fixed-title">{question}</div>
-          <div className="p4-fixed-instructions">
-            <div className="p4-instruction">Continue de te concentrer sur ta demande, et pioche 3 cartes.</div>
-          </div>
         </div>
 
         <div className={`board ${isLandscape ? "" : "col"}`}>
