@@ -92,8 +92,7 @@ export default function Page2() {
         backgroundImage: `url(${background})`,
       }}
     >
-      {showForm && (
-        <div className={`name-inner ${arrive ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""}`}>
+        <div className={`name-inner ${arrive ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""}`} style={{pointerEvents: showForm ? 'auto' : 'none'}}>
           <h1 className="name-title">{greeting}</h1>
 
           <form className="name-form" onSubmit={onSubmit} autoComplete="off">
@@ -119,7 +118,6 @@ export default function Page2() {
             </div>
           </form>
         </div>
-      )}
 
       {showOverlay && (
         <div
