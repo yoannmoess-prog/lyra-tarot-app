@@ -6,7 +6,6 @@
 
 /* Root layout: Flex column pour Header / Main / Footer */
 .page5-root {
-  overscroll-behavior-y: contain;
   height: 100vh; /* Fallback */
   height: 100svh; /* Précis sur mobile */
   display: flex;
