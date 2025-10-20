@@ -115,9 +115,16 @@ button.question-example:hover {
 
 @keyframes ovIn  { from{opacity:0; transform: translateY(8px)} to{opacity:1; transform:none} }
 @keyframes ovOut { from{opacity:1; transform:none} to{opacity:0; transform: translateY(-8px) scale(.985)} }
-.question-overlay.overlay-in  { animation: ovIn 1000ms ease forwards; }
-.question-overlay.overlay-hold{ opacity: 1; }
-.question-overlay.overlay-out { animation: ovOut 1000ms ease forwards; }
+.question-overlay .overlay-text {
+  position: absolute;
+  opacity: 0;
+}
+.question-overlay .fade-in {
+  animation: ovIn 1000ms ease forwards;
+}
+.question-overlay .fade-out {
+  animation: ovOut 1000ms ease forwards;
+}
 
 .sr-only{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px;

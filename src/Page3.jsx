@@ -76,12 +76,13 @@ function Page3() {
   const { state } = useLocation();
   const name = state?.name;
   const [question, setQuestion] = useState("");
-  const [phase, setPhase] = useState("form"); // "form", "formOut", "ovIn", "ovHold", "ovOut"
-  const [overlayText, setOverlayText] = useState("");
+  const [phase, setPhase] = useState("form"); // "form", "formOut", "ov1In", "ov1Hold", "ovCross", "ov2Hold", "ov2Out"
+  const [overlayText1, setOverlayText1] = useState("");
+  const [overlayText2, setOverlayText2] = useState("");
   const inputRef = useRef(null);
   const timers = useRef([]);
 
-  const DUR = { formOut: 1000, ovIn: 1000, ovHold: 1000, ovOut: 1000 };
+  const DUR = { formOut: 1000, ovIn: 1000, ovHold: 1500, cross: 1000, ovOut: 1000 };
 
   useEffect(() => {
     const timer = requestAnimationFrame(() => setPhase("form"));
@@ -97,20 +98,27 @@ function Page3() {
     const q = question.trim();
     if (!q || looksInvalid(q)) return;
 
-    setOverlayText("Très bien. Voyons ce que les cartes ont à révéler...");
+    setOverlayText1(`Très bien, ${name}.`);
+    setOverlayText2("Prépare-toi à piocher les cartes.");
     setPhase("formOut");
 
     timers.current.push(setTimeout(() => {
       // Délai "background vide"
       timers.current.push(setTimeout(() => {
-        setPhase("ovIn");
+        setPhase("ov1In");
         timers.current.push(setTimeout(() => {
-          setPhase("ovHold");
+          setPhase("ov1Hold");
           timers.current.push(setTimeout(() => {
-            setPhase("ovOut");
+            setPhase("ovCross");
             timers.current.push(setTimeout(() => {
-              navigate("/draw", { state: { name, question: q } });
-            }, DUR.ovOut));
+              setPhase("ov2Hold");
+              timers.current.push(setTimeout(() => {
+                setPhase("ov2Out");
+                timers.current.push(setTimeout(() => {
+                  navigate("/draw", { state: { name, question: q } });
+                }, DUR.ovOut));
+              }, DUR.ovHold));
+            }, DUR.cross));
           }, DUR.ovHold));
         }, DUR.ovIn));
       }, 500)); // 500ms de "background vide"
@@ -160,7 +168,7 @@ function Page3() {
   }, []);
 
   const showForm = phase === "form" || phase === "formOut";
-  const showOverlay = phase === "ovIn" || phase === "ovHold" || phase === "ovOut";
+  const showOverlay = phase.startsWith("ov");
 
   return (
     <div className="question-wrap fp-wrap">
@@ -197,8 +205,17 @@ function Page3() {
       )}
 
       {showOverlay && (
-        <div className={`question-overlay ${phase === "ovIn" ? "overlay-in" : phase === "ovHold" ? "overlay-hold" : "overlay-out"}`}>
-          <div className="overlay-text">{overlayText}</div>
+        <div className="question-overlay">
+          <div
+            className={`overlay-text ${phase === "ov1In" || phase === "ov1Hold" ? "fade-in" : phase === "ovCross" ? "fade-out" : ""}`}
+          >
+            {overlayText1}
+          </div>
+          <div
+            className={`overlay-text ${phase === "ovCross" ? "fade-in" : phase === "ov2Hold" ? "fade-in" : phase === "ov2Out" ? "fade-out" : ""}`}
+          >
+            {overlayText2}
+          </div>
         </div>
       )}
     </div>
