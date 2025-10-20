@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Page3.css";
+import background from "./assets/background.webp";
 
 const questionIntros = [
   "Quelle est ta question du jour ?",
@@ -76,13 +77,12 @@ function Page3() {
   const { state } = useLocation();
   const name = state?.name;
   const [question, setQuestion] = useState("");
-  const [phase, setPhase] = useState("form"); // "form", "formOut", "ov1In", "ov1Hold", "ovCross", "ov2Hold", "ov2Out"
-  const [overlayText1, setOverlayText1] = useState("");
-  const [overlayText2, setOverlayText2] = useState("");
+  const [phase, setPhase] = useState("form"); // "form", "formOut", "ov1In", "ov1Hold", "ov1Out", "ov2In", "ov2Hold", "ov2Out"
+  const [overlayText, setOverlayText] = useState("");
   const inputRef = useRef(null);
   const timers = useRef([]);
 
-  const DUR = { formOut: 1000, ovIn: 1000, ovHold: 1500, cross: 1000, ovOut: 1000 };
+  const DUR = { formOut: 1000, ovIn: 1000, ovHold: 1500, ovOut: 1000 };
 
   useEffect(() => {
     const timer = requestAnimationFrame(() => setPhase("form"));
@@ -98,29 +98,32 @@ function Page3() {
     const q = question.trim();
     if (!q || looksInvalid(q)) return;
 
-    setOverlayText1(`Très bien, ${name}.`);
-    setOverlayText2("Prépare-toi à piocher les cartes.");
     setPhase("formOut");
 
     timers.current.push(setTimeout(() => {
       // Délai "background vide"
       timers.current.push(setTimeout(() => {
+        setOverlayText(`Très bien, ${name}.`);
         setPhase("ov1In");
         timers.current.push(setTimeout(() => {
           setPhase("ov1Hold");
           timers.current.push(setTimeout(() => {
-            setPhase("ovCross");
+            setPhase("ov1Out");
             timers.current.push(setTimeout(() => {
-              setPhase("ov2Hold");
+              setOverlayText("Prépare-toi à piocher les cartes.");
+              setPhase("ov2In");
               timers.current.push(setTimeout(() => {
-                setPhase("ov2Out");
+                setPhase("ov2Hold");
                 timers.current.push(setTimeout(() => {
-                  navigate("/draw", { state: { name, question: q } });
-                }, DUR.ovOut));
-              }, DUR.ovHold));
-            }, DUR.cross));
-          }, DUR.ovHold));
-        }, DUR.ovIn));
+                  setPhase("ov2Out");
+                  timers.current.push(setTimeout(() => {
+                    navigate("/draw", { state: { name, question: q } });
+                  }, DUR.ovOut));
+                }, DUR.ovHold));
+              }, DUR.ovIn));
+            }, 500)); // Délai entre les phrases
+          }, DUR.ovOut));
+        }, DUR.ovHold));
       }, 500)); // 500ms de "background vide"
     }, DUR.formOut));
 
@@ -170,6 +173,14 @@ function Page3() {
   const showForm = phase === "form" || phase === "formOut";
   const showOverlay = phase.startsWith("ov");
 
+  let overlayClass = "";
+  if (phase === "ov1In" || phase === "ov1Hold" || phase === "ov2In" || phase === "ov2Hold") {
+    overlayClass = "overlay-in";
+  } else if (phase === "ov1Out" || phase === "ov2Out") {
+    overlayClass = "overlay-out";
+  }
+
+
   return (
     <div className="question-wrap fp-wrap">
       {showForm && (
@@ -205,17 +216,8 @@ function Page3() {
       )}
 
       {showOverlay && (
-        <div className="question-overlay">
-          <div
-            className={`overlay-text ${phase === "ov1In" || phase === "ov1Hold" ? "fade-in" : phase === "ovCross" ? "fade-out" : ""}`}
-          >
-            {overlayText1}
-          </div>
-          <div
-            className={`overlay-text ${phase === "ovCross" ? "fade-in" : phase === "ov2Hold" ? "fade-in" : phase === "ov2Out" ? "fade-out" : ""}`}
-          >
-            {overlayText2}
-          </div>
+        <div className={`question-overlay ${overlayClass}`}>
+          <div className="overlay-text">{overlayText}</div>
         </div>
       )}
     </div>
