@@ -98,6 +98,8 @@ function Page3() {
 
   useEffect(() => {
     const timer = setTimeout(() => setArrive(true), 40);
+    // Focus sur l'input dès l'arrivée
+    inputRef.current?.focus();
     return () => clearTimeout(timer);
   }, []);
 
@@ -216,7 +218,7 @@ function Page3() {
           </button>
         </div>
 
-        <div className="question-examples">
+        {/* <div className="question-examples">
           {randomExamples.map((ex, i) => (
             <button
               key={i}
@@ -227,7 +229,7 @@ function Page3() {
               {ex}
             </button>
           ))}
-        </div>
+        </div> */}
       </form>
 
       <div ref={overlayRef} className="question-overlay">
