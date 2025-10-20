@@ -112,7 +112,6 @@
 .page5-main-scroll {
   flex-grow: 1; /* Prend toute la place restante */
   overflow-y: auto;
-  overscroll-behavior-y: contain;
 }
 
 /* --- Bloc de contenu (cartes + chat) --- */
