@@ -110,7 +110,7 @@ function Page3() {
           timers.current.push(setTimeout(() => {
             setPhase("ov1Out");
             timers.current.push(setTimeout(() => {
-              setOverlayText("Prépare-toi à piocher les cartes.");
+              setOverlayText("Prépare-toi à tirer les cartes.");
               setPhase("ov2In");
               timers.current.push(setTimeout(() => {
                 setPhase("ov2Hold");
