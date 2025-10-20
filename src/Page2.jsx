@@ -12,9 +12,9 @@ export default function Page2() {
   const [name, setName] = useState("");
   // "form" → "formOut" → "ovIn" → "ovHold" → "ovOut"
   const [phase, setPhase] = useState("form");
-  const [arrive, setArrive] = useState(false); // fade-in 2s à l'arrivée
+  const [arrive, setArrive] = useState(false); // fade-in 1s à l'arrivée
 
-  const DUR = { formOut: 2000, ovIn: 2000, ovHold: 2000, ovOut: 2000 };
+  const DUR = { formOut: 1000, ovIn: 1000, ovHold: 1000, ovOut: 1000 };
 
   // ----- Phrases -----
   const greetings = useMemo(
