@@ -31,7 +31,7 @@
   align-self: flex-end;
   border-bottom-right-radius: 4px;
   background-color: rgba(10, 27, 54, 0.5); /* #0A1B36 avec 50% opacité */
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* Étiquettes "LYRA" et "VOUS" */
@@ -47,7 +47,7 @@
 /* Contenu du message */
 .bubble .msg {
   font-family: var(--font-sans);
-  font-size: var(--font-size-standard);
+  font-size: clamp(0.8rem, 1.3vw, 1rem);
   line-height: 1.5;
   white-space: pre-wrap; /* Conserve les sauts de ligne */
 }
@@ -166,14 +166,6 @@
   font-variation-settings: 'wght' 400;
 }
 
-/* Texte non sélectionnable pour l'UX */
-.chat-wrap .bubble .msg,
-.chat-wrap .bubble .who {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
 
 /* Empêche le drag d'images dans le chat */
 .chat-wrap img {
