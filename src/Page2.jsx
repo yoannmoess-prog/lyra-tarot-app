@@ -33,11 +33,10 @@ export default function Page2() {
     () => [
       (n) => `Enchantée, ${n}. Et bienvenue dans le monde du Tarot.`,
       (n) => `Bonjour, ${n}. Heureuse que les cartes nous aient réunis.`,
-      (n) => `Bienvenue, ${n}. Le Tarot pourrait avoir des choses à te dire.`,
+      (n) => `Bienvenue, ${n}. Faisons parler le Tarot ensemble.`,
       (n) => `Enchantée, ${n}. Notre voyage avec le Tarot commence maintenant.`,
       (n) => `Bienvenue parmi les symboles, ${n}. Que le Tarot t'ouvre ses portes !`,
       (n) => `C’est un plaisir de t'accueillir, ${n}. Bienvenue là où les symboles prennent tout leurs sens.`,
-      (n) => `${n}, prends le temps de t'installer. Et écoutons les cartes.`,
     ],
     []
   );
@@ -83,6 +82,7 @@ export default function Page2() {
   };
 
   const showForm = phase === "form" || phase === "formOut";
+  const isGone = !showForm;
   const showOverlay = phase === "ovIn" || phase === "ovHold" || phase === "ovOut";
 
   return (
@@ -92,7 +92,7 @@ export default function Page2() {
         backgroundImage: `url(${background})`,
       }}
     >
-        <div className={`name-inner ${arrive ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""}`} style={{pointerEvents: showForm ? 'auto' : 'none'}}>
+        <div className={`name-inner ${arrive ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""} ${isGone ? "gone" : ""}`} style={{pointerEvents: showForm ? 'auto' : 'none'}}>
           <h1 className="name-title">{greeting}</h1>
 
           <form className="name-form" onSubmit={onSubmit} autoComplete="off">
