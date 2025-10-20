@@ -26,6 +26,7 @@
 .name-inner.leaving{ opacity: 0; transform: translateY(-8px) scale(.985); transition: opacity 2000ms ease, transform 2000ms ease; }
 
 .name-title {
+  transition: opacity 2000ms ease, transform 2000ms ease;
   margin: 0;
   font-family: 'Sorts Mill Goudy', serif;
   color: #F8F5E1;

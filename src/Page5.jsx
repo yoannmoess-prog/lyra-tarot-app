@@ -103,6 +103,28 @@ export default function Page5() {
   const endRef = useRef(null);
   const finalRailRef = useRef(null);
   const spreadRef = useRef(null);
+  const inputRef = useRef(null);
+
+  // Focus sur l'input de chat (méthode non-invasive sur mobile)
+  useEffect(() => {
+    if (!youInputShown || !inputRef.current) return;
+
+    const isMobile = /Mobi/i.test(navigator.userAgent);
+    if (isMobile) {
+      // Sur mobile : focus sans ouvrir le clavier
+      const el = inputRef.current;
+      el.readOnly = true;
+      setTimeout(() => {
+        el.focus({ preventScroll: true });
+        el.readOnly = false;
+      }, 80);
+    } else {
+      // Sur desktop : focus direct
+      setTimeout(() => {
+        inputRef.current.focus({ preventScroll: true });
+      }, 100);
+    }
+  }, [youInputShown]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -407,6 +429,7 @@ export default function Page5() {
         <div className="you-block">
           <form onSubmit={onYouSubmit} className="you-form">
             <input
+              ref={inputRef}
               className="you-input"
               placeholder={!youInputShown ? "Lyra est en train d'écrire..." : "Message à Lyra"}
               value={youMessage}

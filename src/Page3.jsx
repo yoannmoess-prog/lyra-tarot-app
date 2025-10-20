@@ -98,7 +98,11 @@ function Page3() {
 
   useEffect(() => {
     const timer = setTimeout(() => setArrive(true), 40);
-    return () => clearTimeout(timer);
+    const focusTimer = setTimeout(() => inputRef.current?.focus(), 60);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(focusTimer);
+    };
   }, []);
 
   const onSubmit = useCallback(() => {
