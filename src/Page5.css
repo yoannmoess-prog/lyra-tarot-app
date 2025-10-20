@@ -6,15 +6,10 @@
 
 /* Root layout: Flex column pour Header / Main / Footer */
 .page5-root {
-  overscroll-behavior-y: contain;
   height: 100vh; /* Fallback */
   height: 100svh; /* Précis sur mobile */
   display: flex;
   flex-direction: column;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
 }
 
 /* --- Header Fixe --- */
@@ -112,7 +107,6 @@
 .page5-main-scroll {
   flex-grow: 1; /* Prend toute la place restante */
   overflow-y: auto;
-  overscroll-behavior-y: contain;
 }
 
 /* --- Bloc de contenu (cartes + chat) --- */

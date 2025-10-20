@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Modal from "./components/Modal";
 import "./components/Modal.css";
 import "./Page5.css";
-import background from "./assets/background.webp";
 import { toast } from "./utils/net";
 import "./toast.css";
 import "./chat-ux.css";
@@ -53,11 +52,11 @@ function splitIntoBubbles(text, max = 3) {
 }
 
 function getRandomInitialThinkingTime() {
-  return Math.floor(Math.random() * 2001) + 3000; // 3–5 sec
+  return Math.floor(Math.random() * 1001) + 1000; // 1–2 sec
 }
 
 function getRandomThinkingTime() {
-  return Math.floor(Math.random() * 4001) + 4000; // 4–8 sec
+  return Math.floor(Math.random() * 1501) + 1500; // 1.5–3 sec
 }
 
 /* ---------------- Component ---------------- */
@@ -184,28 +183,36 @@ export default function Page5() {
     setLyraTyping(true);
     const thinkingTime = baseConv.length > 0 ? getRandomThinkingTime() : getRandomInitialThinkingTime();
     await new Promise(resolve => setTimeout(resolve, thinkingTime));
-    setLyraTyping(false);
 
-    const lyraMessage = { id: Date.now(), role: "lyra", text: "" };
-    const nextConv = [...baseConv, lyraMessage];
-    setConv(nextConv);
-
+    let fullText = "";
     try {
       const stream = streamLyra(payload);
       for await (const chunk of stream) {
-        lyraMessage.text += chunk;
-        setConv([...nextConv]); // Update the conv state to re-render
-        requestAnimationFrame(scrollToEnd);
+        fullText += chunk;
       }
-      saveConv(nextConv); // Save final response
+
+      if (fullText) {
+        const lyraMessage = { id: Date.now(), role: "lyra", text: fullText };
+        const nextConv = [...baseConv, lyraMessage];
+        setLyraTyping(false);
+        setConv(nextConv);
+        saveConv(nextConv);
+        requestAnimationFrame(scrollToEnd);
+      } else {
+        // En cas de réponse vide, on ne fait que masquer la bulle de réflexion
+        setLyraTyping(false);
+      }
     } catch (err) {
       console.error("Erreur de streaming:", err);
       toast("Désolé, une erreur est survenue. Veuillez réessayer.");
-      // Restore previous conversation state if streaming fails
+      setLyraTyping(false);
       setConv(baseConv);
       saveConv(baseConv);
     } finally {
       setYouInputShown(true);
+      if (lyraTyping && !lyraMessage) {
+        setLyraTyping(false);
+      }
     }
   };
 
@@ -258,7 +265,6 @@ export default function Page5() {
   return (
     <div
       className={`page5-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}
-      style={{ backgroundImage: `url(${background})` }}
     >
       <header className="page5-header">
         <div
@@ -354,10 +360,6 @@ export default function Page5() {
           <section
             className={`chat-wrap${chatVisible ? " show" : ""}`}
             aria-live="polite"
-            onCopy={(e) => e.preventDefault()}
-            onCut={(e) => e.preventDefault()}
-            onContextMenu={(e) => e.preventDefault()}
-            onDragStart={(e) => e.preventDefault()}
           >
             {conv.map((m) =>
               m.role === "lyra" ? (
