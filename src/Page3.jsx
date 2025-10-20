@@ -97,7 +97,7 @@ function Page3() {
     const q = question.trim();
     if (!q || looksInvalid(q)) return;
 
-    setOverlayText("Très bien. Voyons ce que les cartes ont à révéler...");
+    setOverlayText("Très bien. Concentre-toi, le temps est venu de piocher les cartes.");
     setPhase("formOut");
 
     timers.current.push(setTimeout(() => {
