@@ -76,37 +76,45 @@ function Page3() {
   const { state } = useLocation();
   const name = state?.name;
   const [question, setQuestion] = useState("");
-  const [checking, setChecking] = useState(false);
-  const [arrive, setArrive] = useState(false);
-  const [transition, setTransition] = useState(null);
+  const [phase, setPhase] = useState("form"); // "form", "formOut", "ovIn", "ovHold", "ovOut"
+  const [overlayText, setOverlayText] = useState("");
   const inputRef = useRef(null);
-  const overlayRef = useRef(null);
+  const timers = useRef([]);
+
+  const DUR = { formOut: 1000, ovIn: 1000, ovHold: 1000, ovOut: 1000 };
 
   useEffect(() => {
-    const timer = setTimeout(() => setArrive(true), 40);
-    // Focus sur l'input dès l'arrivée
+    const timer = requestAnimationFrame(() => setPhase("form"));
     inputRef.current?.focus();
-    return () => clearTimeout(timer);
+    return () => {
+      cancelAnimationFrame(timer);
+      timers.current.forEach(clearTimeout);
+    };
   }, []);
 
   const onSubmit = useCallback(() => {
-    if (checking) return;
+    if (phase !== "form") return;
     const q = question.trim();
     if (!q || looksInvalid(q)) return;
 
-    setChecking(true);
-    setArrive(false);
+    setOverlayText("Très bien. Voyons ce que les cartes ont à révéler...");
+    setPhase("formOut");
 
-    // Lancement de la transition visuelle
-    setTimeout(() => {
-      setTransition("Très bien. Voyons ce que les cartes ont à révéler...");
-      overlayRef.current?.classList.add("overlay-in");
-    }, 300);
-
-    // 🔁 NAVIGATION VERS /draw IMMÉDIATE (non bloquante)
-    setTimeout(() => {
-      navigate("/draw", { state: { name, question: q } });
-    }, 2600); // On garde les 2.6s d'animation comme avant
+    timers.current.push(setTimeout(() => {
+      // Délai "background vide"
+      timers.current.push(setTimeout(() => {
+        setPhase("ovIn");
+        timers.current.push(setTimeout(() => {
+          setPhase("ovHold");
+          timers.current.push(setTimeout(() => {
+            setPhase("ovOut");
+            timers.current.push(setTimeout(() => {
+              navigate("/draw", { state: { name, question: q } });
+            }, DUR.ovOut));
+          }, DUR.ovHold));
+        }, DUR.ovIn));
+      }, 500)); // 500ms de "background vide"
+    }, DUR.formOut));
 
     // 🔄 Appel à l’IA en arrière-plan (sans bloquer le front)
     fetch("/api/question", {
@@ -117,7 +125,7 @@ function Page3() {
       console.error("Erreur IA : ", err); // ← utile en dev
       // TODO : gérer un fallback plus tard si besoin
     });
-  }, [checking, question, navigate, name]);
+  }, [phase, question, navigate, name]);
 
   useEffect(() => {
     const down = (e) => {
@@ -151,73 +159,48 @@ function Page3() {
     return shuffled.slice(0, 5);
   }, []);
 
+  const showForm = phase === "form" || phase === "formOut";
+  const showOverlay = phase === "ovIn" || phase === "ovHold" || phase === "ovOut";
+
   return (
-    <div
-      className="question-wrap fp-wrap"
-    >
-      <form
-        className={`question-inner ${arrive ? "arrive" : "pre"} ${!arrive && checking ? "leaving" : ""}`}
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSubmit();
-        }}
-      >
-        <div className="question-title">
-          {randomIntro}
-        </div>
-
-        <div className="q-shuffle is-on">
-          {[...Array(5)].map((_, i) => (
-            <div
-              className="card"
-              key={i}
-              style={{
-                "--rot": `${-14 + i * 7}deg`,
-                "--shift": `${-20 + i * 10}%`
-              }}
+    <div className="question-wrap fp-wrap">
+      {showForm && (
+        <form
+          className={`question-inner ${phase === "form" ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""}`}
+          onSubmit={(e) => { e.preventDefault(); onSubmit(); }}
+        >
+          <div className="question-title">{randomIntro}</div>
+          <div className="q-shuffle is-on">
+            {[...Array(5)].map((_, i) => (
+              <div
+                className="card"
+                key={i}
+                style={{ "--rot": `${-14 + i * 7}deg`, "--shift": `${-20 + i * 10}%` }}
+              />
+            ))}
+          </div>
+          <div className="input-bubble textarea">
+            <textarea
+              ref={inputRef}
+              rows="1"
+              placeholder="Écris ta question ici..."
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
             />
-          ))}
-        </div>
-
-        <div className="input-bubble textarea">
-          <textarea
-            ref={inputRef}
-            rows="1"
-            placeholder="Écris ta question ici..."
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-          />
-          <button
-            type="submit"
-            className="send-btn"
-            aria-label="Envoyer la question"
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{ color: question ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)' }}
-            >
-              arrow_forward
-            </span>
-          </button>
-        </div>
-
-        {/* <div className="question-examples">
-          {randomExamples.map((ex, i) => (
-            <button
-              key={i}
-              type="button"
-              className="question-example"
-              onClick={() => handleClickExample(ex)}
-            >
-              {ex}
+            <button type="submit" className="send-btn" aria-label="Envoyer la question">
+              <span className="material-symbols-outlined" style={{ color: question ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)' }}>
+                arrow_forward
+              </span>
             </button>
-          ))}
-        </div> */}
-      </form>
+          </div>
+        </form>
+      )}
 
-      <div ref={overlayRef} className="question-overlay">
-        {transition && <div className="overlay-text">{transition}</div>}
-      </div>
+      {showOverlay && (
+        <div className={`question-overlay ${phase === "ovIn" ? "overlay-in" : phase === "ovHold" ? "overlay-hold" : "overlay-out"}`}>
+          <div className="overlay-text">{overlayText}</div>
+        </div>
+      )}
     </div>
   );
 }

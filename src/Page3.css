@@ -7,18 +7,20 @@
   padding: 24px 16px;
 }
 
-/* bloc formulaire (fade-in 2s à l’arrivée, fade-out 2s au submit) */
+/* bloc formulaire (fade-in 1s à l’arrivée, fade-out 1s au submit) */
 .question-inner{
   width: 100%;
   max-width: 860px;
   display: grid;
   gap: 18px;
   text-align: center;
-  will-change: opacity, transform;
 }
-.question-inner.pre    { opacity: 0; transform: translateY(8px) scale(.995); }
-.question-inner.arrive { opacity: 1; transform: none; transition: opacity 2000ms ease, transform 2000ms ease; }
-.question-inner.leaving{ opacity: 0; transform: translateY(-8px) scale(.985); transition: opacity 2000ms ease, transform 2000ms ease; }
+.question-inner > * {
+  will-change: opacity, transform;
+  transition: opacity 1000ms ease, transform 1000ms ease;
+}
+.question-inner.pre > *    { opacity: 0; transform: translateY(8px) scale(.995); }
+.question-inner.leaving > *{ opacity: 0; transform: translateY(-8px) scale(.985); }
 
 .question-title{
   margin: 0;
@@ -37,7 +39,6 @@
   background-color: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 8px 8px 8px 24px; /* Adjust padding */
-  transition: all 0.3s ease;
 }
 .input-bubble:has(textarea:focus){
   background-color: rgba(0, 0, 0, 0.3);
@@ -114,9 +115,9 @@ button.question-example:hover {
 
 @keyframes ovIn  { from{opacity:0; transform: translateY(8px)} to{opacity:1; transform:none} }
 @keyframes ovOut { from{opacity:1; transform:none} to{opacity:0; transform: translateY(-8px) scale(.985)} }
-.question-overlay.overlay-in  { animation: ovIn 2000ms ease forwards; }
+.question-overlay.overlay-in  { animation: ovIn 1000ms ease forwards; }
 .question-overlay.overlay-hold{ opacity: 1; }
-.question-overlay.overlay-out { animation: ovOut 2000ms ease forwards; }
+.question-overlay.overlay-out { animation: ovOut 1000ms ease forwards; }
 
 .sr-only{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px;
