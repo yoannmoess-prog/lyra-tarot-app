@@ -2,7 +2,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Page4.css";
-import background from "./assets/background.webp";
 
 /* ---------------- Card Data Helpers ---------------- */
 const FACE_MODULES = import.meta.glob("./assets/cards/*.webp", { eager: true });
@@ -146,7 +145,7 @@ export default function Page4() {
   const animationClass = boardFading ? "fade-out-2s" : arrive ? "fade-in-soft" : "pre-fade";
 
   return (
-    <div className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`} style={{ backgroundImage: `url(${background})` }}>
+    <div className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
       <div className={`page4-container ${animationClass}`}>
         <div className="title-block">
           <div className="p4-fixed-title">{question}</div>

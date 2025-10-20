@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Modal from "./components/Modal";
 import "./components/Modal.css";
 import "./Page5.css";
-import background from "./assets/background.webp";
 import { toast } from "./utils/net";
 import "./toast.css";
 import "./chat-ux.css";
@@ -266,7 +265,6 @@ export default function Page5() {
   return (
     <div
       className={`page5-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}
-      style={{ backgroundImage: `url(${background})` }}
     >
       <header className="page5-header">
         <div

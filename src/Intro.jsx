@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import "./Intro.css";
 import logo from "./assets/logo.webp";
 import arrow from "./assets/arrowtoright_01.webp";
-import bg from "./assets/background.webp";
 
 export default function Intro() {
   const nav = useNavigate();
@@ -58,7 +57,6 @@ export default function Intro() {
     <main
       ref={mainRef} // ✅ ref ici
       className={`intro-root ${entered ? "enter" : ""} ${leaving ? "leaving" : ""}`}
-      style={{ backgroundImage: `url(${bg})` }}
       onClick={go}
       onTouchStart={(e) => begin(e.changedTouches[0].clientX, e.changedTouches[0].clientY)}
       onTouchEnd={(e) => end(e.changedTouches[0].clientX, e.changedTouches[0].clientY)}
