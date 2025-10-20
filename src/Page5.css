@@ -10,10 +10,6 @@
   height: 100svh; /* Précis sur mobile */
   display: flex;
   flex-direction: column;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
 }
 
 /* --- Header Fixe --- */
