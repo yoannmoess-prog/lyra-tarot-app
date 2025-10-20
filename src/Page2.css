@@ -24,6 +24,7 @@
 .name-inner.pre    { opacity: 0; transform: translateY(8px) scale(.995); }
 .name-inner.arrive { opacity: 1; transform: none; transition: opacity 2000ms ease, transform 2000ms ease; }
 .name-inner.leaving{ opacity: 0; transform: translateY(-8px) scale(.985); transition: opacity 2000ms ease, transform 2000ms ease; }
+.name-inner.gone  { visibility: hidden; }
 
 .name-title {
   margin: 0;
