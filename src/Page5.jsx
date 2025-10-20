@@ -187,35 +187,63 @@ export default function Page5() {
 
     let lyraMessage = null;
     let nextConv = [...baseConv];
+    let textBuffer = "";
+    let renderInterval = null;
 
-    try {
-      const stream = streamLyra(payload);
-      for await (const chunk of stream) {
-        if (!lyraMessage) {
-          // Premier chunk reçu : on masque la bulle "..." et on crée la bulle de message
-          setLyraTyping(false);
-          lyraMessage = { id: Date.now(), role: "lyra", text: "" };
-          nextConv = [...baseConv, lyraMessage];
-          setConv(nextConv);
+    const stream = streamLyra(payload);
+    const reader = stream.getReader();
+    const decoder = new TextDecoder();
+
+    reader.read().then(function processText({ done, value }) {
+      if (done) {
+        clearInterval(renderInterval);
+        if (lyraMessage) {
+          lyraMessage.text += textBuffer; // Vider le reste du buffer
+          setConv([...nextConv]);
+          saveConv(nextConv);
         }
-        lyraMessage.text += chunk;
-        setConv([...nextConv]);
-        requestAnimationFrame(scrollToEnd);
+        setYouInputShown(true);
+        if (lyraTyping && !lyraMessage) setLyraTyping(false);
+        return;
       }
-      saveConv(nextConv); // Sauvegarde de la réponse finale
-    } catch (err) {
+
+      textBuffer += decoder.decode(value, { stream: true });
+
+      if (!lyraMessage) {
+        setLyraTyping(false);
+        lyraMessage = { id: Date.now(), role: "lyra", text: "" };
+        nextConv = [...baseConv, lyraMessage];
+        setConv(nextConv);
+
+        renderInterval = setInterval(() => {
+          if (textBuffer.length > 0) {
+            const charCount = Math.min(textBuffer.length, Math.floor(Math.random() * 3) + 2); // 2-4 chars
+            const toRender = textBuffer.substring(0, charCount);
+            textBuffer = textBuffer.substring(charCount);
+            lyraMessage.text += toRender;
+            setConv([...nextConv]);
+            requestAnimationFrame(scrollToEnd);
+          }
+        }, 60); // Toutes les 60ms
+      }
+
+      reader.read().then(processText).catch(err => {
+        console.error("Erreur de lecture du stream:", err);
+        toast("Désolé, une erreur de lecture est survenue.");
+        clearInterval(renderInterval);
+        setLyraTyping(false);
+        setConv(baseConv);
+        saveConv(baseConv);
+        setYouInputShown(true);
+      });
+    }).catch(err => {
       console.error("Erreur de streaming:", err);
       toast("Désolé, une erreur est survenue. Veuillez réessayer.");
-      setLyraTyping(false); // S'assurer de masquer le typing en cas d'erreur
-      setConv(baseConv); // Restaurer l'état précédent
+      setLyraTyping(false);
+      setConv(baseConv);
       saveConv(baseConv);
-    } finally {
       setYouInputShown(true);
-      if (lyraTyping && !lyraMessage) {
-        // Si le stream se termine sans chunk (erreur silencieuse), on masque le typing
-        setLyraTyping(false);
-      }
-    }
+    });
   };
 
   /* ---------------- Première réponse IA ---------------- */
