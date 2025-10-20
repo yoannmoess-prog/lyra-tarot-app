@@ -187,23 +187,25 @@ export default function Page5() {
 
     let lyraMessage = null;
     let nextConv = [...baseConv];
-    const delay = ms => new Promise(res => setTimeout(res, ms));
 
     try {
       const stream = streamLyra(payload);
       for await (const chunk of stream) {
         if (!lyraMessage) {
           setLyraTyping(false);
-          lyraMessage = { id: Date.now(), role: "lyra", text: "" };
+          lyraMessage = { id: Date.now(), role: "lyra", chunks: [] };
           nextConv = [...baseConv, lyraMessage];
-          setConv(nextConv);
         }
-        lyraMessage.text += chunk;
+        lyraMessage.chunks.push(chunk);
         setConv([...nextConv]);
         requestAnimationFrame(scrollToEnd);
-        await delay(20); // Petite pause pour fluidifier l'affichage
       }
-      saveConv(nextConv);
+
+      if (lyraMessage) {
+        lyraMessage.text = lyraMessage.chunks.join("");
+        delete lyraMessage.chunks;
+        saveConv(nextConv);
+      }
     } catch (err) {
       console.error("Erreur de streaming:", err);
       toast("Désolé, une erreur est survenue. Veuillez réessayer.");
@@ -366,20 +368,37 @@ export default function Page5() {
           >
             {conv.map((m) =>
               m.role === "lyra" ? (
-                <React.Fragment key={m.id}>
-                  {splitIntoBubbles(m.text, 3).map((seg, idx) => (
-                    <div key={`${m.id}-${idx}`} className={`bubble lyra${idx > 0 ? " stacked" : ""} lyra-fadein`}>
-                      <div className="who">LYRA</div>
-                      <div className="msg">
-                        {seg.split("\n").map((line, i) => (
-                          <p key={i} style={{ margin: "6px 0" }}>
-                            {line || "\u00A0"}
-                          </p>
+                m.chunks ? (
+                  // Message en cours de streaming avec fade-in progressif
+                  <div key={m.id} className="bubble lyra lyra-fadein">
+                    <div className="who">LYRA</div>
+                    <div className="msg">
+                      <p style={{ margin: "6px 0" }}>
+                        {m.chunks.map((chunk, i) => (
+                          <span key={i} className="text-fade-in" style={{ animationDelay: `${i * 0.02}s` }}>
+                            {chunk}
+                          </span>
                         ))}
-                      </div>
+                      </p>
                     </div>
-                  ))}
-                </React.Fragment>
+                  </div>
+                ) : (
+                  // Message complet, affichage normal
+                  <React.Fragment key={m.id}>
+                    {splitIntoBubbles(m.text, 3).map((seg, idx) => (
+                      <div key={`${m.id}-${idx}`} className={`bubble lyra${idx > 0 ? " stacked" : ""} lyra-fadein`}>
+                        <div className="who">LYRA</div>
+                        <div className="msg">
+                          {seg.split("\n").map((line, i) => (
+                            <p key={i} style={{ margin: "6px 0" }}>
+                              {line || "\u00A0"}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </React.Fragment>
+                )
               ) : (
                 <div key={m.id} className="bubble you you-fadein">
                   <div className="who">VOUS</div>

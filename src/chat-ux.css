@@ -100,6 +100,19 @@
 .lyra-fadein { animation: fadeIn 0.5s ease-out forwards; }
 .you-fadein { animation: fadeIn 0.5s ease-out forwards; }
 
+/* Animation pour le texte en streaming */
+@keyframes textFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.text-fade-in {
+  opacity: 0; /* Commence invisible */
+  animation: textFadeIn 0.4s ease-out forwards;
+  display: inline-block; /* Nécessaire pour l'animation */
+  white-space: pre-wrap; /* Conserve les espaces et sauts de ligne */
+}
+
 
 /* Styles pour les écrans larges */
 @media (min-width: 768px) {
