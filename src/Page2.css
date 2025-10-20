@@ -6,10 +6,6 @@
   align-items: center;
   justify-content: center;
   padding: 24px 16px;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
 }
 
 /* Bloc formulaire avec transitions */
@@ -46,7 +42,6 @@
   background-color: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 8px 8px 8px 24px; /* Adjust padding for button and input */
-  transition: all 0.3s ease;
 }
 .input-bubble:has(input:focus) {
   border-color: rgba(255, 255, 255, 0.5);
@@ -132,9 +127,9 @@
   from { opacity:1; transform: none; }
   to   { opacity:0; transform: translateY(-8px) scale(.985); }
 }
-.name-overlay.overlay-in  { animation: ovIn 2000ms ease forwards; }
+.name-overlay.overlay-in  { animation: ovIn 1000ms ease forwards; }
 .name-overlay.overlay-hold{ opacity: 1; }
-.name-overlay.overlay-out { animation: ovOut 2000ms ease forwards; }
+.name-overlay.overlay-out { animation: ovOut 1000ms ease forwards; }
 
 /* Accessibilité */
 .sr-only {

@@ -57,19 +57,22 @@ export default function Page2() {
     if (phase !== "form") return; // évite double déclenchement
     const pick = transitions[Math.floor(Math.random() * transitions.length)];
     setOverlayText(pick(finalName));
-    setPhase("formOut"); // 1) fade-out form (2s)
+    setPhase("formOut"); // 1) fade-out form
 
     timers.current.push(setTimeout(() => {
-      setPhase("ovIn");  // 2) overlay in (2s)
+      // Délai pour "background vide"
       timers.current.push(setTimeout(() => {
-        setPhase("ovHold"); // 3) hold (2s)
+        setPhase("ovIn");  // 2) overlay in
         timers.current.push(setTimeout(() => {
-          setPhase("ovOut"); // 4) overlay out (2s)
+          setPhase("ovHold"); // 3) hold
           timers.current.push(setTimeout(() => {
-            nav("/question", { state: { name: finalName } }); // 5) route
-          }, DUR.ovOut));
-        }, DUR.ovHold));
-      }, DUR.ovIn));
+            setPhase("ovOut"); // 4) overlay out
+            timers.current.push(setTimeout(() => {
+              nav("/question", { state: { name: finalName } }); // 5) route
+            }, DUR.ovOut));
+          }, DUR.ovHold));
+        }, DUR.ovIn));
+      }, 500)); // 500ms de "background vide"
     }, DUR.formOut));
   };
 
