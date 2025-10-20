@@ -363,10 +363,6 @@ export default function Page5() {
           <section
             className={`chat-wrap${chatVisible ? " show" : ""}`}
             aria-live="polite"
-            onCopy={(e) => e.preventDefault()}
-            onCut={(e) => e.preventDefault()}
-            onContextMenu={(e) => e.preventDefault()}
-            onDragStart={(e) => e.preventDefault()}
           >
             {conv.map((m) =>
               m.role === "lyra" ? (
