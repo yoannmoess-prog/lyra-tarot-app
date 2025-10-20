@@ -102,6 +102,7 @@ export default function Page5() {
   const endRef = useRef(null);
   const finalRailRef = useRef(null);
   const spreadRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -250,7 +251,12 @@ export default function Page5() {
     const currentConv = [...conv, userBubble];
     setConv(currentConv);
     saveConv(currentConv);
-    requestAnimationFrame(scrollToEnd);
+
+    // Délai pour permettre au clavier de se stabiliser avant de scroller et de redonner le focus
+    setTimeout(() => {
+      requestAnimationFrame(scrollToEnd);
+      inputRef.current?.focus();
+    }, 100);
 
     const history = conv.map((m) => ({
       role: m.role === "user" ? "user" : "assistant",
@@ -409,6 +415,7 @@ export default function Page5() {
         <div className="you-block">
           <form onSubmit={onYouSubmit} className="you-form">
             <input
+              ref={inputRef}
               className="you-input"
               placeholder={!youInputShown ? "Lyra est en train d'écrire..." : "Message à Lyra"}
               value={youMessage}
