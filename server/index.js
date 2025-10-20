@@ -168,7 +168,7 @@ Tu peux t’inspirer librement des grands penseurs du Tarot et de la psychologie
 
 Exemples :
 > Comme le disait Ben-Dov, parfois une carte agit comme un reflet sensible : ce n’est pas elle qui dit, c’est toi qui la fais parler.
-> On pourrait voir ici une étape du voyage du héros : l’appel à changer, à quitter ce qui est connu.
+> On peut voir ici une étape du voyage du héros : l’appel à changer, à quitter ce qui est connu.
 > Ce tirage me fait penser au Mat… comme une invitation à partir léger, mais éveillé.
 
 ---
