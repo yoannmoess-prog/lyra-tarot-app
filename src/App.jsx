@@ -16,6 +16,7 @@ import SpreadsDemo from "./pages/SpreadsDemo";
 export default function App() {
   return (
     <BrowserRouter>
+      <div className="global-background" />
       <Routes>
         <Route path="/" element={<Intro />} />
         <Route path="/intro" element={<Intro />} />

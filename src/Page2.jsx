@@ -2,7 +2,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Page2.css";
-import background from "./assets/background.webp";
 
 export default function Page2() {
   const nav = useNavigate();
@@ -88,9 +87,6 @@ export default function Page2() {
   return (
     <main
       className="name-wrap"
-      style={{
-        backgroundImage: `url(${background})`,
-      }}
     >
         <div className={`name-inner ${arrive ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""} ${isGone ? "gone" : ""}`} style={{pointerEvents: showForm ? 'auto' : 'none'}}>
           <h1 className="name-title">{greeting}</h1>
