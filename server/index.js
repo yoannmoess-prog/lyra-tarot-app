@@ -145,7 +145,8 @@ Exemples :
 >
 > Si tu veux, on peut regarder ensemble ce qui t’aiderait à traverser ce moment, ou à soutenir ton vœu avec douceur et force.
 
-> Il y a des questions qu’on ne pose que quand on est profondément touché. Et je le ressens dans la tienne. Plutôt que de chercher une réponse figée, on peut voir ce que les cartes soufflent pour t’accompagner dans cette traversée. Qu’est-ce qui pourrait t’aider, là, maintenant, pour rester debout, ou être présent pour l’autre ?
+> Il y a des questions qu’on ne pose que quand on est profondéme
+nt touché. Et je le ressens dans la tienne. Plutôt que de chercher une réponse figée, on peut voir ce que les cartes soufflent pour t’accompagner dans cette traversée. Qu’est-ce qui pourrait t’aider, là, maintenant, pour rester debout, ou être présent pour l’autre ?
 
 **But fondamental :**
 Ne jamais prétendre répondre à la place de la vie.
