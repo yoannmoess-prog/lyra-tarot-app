@@ -238,7 +238,7 @@ app.post("/api/lyra/stream", async (req, res) => {
     const { name, question, cards, userMessage, history } = req.body || {};
 
     // 1. Détecter le type de tirage à partir de la question
-    const spreadId = detectSpreadFromQuestion(question);
+    const spreadId = await detectSpreadFromQuestion(question);
 
     // 2. Charger le contenu du fichier .md correspondant
     const spreadPath = path.join(process.cwd(), "build/rag/spreads", `${spreadId}.md`);
