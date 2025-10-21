@@ -7,8 +7,10 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
-import { initRag } from "./rag.js";
+import { initRag, detectSpreadFromQuestion } from "./rag.js";
 import OpenAI from "openai";
+import fs from "fs";
+import path from "path";
 
 // --- Configuration initiale ---
 const __filename = fileURLToPath(import.meta.url);
@@ -73,7 +75,7 @@ function validateInput(data) {
 }
 
 // --- Prompt Builder ---
-function buildMessages({ name: n, question, cards, userMessage, history }) {
+function buildMessages({ name: n, question, cards, userMessage, history, spreadContent }) {
   // S'assure que 'cards' est un tableau avant d'appeler .map()
   const safeCards = Array.isArray(cards) ? cards : [];
   const cardNames = safeCards.join(", ");
@@ -191,17 +193,9 @@ Tu ne récites pas. Tu accompagnes. Chaque message est une main tendue.
 
 ---
 
---- STRUCTURE DES TIRAGES PRÉSENTS DANS L'APP ---
+--- STRUCTURE DU TIRAGE APPLIQUÉ À CETTE LECTURE ---
 
-TIRAGE-CONSEIL (3 cartes)
-
-Ce tirage est utilisé par défaut.
-
-Si ${name} demande à quoi correspond chaque carte du tirage, voici la structure à lui transmettre :
-
-Carte 1 : Le véritable enjeu — Ce qui se joue en profondeur dans cette situation.  
-Carte 2 : Le message à entendre — Ce que le Tarot met en lumière pour t’aider à voir plus clair.  
-Carte 3 : La part de toi qui peut aider — Une ressource intérieure à activer dans ce contexte.
+${spreadContent}
   `.trim();
 
   // Limite l'historique aux 10 derniers messages pour éviter les dépassements
@@ -243,6 +237,19 @@ app.post("/api/lyra/stream", async (req, res) => {
   
   try {
     const { name, question, cards, userMessage, history } = req.body || {};
+
+    // 1. Détecter le type de tirage à partir de la question
+    const spreadId = detectSpreadFromQuestion(question);
+
+    // 2. Charger le contenu du fichier .md correspondant
+    const spreadPath = path.join(process.cwd(), "build/rag/spreads", `${spreadId}.md`);
+    let spreadContent = "";
+    try {
+      spreadContent = fs.readFileSync(spreadPath, "utf8");
+    } catch (e) {
+      console.warn(`[server] Fichier de tirage "${spreadId}.md" non trouvé. Utilisation du contenu par défaut.`);
+      // Vous pouvez définir un contenu par défaut ici si nécessaire
+    }
     
     // Validation des entrées
     const validationErrors = validateInput({ name, question, cards, userMessage, history });
@@ -257,7 +264,7 @@ app.post("/api/lyra/stream", async (req, res) => {
       });
     }
     
-    const messages = buildMessages({ name, question, cards, userMessage, history });
+    const messages = buildMessages({ name, question, cards, userMessage, history, spreadContent });
 
     console.log("[lyra] Envoi de la requête à OpenAI");
 
