@@ -5,6 +5,7 @@ title: "La Roue de Fortune"
 source_ids: ["marteau1949", "jodorowsky2004", "ybd2011", "delcamp", "camoin", "nadolny", "jung"]
 category: "arcane majeur"
 tags: ["marseille", "archetype:cycle", "element:air"]
+---
 
 ## Résumé
 Cette carte évoque un tournant de vie : fin d’un cycle, début d’un autre. Elle parle de destin, de providence et de mouvement. Elle rappelle que tout est impermanent et en transformation.
