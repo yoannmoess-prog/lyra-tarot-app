@@ -194,11 +194,11 @@ Tu ne récites pas. Tu accompagnes. Chaque message est une main tendue.
   const safeHistory = Array.isArray(history) ? history.slice(-10) : [];
   
   const turn = userMessage
-    ? [{ role: "user", content: userMessage }]
-    : [{
-        role: "user",
-        content: "C'est mon premier tour après le tirage. Donne-moi ton interprétation complète en suivant la structure demandée."
-      }];
+  ? [{ role: "user", content: userMessage }]
+  : [{
+      role: "user",
+      content: `Ma question est : ${question}. C'est mon premier tour après le tirage. Donne-moi ton interprétation complète en suivant la structure demandée.`
+    }];
       
   return [{ role: "system", content: systemContent }, ...safeHistory, ...turn];
 }
