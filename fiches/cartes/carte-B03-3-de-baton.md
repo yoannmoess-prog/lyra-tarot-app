@@ -6,6 +6,7 @@ source_ids: ["marteau1949", "jodorowsky2004", "camoin2010", "costabendov2008", "
 tags: ["marseille", "archetype:jaillissement", "element:feu", "arcane:mineur"]
 category: "arcane mineur"
 subcategory: "valeur"
+---
 
 ## Résumé
 → Le 3 de Bâton exprime une explosion d’énergie créatrice. Il symbolise les premiers élans puissants d’expression ou de désir, l’enthousiasme qui pousse à l’action sans finalité encore définie. C’est la carte de l’élan vital, souvent incontrôlé.
