@@ -204,7 +204,7 @@ ${spreadContent}
   ? [{ role: "user", content: userMessage }]
   : [{
       role: "user",
-      content: `Ma question est : ${question}. C'est mon premier tour après le tirage. Donne-moi ton interprétation complète en suivant la structure demandée.`
+      content: `Les cartes tirées sont : ${cardNames}. Ma question est : ${question}. C'est mon premier tour après le tirage. Donne-moi ton interprétation complète en suivant la structure demandée.`
     }];
       
   return [{ role: "system", content: systemContent }, ...safeHistory, ...turn];

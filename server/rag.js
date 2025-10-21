@@ -31,52 +31,30 @@ function cosine(a, b) {
 }
 
 export async function detectSpreadFromQuestion(question) {
-  const systemPrompt = `
-    Tu es un expert en tarot et en psychologie. Ton unique rôle est de classifier la question de l'utilisateur pour déterminer le type de tirage de tarot le plus approprié.
+  if (!STORE.length) return "tirage-conseil";
 
-    Tu as deux options :
-    1.  "tirage-verite" : Choisis cette option si la question révèle une peur profonde, un doute existentiel, un blocage, une quête de vérité cachée, ou un besoin de comprendre les causes profondes d'une situation.
-    2.  "tirage-conseil" : Choisis cette option pour toutes les autres questions, notamment celles qui demandent un conseil pratique, une orientation générale, ou une aide à la décision.
-
-    Exemples pour "tirage-verite" :
-    - "J'ai peur de sortir dans la rue."
-    - "J'ai peur que mon mari me trompe."
-    - "Est-ce que je vais trouver l'homme de ma vie ?"
-    - "On m'a proposé un projet mais j'ai un blocage."
-    - "Je ne sais pas pourquoi je sabote mes relations."
-
-    Exemples pour "tirage-conseil" :
-    - "Que dois-je faire pour améliorer ma carrière ?"
-    - "J'hésite entre deux offres d'emploi, que me conseillez-vous ?"
-    - "Comment puis-je mieux communiquer avec mon fils ?"
-
-    Ta réponse DOIT être UNIQUEMENT "tirage-verite" ou "tirage-conseil", sans aucune autre explication, ponctuation ou texte.
-  `.trim();
-
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: question },
-      ],
-      temperature: 0,
-      max_tokens: 5,
-    });
-
-    const result = response.choices[0]?.message?.content?.trim();
-
-    if (result === "tirage-verite" || result === "tirage-conseil") {
-      console.log(`[rag] Classification de la question : "${question}" → ${result}`);
-      return result;
-    } else {
-      console.warn(`[rag] Classification inattendue reçue : "${result}". Utilisation du tirage par défaut.`);
-      return "tirage-conseil";
-    }
-  } catch (error) {
-    console.error("[rag] Erreur lors de la classification de la question:", error);
+  // On ne cherche que parmi les fiches de tirage
+  const spreads = STORE.filter((s) => s.meta?.type === "spread");
+  if (!spreads.length) {
+    console.warn("[rag] Aucune fiche de tirage (type: spread) trouvée dans le store.");
     return "tirage-conseil";
   }
+
+  const qv = await embed(String(question).slice(0, 4000));
+
+  const scored = spreads.map((r) => ({
+    id: r.id,
+    score: cosine(qv, r.embedding),
+  }));
+
+  scored.sort((a, b) => b.score - a.score);
+
+  const bestMatch = scored[0];
+  const spreadId = bestMatch.id.replace(/\.md$/, ""); // "tirage-verite.md" -> "tirage-verite"
+
+  console.log(`[rag] Détection du tirage pour "${question}" → ${spreadId} (score: ${bestMatch.score.toFixed(3)})`);
+
+  return spreadId;
 }
 
 async function embed(text) {
