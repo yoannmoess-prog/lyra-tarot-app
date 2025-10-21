@@ -10,7 +10,6 @@ import rateLimit from "express-rate-limit";
 import { initRag, detectSpreadFromQuestion } from "./rag.js";
 import OpenAI from "openai";
 import fs from "fs";
-import path from "path";
 
 // --- Configuration initiale ---
 const __filename = fileURLToPath(import.meta.url);
