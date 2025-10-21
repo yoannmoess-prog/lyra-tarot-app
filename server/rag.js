@@ -1,4 +1,4 @@
-// server/rag.js — charge build/rag/index.vec.jsonl en mémoire + recherche cosinus
+// server/rag.js — avec logique de détection de tirage
 import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
@@ -7,21 +7,32 @@ import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(process.cwd(), "server/.env") });
 
 const LLM_BASE_URL = (process.env.LLM_BASE_URL || "https://api.openai.com").replace(/\/+$/, "");
-const LLM_API_KEY  = process.env.LLM_API_KEY || "";
-const EMB_MODEL    = process.env.RAG_EMBED_MODEL || "text-embedding-3-small";
-const STORE_PATH   = process.env.RAG_STORE || "build/rag/index.vec.jsonl";
+const LLM_API_KEY = process.env.LLM_API_KEY || "";
+const EMB_MODEL = process.env.RAG_EMBED_MODEL || "text-embedding-3-small";
+const STORE_PATH = process.env.RAG_STORE || "build/rag/index.vec.jsonl";
 
 let STORE = []; // { id, text, meta, embedding: number[] }[]
 
 function norm(v) {
-  let s = 0; for (let i = 0; i < v.length; i++) s += v[i] * v[i];
+  let s = 0;
+  for (let i = 0; i < v.length; i++) s += v[i] * v[i];
   const n = Math.sqrt(s) || 1;
   return v.map((x) => x / n);
 }
+
 function cosine(a, b) {
-  let s = 0; const L = Math.min(a.length, b.length);
+  let s = 0;
+  const L = Math.min(a.length, b.length);
   for (let i = 0; i < L; i++) s += a[i] * b[i];
   return s;
+}
+
+export function detectSpreadFromQuestion(question) {
+  const q = question.toLowerCase();
+  if (q.includes("peur") || q.includes("vérité") || q.includes("vérités") || q.includes("direction")) {
+    return "tirage-verite"; // ID du fichier .md
+  }
+  return "tirage-conseil"; // tirage par défaut
 }
 
 async function embed(text) {
@@ -74,7 +85,9 @@ export async function searchRag(query, k = 6, opts = {}) {
   if (!STORE.length) return [];
   const qv = await embed(String(query).slice(0, 4000));
   const scored = STORE.map((r) => ({
-    id: r.id, text: r.text, meta: r.meta,
+    id: r.id,
+    text: r.text,
+    meta: r.meta,
     score: cosine(qv, r.embedding),
   }));
   scored.sort((a, b) => b.score - a.score);
@@ -85,7 +98,7 @@ export async function searchRag(query, k = 6, opts = {}) {
 export function formatRagContext(hits) {
   if (!hits?.length) return "";
   const blocks = hits.map((h, i) => {
-    const tag = h.meta?.title || h.meta?.id || h.meta?.type || `source ${i+1}`;
+    const tag = h.meta?.title || h.meta?.id || h.meta?.type || `source ${i + 1}`;
     return `— ${tag}\n${h.text}`;
   });
   const joined = blocks.join("\n\n").slice(0, 1800);
