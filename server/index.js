@@ -241,7 +241,7 @@ app.post("/api/lyra/stream", async (req, res) => {
     const spreadId = await detectSpreadFromQuestion(question);
 
     // 2. Charger le contenu du fichier .md correspondant
-    const spreadPath = path.join(process.cwd(), "build/rag/spreads", `${spreadId}.md`);
+    const spreadPath = path.join(process.cwd(), "fiches/spreads", `${spreadId}.md`);
     let spreadContent = "";
     try {
       spreadContent = fs.readFileSync(spreadPath, "utf8");

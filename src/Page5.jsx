@@ -42,15 +42,6 @@ function firstNameNice(s) {
   return first[0].toLocaleUpperCase("fr-FR") + first.slice(1);
 }
 
-function splitIntoBubbles(text, max = 3) {
-  if (!text) return [""];
-  const parts = String(text).split(/\r?\n\s*\r?\n+/);
-  if (parts.length <= max) return parts;
-  const head = parts.slice(0, max - 1);
-  const tail = parts.slice(max - 1).join("\n\n");
-  return [...head, tail];
-}
-
 function getRandomInitialThinkingTime() {
   return Math.floor(Math.random() * 1001) + 1000; // 1–2 sec
 }
@@ -369,20 +360,16 @@ export default function Page5() {
           >
             {conv.map((m) =>
               m.role === "lyra" ? (
-                <React.Fragment key={m.id}>
-                  {splitIntoBubbles(m.text, 3).map((seg, idx) => (
-                    <div key={`${m.id}-${idx}`} className={`bubble lyra${idx > 0 ? " stacked" : ""} lyra-fadein`}>
-                      <div className="who">LYRA</div>
-                      <div className="msg">
-                        {seg.split("\n").map((line, i) => (
-                          <p key={i} style={{ margin: "6px 0" }}>
-                            {line || "\u00A0"}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </React.Fragment>
+                <div key={m.id} className="bubble lyra lyra-fadein">
+                  <div className="who">LYRA</div>
+                  <div className="msg">
+                    {m.text.split("\n").map((line, i) => (
+                      <p key={i} style={{ margin: "6px 0" }}>
+                        {line || "\u00A0"}
+                      </p>
+                    ))}
+                  </div>
+                </div>
               ) : (
                 <div key={m.id} className="bubble you you-fadein">
                   <div className="who">VOUS</div>
