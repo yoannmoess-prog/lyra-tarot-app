@@ -9,7 +9,10 @@ import path from "node:path";
 import readline from "node:readline";
 import dotenv from "dotenv";
 
-dotenv.config({ path: path.resolve(process.cwd(), "server/.env") });
+// On ne charge le .env que s'il existe. En CI, les variables sont ailleurs.
+if (fs.existsSync(path.resolve(process.cwd(), "server/.env"))) {
+  dotenv.config({ path: path.resolve(process.cwd(), "server/.env") });
+}
 
 const LLM_BASE_URL = (process.env.LLM_BASE_URL || "https://api.openai.com").replace(/\/+$/, "");
 const LLM_API_KEY = process.env.LLM_API_KEY || "";
@@ -27,9 +30,9 @@ const inAbs  = path.resolve(process.cwd(), inFile);
 const outAbs = path.resolve(process.cwd(), outFile);
 
 if (!LLM_API_KEY) {
-  console.warn("[embed] ⚠️  LLM_API_KEY manquante dans server/.env — génération d'un fichier vide.");
-  fs.writeFileSync(outAbs, "");
-  process.exit(0);
+  console.error("[embed] ❌ LLM_API_KEY est manquante.");
+  console.error("[embed]  çözüm: Renseignez-la dans server/.env ou dans les secrets de votre environnement CI/CD.");
+  process.exit(1);
 }
 
 console.log(`[embed] modèle utilisé : ${EMB_MODEL}`);
