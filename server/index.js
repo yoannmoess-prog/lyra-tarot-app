@@ -218,7 +218,7 @@ app.post("/api/lyra/stream", async (req, res) => {
       chunkCounter++;
       const content = chunk.choices[0]?.delta?.content || "";
       if (content) {
-        res.write(`data: \${JSON.stringify(content)}\n\n`);
+        res.write(`data: ${JSON.stringify(content)}\n\n`);
       }
     }
 
