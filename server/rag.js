@@ -31,6 +31,17 @@ function cosine(a, b) {
 }
 
 export async function detectSpreadFromQuestion(question) {
+  // 1. Détection par mots-clés pour le "tirage-vérité"
+  const truthKeywords = ["crains", "peur", "doute", "anxiété", "angoisse", "pas à la hauteur"];
+  const lowerCaseQuestion = question.toLowerCase();
+  for (const keyword of truthKeywords) {
+    if (lowerCaseQuestion.includes(keyword)) {
+      console.log(`[rag] Mot-clé de peur détecté ("${keyword}"). Forçage du tirage-vérité.`);
+      return "tirage-verite";
+    }
+  }
+
+  // 2. Si aucun mot-clé n'est trouvé, utiliser la recherche sémantique (RAG)
   if (!STORE.length) return "tirage-conseil";
 
   // On ne cherche que parmi les fiches de tirage
@@ -50,7 +61,9 @@ export async function detectSpreadFromQuestion(question) {
   scored.sort((a, b) => b.score - a.score);
 
   const bestMatch = scored[0];
-  const spreadId = bestMatch.id.replace(/\.md$/, ""); // "tirage-verite.md" -> "tirage-verite"
+  // Extrait l'ID du tirage (ex: "tirage-verite") à partir de l'ID du chunk (ex: "spread:tirage-verite:description:1")
+  const idParts = bestMatch.id.split(":");
+  const spreadId = idParts.length > 1 && idParts[0] === "spread" ? idParts[1] : "tirage-conseil";
 
   console.log(`[rag] Détection du tirage pour "${question}" → ${spreadId} (score: ${bestMatch.score.toFixed(3)})`);
 
