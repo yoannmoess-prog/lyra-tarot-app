@@ -58,6 +58,7 @@ export default function Page5() {
   const niceName = useMemo(() => firstNameNice(name), [name]);
   const question = useMemo(() => (state?.question || "").trim(), [state?.question]);
   const cards = useMemo(() => state?.cards || [], [state?.cards]);
+  const spreadType = useMemo(() => state?.spreadType || "tirage-conseil", [state?.spreadType]);
 
   const [pageLoaded, setPageLoaded] = useState(false);
   useEffect(() => {
@@ -214,7 +215,7 @@ export default function Page5() {
 
     const fetchInitialLyraResponse = () => {
       const cardNames = finalNames.filter(Boolean);
-      const payload = { name: niceName, question, cards: cardNames, userMessage: "", history: [] };
+      const payload = { name: niceName, question, cards: cardNames, spreadType, userMessage: "", history: [] };
       showLyraStreamingResponse(payload, []);
     };
 
@@ -254,7 +255,7 @@ export default function Page5() {
       content: m.text,
     }));
 
-    const payload = { name: niceName, question, cards: finalNames.filter(Boolean), userMessage: msg, history };
+    const payload = { name: niceName, question, cards: finalNames.filter(Boolean), spreadType, userMessage: msg, history };
     showLyraStreamingResponse(payload, currentConv);
   };
 
@@ -289,6 +290,9 @@ export default function Page5() {
       <main className="page5-main-scroll">
         <div className="final-stack">
           <section className="final-hero" ref={spreadRef}>
+            <div className="spread-title">
+              {spreadType.replace(/-/g, ' ')}
+            </div>
             <div className={`final-rail appear-slow${sealed ? " sealed" : ""}`} ref={finalRailRef}>
               {[0, 1, 2].map((i) => (
                 <div key={`final-${i}`} className="final-card-outer">

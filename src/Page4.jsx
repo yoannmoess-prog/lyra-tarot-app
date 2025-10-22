@@ -153,7 +153,7 @@ export default function Page4() {
           setShuffleActive(false);
           setTimeout(() => {
             setBoardFading(true);
-            setTimeout(() => nav("/chat", { state: { name, question, cards: updatedChosenCards, isNew: true } }), DUR.boardFade);
+            setTimeout(() => nav("/chat", { state: { name, question, cards: updatedChosenCards, spreadType, isNew: true } }), DUR.boardFade);
           }, DUR.waitBeforeRedirect);
         }
         return newSlots;
