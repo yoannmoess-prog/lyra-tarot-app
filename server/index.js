@@ -221,6 +221,20 @@ app.get("/", (_, res) => {
 
 app.get("/api/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
 
+app.post("/api/spread", async (req, res) => {
+  const { question } = req.body;
+  if (!question) {
+    return res.status(400).json({ error: "La question est requise." });
+  }
+  try {
+    const spreadId = await detectSpreadFromQuestion(question);
+    res.json({ spreadId });
+  } catch (error) {
+    console.error("[api/spread] Erreur:", error);
+    res.status(500).json({ error: "Erreur lors de la détection du tirage." });
+  }
+});
+
 app.post("/api/lyra/stream", async (req, res) => {
   console.log("[lyra] /api/lyra/stream: Requête reçue avec le corps:", JSON.stringify(req.body, null, 2));
   

@@ -126,16 +126,6 @@ function Page3() {
         }, DUR.ovHold));
       }, 500)); // 500ms de "background vide"
     }, DUR.formOut));
-
-    // 🔄 Appel à l’IA en arrière-plan (sans bloquer le front)
-    fetch("/api/question", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: q }),
-    }).catch((err) => {
-      console.error("Erreur IA : ", err); // ← utile en dev
-      // TODO : gérer un fallback plus tard si besoin
-    });
   }, [phase, question, navigate, name]);
 
   useEffect(() => {
