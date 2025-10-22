@@ -32,13 +32,16 @@ function cosine(a, b) {
 
 export async function detectSpreadFromQuestion(question) {
   // 1. Détection par mots-clés pour le "tirage-vérité"
-  const truthKeywords = ["crains", "peur", "doute", "anxiété", "angoisse", "pas à la hauteur"];
-  const lowerCaseQuestion = question.toLowerCase();
-  for (const keyword of truthKeywords) {
-    if (lowerCaseQuestion.includes(keyword)) {
-      console.log(`[rag] Mot-clé de peur détecté ("${keyword}"). Forçage du tirage-vérité.`);
-      return "tirage-verite";
-    }
+  // Utilise une regex pour une détection plus robuste et insensible à la casse.
+  const truthKeywords = [
+    "peur", "crain", "dout", "anxiété", "angoisse",
+    "pas à la hauteur", "inquiet", "stress", "tracass"
+  ];
+  const truthRegex = new RegExp(truthKeywords.join('|'), 'i');
+
+  if (truthRegex.test(question)) {
+    console.log(`[rag] Mot-clé de peur détecté. Forçage du tirage-vérité.`);
+    return "tirage-verite";
   }
 
   // 2. Si aucun mot-clé n'est trouvé, utiliser la recherche sémantique (RAG)
