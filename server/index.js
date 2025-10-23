@@ -345,4 +345,7 @@ app.listen(PORT, () => {
   console.log(`Lyra backend on http://localhost:${PORT}`);
   console.log(`[lyra] LLM key: ${LLM_API_KEY ? "présente" : "absente"}`);
   console.log(`[lyra] Model: ${LLM_MODEL}`);
+  console.log("---");
+  console.log("[lyra-backend] Version du code : 2.0 - CORRECTIF ACTIF");
+  console.log("---");
 });
