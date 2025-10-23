@@ -1,10 +1,10 @@
 ---
-id: spread-conseil
+id: spread-advice
 name: "Tirage-conseil"
 type: spread
 cards: 3
 default: true
-tags: ["spread", "spread-conseil", "tirage-3-cartes"]
+tags: ["spread", "spread-advice", "tirage-3-cartes"]
 ---
 
 ## Positions
