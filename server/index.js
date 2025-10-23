@@ -200,12 +200,16 @@ ${spreadContent}
   // Limite l'historique aux 10 derniers messages pour éviter les dépassements
   const safeHistory = Array.isArray(history) ? history.slice(-10) : [];
   
-  const turn = userMessage
-  ? [{ role: "user", content: userMessage }]
-  : [{
-      role: "user",
-      content: `Les cartes tirées sont : ${cardNames}. Ma question est : ${question}. C'est mon premier tour après le tirage. Donne-moi ton interprétation complète en suivant la structure demandée.`
-    }];
+  // Détermine s'il s'agit du premier tour en se basant sur la présence d'un historique.
+  // C'est plus robuste que de se fier au contenu de `userMessage`.
+  const isFirstTurn = !safeHistory || safeHistory.length === 0;
+
+  const turn = isFirstTurn
+    ? [{
+        role: "user",
+        content: `Les cartes tirées sont : ${cardNames}. Ma question est : ${question}. C'est mon premier tour après le tirage. Donne-moi ton interprétation complète en suivant la structure demandée.`
+      }]
+    : [{ role: "user", content: userMessage }];
       
   return [{ role: "system", content: systemContent }, ...safeHistory, ...turn];
 }
