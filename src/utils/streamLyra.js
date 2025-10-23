@@ -2,7 +2,7 @@
 export async function* streamLyra(payload, onError) {
   const API_BASE_URL = process.env.VITE_API_BASE_URL || '';
   try {
-    const res = await fetch(`${API_BASE_URL}/lyra/stream`, {
+    const res = await fetch(`${API_BASE_URL}/api/lyra/stream`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
