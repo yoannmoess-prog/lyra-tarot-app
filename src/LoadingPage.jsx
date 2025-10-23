@@ -7,10 +7,11 @@ const LoadingPage = () => {
   const navigate = useNavigate();
   const { name, question } = location.state || { name: 'Utilisateur', question: '' };
 
+  // Durée de chaque étape de l'animation ajustée à 1.5s
   const loadingSteps = [
     { text: 'Réflexion en cours...', duration: 1500 },
-    { text: 'Choix du meilleur tirage...', duration: 2000 },
-    { text: 'Préparation des cartes...', duration: 1000 },
+    { text: 'Choix du meilleur tirage...', duration: 1500 },
+    { text: 'Préparation des cartes...', duration: 1500 },
   ];
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -18,13 +19,12 @@ const LoadingPage = () => {
 
   useEffect(() => {
     if (!question) {
-      // Si aucune question n'est fournie, on redirige vers la page de la question
       console.warn("Aucune question trouvée, redirection vers la page de question.");
       navigate('/question');
       return;
     }
 
-    // Démarre l'animation des étapes
+    // Promesse qui gère l'animation des étapes
     const animateSteps = async () => {
       for (let i = 0; i < loadingSteps.length; i++) {
         setCurrentStep(i);
@@ -33,7 +33,7 @@ const LoadingPage = () => {
       }
     };
 
-    // Appelle l'API pour déterminer le tirage
+    // Promesse qui appelle l'API pour déterminer le tirage
     const fetchSpread = async () => {
       try {
         const response = await fetch('/api/spread', {
@@ -45,23 +45,28 @@ const LoadingPage = () => {
           throw new Error('La réponse du serveur n\'était pas OK');
         }
         const data = await response.json();
-        const spreadId = data.spreadId;
-
-        console.log(`Tirage sélectionné : ${spreadId}. Redirection...`);
-
-        // Redirige vers la page de tirage correspondante
-        // ex: /spread-advice ou /spread-truth
-        navigate(`/spread-${spreadId.replace('spread-', '')}`, { state: { name, question } });
-
+        return data.spreadId; // Retourne l'ID du tirage
       } catch (error) {
         console.error("Erreur lors de la récupération du tirage :", error);
-        // En cas d'erreur, on redirige vers le tirage par défaut
-        navigate('/spread-advice', { state: { name, question } });
+        return 'spread-advice'; // Retourne le tirage par défaut en cas d'erreur
       }
     };
 
-    animateSteps();
-    fetchSpread();
+    // Exécute l'animation et l'appel API en parallèle
+    // et attend que les deux soient terminés
+    const runLoadingSequence = async () => {
+      const [spreadId] = await Promise.all([
+        fetchSpread(),
+        animateSteps()
+      ]);
+
+      console.log(`Animation terminée. Tirage sélectionné : ${spreadId}. Redirection...`);
+
+      // Redirige vers la page de tirage correspondante APRÈS la fin de l'animation
+      navigate(`/spread-${spreadId.replace('spread-', '')}`, { state: { name, question } });
+    };
+
+    runLoadingSequence();
 
   }, [question, name, navigate]);
 
