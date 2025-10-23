@@ -31,16 +31,30 @@ function cosine(a, b) {
 }
 
 export async function detectSpreadFromQuestion(question) {
-  // Priorité à la détection par LLM si la clé API est disponible
+  console.log(`[rag] Début de la détection de tirage pour la question : "${question}"`);
+
+  // Étape 1 : Détection prioritaire par mots-clés
+  const truthKeywords = [
+    "peur", "crain", "dout", "anxiété", "angoisse", "permis de conduire",
+    "pas à la hauteur", "inquiet", "stress", "tracass"
+  ];
+  const truthRegex = new RegExp(truthKeywords.join('|'), 'i');
+
+  if (truthRegex.test(question)) {
+    console.log(`[rag] Méthode : Mots-clés. Mot-clé de peur/doute détecté. Forçage du spread-truth.`);
+    return "spread-truth";
+  }
+
+  // Étape 2 : Si aucun mot-clé n'est trouvé, utiliser le LLM si la clé API est disponible
   if (process.env.LLM_API_KEY && process.env.LLM_API_KEY !== "DUMMY_KEY") {
-    console.log(`[rag] Début de la détection de tirage par LLM pour la question : "${question}"`);
+    console.log(`[rag] Méthode : LLM. Aucun mot-clé détecté, passage à la détection par LLM.`);
 
     const systemPrompt = `
 Tu es un expert du Tarot de Marseille. Ton unique rôle est de choisir le tirage (spread) le plus adapté à la question de l'utilisateur.
 Tu as deux options de tirage :
 1. **spread-advice**: Pour les questions générales (développement personnel, choix, relations, carrière).
-2. **spread-truth**: Spécifiquement pour les questions exprimant peur, doute, anxiété, ou angoisse.
-Analyse la question et réponds UNIQUEMENT avec "spread-advice" ou "spread-truth".`.trim();
+2. **spread-truth**: Spécifiquement pour les questions exprimant une peur, un doute, une anxiété ou une angoisse profonde.
+Analyse la sémantique de la question et réponds UNIQUEMENT avec "spread-advice" ou "spread-truth". Ne te base pas uniquement sur des mots-clés, mais sur le sentiment général de la question.`.trim();
 
     try {
       const response = await openai.chat.completions.create({
@@ -59,28 +73,17 @@ Analyse la question et réponds UNIQUEMENT avec "spread-advice" ou "spread-truth
       if (spreadId === "spread-advice" || spreadId === "spread-truth") {
         return spreadId;
       }
-      console.warn(`[rag] Le LLM a renvoyé une valeur inattendue. Basculement vers la logique de secours.`);
+      console.warn(`[rag] Le LLM a renvoyé une valeur inattendue ("${spreadId}"). Basculement vers le tirage par défaut.`);
     } catch (error) {
-      console.error("[rag] Erreur lors de l'appel au LLM. Basculement vers la logique de secours.");
+      console.error("[rag] Erreur lors de l'appel au LLM. Basculement vers le tirage par défaut.", error);
     }
   }
 
-  // Logique de secours : détection par mots-clés
-  console.log('[rag] Utilisation de la logique de détection par mots-clés (secours).');
-  const truthKeywords = [
-    "peur", "crain", "dout", "anxiété", "angoisse",
-    "pas à la hauteur", "inquiet", "stress", "tracass"
-  ];
-  const truthRegex = new RegExp(truthKeywords.join('|'), 'i');
-
-  if (truthRegex.test(question)) {
-    console.log(`[rag] Mot-clé de peur détecté. Forçage du spread-truth.`);
-    return "spread-truth";
-  }
-
-  console.log(`[rag] Aucun mot-clé de peur détecté. Utilisation du spread-advice par défaut.`);
+  // Étape 3 : Tirage par défaut si le LLM n'est pas disponible ou échoue
+  console.log(`[rag] Méthode : Défaut. Utilisation du spread-advice.`);
   return "spread-advice";
 }
+
 
 async function embed(text) {
   if (!LLM_API_KEY) throw new Error("LLM_API_KEY manquante");
