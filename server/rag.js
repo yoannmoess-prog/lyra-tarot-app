@@ -47,7 +47,7 @@ export async function detectSpreadFromQuestion(question) {
   // 2. Si aucun mot-clé n'est trouvé, utiliser la recherche sémantique (RAG)
   if (!STORE.length) return "tirage-conseil";
 
-  // On ne cherche que parmi les fiches de tirage
+  // On ne cherche que parmi les records de tirage
   const spreads = STORE.filter((s) => s.meta?.type === "spread");
   if (!spreads.length) {
     console.warn("[rag] Aucune fiche de tirage (type: spread) trouvée dans le store.");

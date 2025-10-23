@@ -9,7 +9,7 @@ export async function indexDocuments() {
 
   try {
     console.log("🛠️  Conversion Markdown → JSONL...");
-    await execAsync("node scripts/md2jsonl.mjs fiches build/rag/index.jsonl");
+    await execAsync("node scripts/md2jsonl.mjs records build/rag/index.jsonl");
 
     console.log("🔗 Embedding JSONL → Vectors...");
     await execAsync("node scripts/embed.mjs build/rag/index.jsonl build/rag/index.vec.jsonl");
