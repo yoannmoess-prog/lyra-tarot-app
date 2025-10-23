@@ -40,7 +40,14 @@ export async function detectSpreadFromQuestion(question) {
   ];
   const truthRegex = new RegExp(truthKeywords.join('|'), 'i');
 
-  if (truthRegex.test(question)) {
+  // --- LOGS DE DÉBOGAGE AMÉLIORÉS ---
+  console.log(`[rag-debug] Question reçue: "${question}"`);
+  console.log(`[rag-debug] Regex utilisée: ${truthRegex}`);
+  const isMatch = truthRegex.test(question);
+  console.log(`[rag-debug] Résultat du test de la regex: ${isMatch}`);
+  // --- FIN DES LOGS DE DÉBOGAGE ---
+
+  if (isMatch) {
     console.log(`[rag] Méthode : Mots-clés. Mot-clé de peur/doute détecté. Forçage du spread-truth.`);
     return "spread-truth";
   }
