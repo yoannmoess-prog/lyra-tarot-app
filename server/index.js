@@ -253,7 +253,7 @@ app.post("/api/lyra/stream", async (req, res) => {
 
     // Le spreadId est maintenant fourni par le client.
     // On charge directement le contenu du fichier .md correspondant.
-    const spreadPath = path.join(process.cwd(), "fiches/spreads", `${spreadId}.md`);
+    const spreadPath = path.join(process.cwd(), "records/spreads", `${spreadId}.md`);
     let spreadContent = "";
     try {
       spreadContent = fs.readFileSync(spreadPath, "utf8");

@@ -4,7 +4,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import removeMd from "remove-markdown";
 
-const ROOT = process.argv[2] || "fiches";
+const ROOT = process.argv[2] || "records";
 const OUTFILE = process.argv[3] || "build/rag/index.jsonl";
 const DRY = process.argv.includes("--dry");
 
@@ -95,9 +95,9 @@ function baseIdFromFM(fm, filePath) {
 }
 
 function inferType(p) {
-  if (p.includes("/cartes/") || /carte-/.test(p)) return "carte";
+  if (p.includes("/cards/") || /card-/.test(p)) return "card";
   if (p.includes("/themes/") || /theme-/.test(p)) return "theme";
-  if (p.includes("/auteurs/") || /auteur-/.test(p)) return "auteur";
+  if (p.includes("/authors/") || /author-/.test(p)) return "author";
   if (p.includes("/spreads/") || /spread-/.test(p)) return "spread";
   return "note";
 }
