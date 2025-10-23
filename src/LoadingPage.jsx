@@ -36,8 +36,10 @@ const LoadingPage = () => {
     // Promesse qui appelle l'API pour déterminer le tirage
     const fetchSpread = async () => {
       try {
-        // Utilise un chemin relatif simple qui sera intercepté par le proxy
-        const response = await fetch('/api/spread', {
+        // Construit l'URL de l'API en utilisant la variable d'environnement VITE_API_BASE_URL.
+        // Si elle n'est pas définie (développement local), utilise un chemin relatif pour le proxy.
+        const apiUrl = import.meta.env.VITE_API_BASE_URL || '';
+        const response = await fetch(`${apiUrl}/api/spread`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ question }),

@@ -249,17 +249,19 @@ app.post("/api/lyra/stream", async (req, res) => {
   }
   
   try {
-    const { name, question, cards, userMessage, history, spreadId } = req.body || {};
+    const { name, question, cards, userMessage, history } = req.body || {};
 
-    // Le spreadId est maintenant fourni par le client.
-    // On charge directement le contenu du fichier .md correspondant.
+    // Détecte le 'spreadId' à partir de la question de l'utilisateur.
+    const spreadId = await detectSpreadFromQuestion(question);
+
+    // Charge le contenu du tirage en se basant sur le 'spreadId' détecté.
     const spreadPath = path.join(process.cwd(), "records/spreads", `${spreadId}.md`);
     let spreadContent = "";
     try {
       spreadContent = fs.readFileSync(spreadPath, "utf8");
     } catch (e) {
-      console.warn(`[server] Fichier de tirage "${spreadId}.md" non trouvé. Utilisation du contenu par défaut.`);
-      // Vous pouvez définir un contenu par défaut ici si nécessaire
+      console.warn(`[server] Fichier de tirage "${spreadId}.md" non trouvé. Utilisation d'un contenu par défaut.`);
+      // Vous pouvez définir un contenu par défaut ici si nécessaire.
     }
     
     // Validation des entrées
