@@ -1,0 +1,74 @@
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  background-color: #0a1b36; /* Arrière-plan sombre cohérent avec le thème */
+  color: white;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.loading-header {
+  margin-bottom: 40px;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-family: 'Sorts Mill Goudy', serif;
+}
+
+.loading-header p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.loading-animation ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 300px;
+  text-align: left;
+}
+
+.loading-animation li {
+  margin-bottom: 15px;
+  font-size: clamp(0.9rem, 1.4vw, 1.1rem);
+  opacity: 0.5;
+  transition: opacity 0.5s ease-in-out;
+  display: flex;
+  align-items: center;
+}
+
+.loading-animation li .checkmark {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  margin-right: 15px;
+  text-align: center;
+  line-height: 18px;
+  color: transparent;
+  transition: all 0.3s ease;
+}
+
+.loading-animation li.active {
+  opacity: 1;
+}
+
+.loading-animation li.active .checkmark {
+  border-color: white;
+}
+
+.loading-animation li.completed {
+  opacity: 1;
+}
+
+.loading-animation li.completed .checkmark {
+  background-color: #4CAF50; /* Vert pour indiquer le succès */
+  border-color: #4CAF50;
+  color: white;
+}
+
+.loading-animation li.pending {
+  opacity: 0.3;
+}

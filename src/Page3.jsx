@@ -77,8 +77,7 @@ function Page3() {
   const { state } = useLocation();
   const name = state?.name;
   const [question, setQuestion] = useState("");
-  const [phase, setPhase] = useState("form"); // "form", "formOut", "ov1In", "ov1Hold", "ov1Out", "ov2In", "ov2Hold", "ov2Out"
-  const [overlayText, setOverlayText] = useState("");
+  const [phase, setPhase] = useState("form"); // "form", "formOut"
   const inputRef = useRef(null);
   const timers = useRef([]);
 
@@ -100,33 +99,12 @@ function Page3() {
 
     setPhase("formOut");
 
+    // Redirige vers la page de chargement après l'animation de sortie
     timers.current.push(setTimeout(() => {
-      // Délai "background vide"
-      timers.current.push(setTimeout(() => {
-        setOverlayText(`Très bien, ${name}.`);
-        setPhase("ov1In");
-        timers.current.push(setTimeout(() => {
-          setPhase("ov1Hold");
-          timers.current.push(setTimeout(() => {
-            setPhase("ov1Out");
-            timers.current.push(setTimeout(() => {
-              setOverlayText("Prépare-toi à tirer les cartes.");
-              setPhase("ov2In");
-              timers.current.push(setTimeout(() => {
-                setPhase("ov2Hold");
-                timers.current.push(setTimeout(() => {
-                  setPhase("ov2Out");
-                  timers.current.push(setTimeout(() => {
-                    navigate("/draw", { state: { name, question: q } });
-                  }, DUR.ovOut));
-                }, DUR.ovHold));
-              }, DUR.ovIn));
-            }, 500)); // Délai entre les phrases
-          }, DUR.ovOut));
-        }, DUR.ovHold));
-      }, 500)); // 500ms de "background vide"
+      navigate("/loading", { state: { name, question: q } });
     }, DUR.formOut));
-  }, [phase, question, navigate, name]);
+
+  }, [phase, question, navigate, name, DUR.formOut]);
 
   useEffect(() => {
     const down = (e) => {
@@ -160,56 +138,37 @@ function Page3() {
     return shuffled.slice(0, 5);
   }, []);
 
-  const showForm = phase === "form" || phase === "formOut";
-  const showOverlay = phase.startsWith("ov");
-
-  let overlayClass = "";
-  if (phase === "ov1In" || phase === "ov1Hold" || phase === "ov2In" || phase === "ov2Hold") {
-    overlayClass = "overlay-in";
-  } else if (phase === "ov1Out" || phase === "ov2Out") {
-    overlayClass = "overlay-out";
-  }
-
-
   return (
     <div className="question-wrap fp-wrap">
-      {showForm && (
-        <form
-          className={`question-inner ${phase === "form" ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""}`}
-          onSubmit={(e) => { e.preventDefault(); onSubmit(); }}
-        >
-          <div className="question-title">{randomIntro}</div>
-          <div className="q-shuffle is-on">
-            {[...Array(5)].map((_, i) => (
-              <div
-                className="card"
-                key={i}
-                style={{ "--rot": `${-14 + i * 7}deg`, "--shift": `${-20 + i * 10}%` }}
-              />
-            ))}
-          </div>
-          <div className="input-bubble textarea">
-            <textarea
-              ref={inputRef}
-              rows="1"
-              placeholder="Écris ta question ici..."
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
+      <form
+        className={`question-inner ${phase === "form" ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""}`}
+        onSubmit={(e) => { e.preventDefault(); onSubmit(); }}
+      >
+        <div className="question-title">{randomIntro}</div>
+        <div className="q-shuffle is-on">
+          {[...Array(5)].map((_, i) => (
+            <div
+              className="card"
+              key={i}
+              style={{ "--rot": `${-14 + i * 7}deg`, "--shift": `${-20 + i * 10}%` }}
             />
-            <button type="submit" className="send-btn" aria-label="Envoyer la question">
-              <span className="material-symbols-outlined" style={{ color: question ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)' }}>
-                arrow_forward
-              </span>
-            </button>
-          </div>
-        </form>
-      )}
-
-      {showOverlay && (
-        <div className={`question-overlay ${overlayClass}`}>
-          <div className="overlay-text">{overlayText}</div>
+          ))}
         </div>
-      )}
+        <div className="input-bubble textarea">
+          <textarea
+            ref={inputRef}
+            rows="1"
+            placeholder="Écris ta question ici..."
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+          />
+          <button type="submit" className="send-btn" aria-label="Envoyer la question">
+            <span className="material-symbols-outlined" style={{ color: question ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)' }}>
+              arrow_forward
+            </span>
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

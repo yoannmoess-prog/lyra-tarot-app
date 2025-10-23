@@ -1,4 +1,4 @@
-// src/Page5.jsx — version finale sans DebugBar ni CTA secondaires
+// src/ChatTruthPage.jsx — Page de conversation pour "spread-truth"
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Modal from "./components/Modal";
@@ -8,10 +8,10 @@ import { toast } from "./utils/net";
 import "./toast.css";
 import "./chat-ux.css";
 
-import { streamLyra } from "./utils/streamLyra"; // Import de la fonction de streaming
+import { streamLyra } from "./utils/streamLyra";
 
 /* ---------------- Persistance conversation ---------------- */
-const STORAGE_KEY = "lyra:conv";
+const STORAGE_KEY = "lyra:conv:truth"; // Clé de stockage spécifique
 function loadConv() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
@@ -51,14 +51,14 @@ function getRandomThinkingTime() {
 }
 
 /* ---------------- Component ---------------- */
-export default function Page5() {
+export default function ChatTruthPage() {
   const { state } = useLocation();
   const nav = useNavigate();
   const name = useMemo(() => (state?.name || "voyageur").trim(), [state?.name]);
   const niceName = useMemo(() => firstNameNice(name), [name]);
   const question = useMemo(() => (state?.question || "").trim(), [state?.question]);
   const cards = useMemo(() => state?.cards || [], [state?.cards]);
-  const spreadType = useMemo(() => state?.spreadType || "tirage-conseil", [state?.spreadType]);
+  const spreadId = "spread-truth"; // spreadId est fixe
 
   const [pageLoaded, setPageLoaded] = useState(false);
   useEffect(() => {
@@ -87,7 +87,7 @@ export default function Page5() {
   const [youInputShown, setYouInputShown] = useState(false);
   const [youMessage, setYouMessage] = useState("");
   const [lyraTyping, setLyraTyping] = useState(false);
-  const [zoomedCard, setZoomedCard] = useState(null); // null ou index de la carte
+  const [zoomedCard, setZoomedCard] = useState(null);
   const [isSpreadVisible, setIsSpreadVisible] = useState(true);
   const [isSpreadModalOpen, setIsSpreadModalOpen] = useState(false);
 
@@ -101,7 +101,7 @@ export default function Page5() {
       ([entry]) => {
         setIsSpreadVisible(entry.isIntersecting);
       },
-      { threshold: 0.1 } // Se déclenche si 10% de l'élément est visible
+      { threshold: 0.1 }
     );
 
     const currentRef = spreadRef.current;
@@ -130,7 +130,6 @@ export default function Page5() {
     }
   };
 
-  /* ---------------- Animation des cartes ---------------- */
   useEffect(() => {
     const isNewSession = state?.isNew;
     const savedConv = loadConv();
@@ -170,7 +169,6 @@ export default function Page5() {
     };
   }, [DUR, state?.isNew]);
 
-  /* ---------------- Logique de conversation ---------------- */
   const showLyraStreamingResponse = async (payload, baseConv) => {
     setYouInputShown(false);
     setLyraTyping(true);
@@ -192,7 +190,6 @@ export default function Page5() {
         saveConv(nextConv);
         requestAnimationFrame(scrollToEnd);
       } else {
-        // En cas de réponse vide, on ne fait que masquer la bulle de réflexion
         setLyraTyping(false);
       }
     } catch (err) {
@@ -203,24 +200,23 @@ export default function Page5() {
       saveConv(baseConv);
     } finally {
       setYouInputShown(true);
-      if (lyraTyping && !lyraMessage) {
+      if (lyraTyping && !fullText) {
         setLyraTyping(false);
       }
     }
   };
 
-  /* ---------------- Première réponse IA ---------------- */
   useEffect(() => {
     if (!chatVisible || conv.length > 0) return;
 
     const fetchInitialLyraResponse = () => {
       const cardNames = finalNames.filter(Boolean);
-      const payload = { name: niceName, question, cards: cardNames, spreadType, userMessage: "", history: [] };
+      const payload = { name: niceName, question, cards: cardNames, spreadId, userMessage: "", history: [] };
       showLyraStreamingResponse(payload, []);
     };
 
     fetchInitialLyraResponse();
-  }, [chatVisible, conv.length, niceName, question, finalNames]);
+  }, [chatVisible, conv.length, niceName, question, finalNames, spreadId]);
 
   useEffect(() => {
     if (chatVisible) requestAnimationFrame(scrollToEnd);
@@ -230,7 +226,6 @@ export default function Page5() {
     requestAnimationFrame(scrollToEnd);
   }, [conv.length, lyraTyping, youInputShown]);
 
-  /* ---------------- Envoi message utilisateur ---------------- */
   const onYouSubmit = (e) => {
     if (e) e.preventDefault();
     const msg = youMessage.trim();
@@ -244,7 +239,6 @@ export default function Page5() {
     setConv(currentConv);
     saveConv(currentConv);
 
-    // Délai pour permettre au clavier de se stabiliser avant de scroller et de redonner le focus
     setTimeout(() => {
       requestAnimationFrame(scrollToEnd);
       inputRef.current?.focus();
@@ -255,15 +249,12 @@ export default function Page5() {
       content: m.text,
     }));
 
-    const payload = { name: niceName, question, cards: finalNames.filter(Boolean), spreadType, userMessage: msg, history };
+    const payload = { name: niceName, question, cards: finalNames.filter(Boolean), spreadId, userMessage: msg, history };
     showLyraStreamingResponse(payload, currentConv);
   };
 
-  /* ---------------- Render ---------------- */
   return (
-    <div
-      className={`page5-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}
-    >
+    <div className={`page5-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
       <header className="page5-header">
         <div
           className="p5-fixed-title"
@@ -286,13 +277,9 @@ export default function Page5() {
           </button>
         </div>
       </header>
-
       <main className="page5-main-scroll">
         <div className="final-stack">
           <section className="final-hero" ref={spreadRef}>
-            <div className="spread-title">
-              {spreadType.replace(/-/g, ' ')}
-            </div>
             <div className={`final-rail appear-slow${sealed ? " sealed" : ""}`} ref={finalRailRef}>
               {[0, 1, 2].map((i) => (
                 <div key={`final-${i}`} className="final-card-outer">
@@ -319,7 +306,6 @@ export default function Page5() {
               ))}
             </div>
           </section>
-
           {zoomedCard !== null && (
             <Modal onClose={() => setZoomedCard(null)}>
               <div className="zoomed-card-container">
@@ -331,7 +317,6 @@ export default function Page5() {
               </div>
             </Modal>
           )}
-
           {isSpreadModalOpen && (
             <Modal onClose={() => setIsSpreadModalOpen(false)}>
               <div className="spread-modal-container">
@@ -357,20 +342,14 @@ export default function Page5() {
               </div>
             </Modal>
           )}
-
-          <section
-            className={`chat-wrap${chatVisible ? " show" : ""}`}
-            aria-live="polite"
-          >
+          <section className={`chat-wrap${chatVisible ? " show" : ""}`} aria-live="polite">
             {conv.map((m) =>
               m.role === "lyra" ? (
                 <div key={m.id} className="bubble lyra lyra-fadein">
                   <div className="who">LYRA</div>
                   <div className="msg">
                     {m.text.split("\n").map((line, i) => (
-                      <p key={i} style={{ margin: "6px 0" }}>
-                        {line || "\u00A0"}
-                      </p>
+                      <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
                     ))}
                   </div>
                 </div>
@@ -379,21 +358,16 @@ export default function Page5() {
                   <div className="who">VOUS</div>
                   <div className="msg">
                     {m.text.split("\n").map((line, i) => (
-                      <p key={i} style={{ margin: "6px 0" }}>
-                        {line || "\u00A0"}
-                      </p>
+                      <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
                     ))}
                   </div>
                 </div>
               )
             )}
-
             {lyraTyping && (
               <div className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire">
                 <div className="dots" role="status" aria-hidden="true">
-                  <span></span>
-                  <span></span>
-                  <span></span>
+                  <span></span><span></span><span></span>
                 </div>
               </div>
             )}
@@ -401,7 +375,6 @@ export default function Page5() {
           </section>
         </div>
       </main>
-
       <footer className={`page5-footer ${chatVisible ? " show" : ""}`}>
         <div className="you-block">
           <form onSubmit={onYouSubmit} className="you-form">
@@ -419,19 +392,10 @@ export default function Page5() {
               }}
               disabled={!youInputShown}
             />
-            <button
-              type="submit"
-              className="send-btn"
-              aria-label="Envoyer"
-              title="Envoyer"
-              disabled={!youInputShown}
-            >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ color: youMessage ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)' }}
-                  >
-                    arrow_forward
-                  </span>
+            <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer" disabled={!youInputShown}>
+              <span className="material-symbols-outlined" style={{ color: youMessage ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)' }}>
+                arrow_forward
+              </span>
             </button>
           </form>
         </div>

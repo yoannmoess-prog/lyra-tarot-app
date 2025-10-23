@@ -1,10 +1,10 @@
 ---
-id: spread-verite
+id: spread-truth
 name: "Tirage de la vérité intérieure"
 type: spread
 cards: 3
 default: false
-tags: ["spread", "spread-verite", "tirage-3-cartes"]
+tags: ["spread", "spread-truth", "tirage-3-cartes"]
 ---
 
 ## Description

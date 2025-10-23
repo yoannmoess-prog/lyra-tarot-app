@@ -31,8 +31,42 @@ function cosine(a, b) {
 }
 
 export async function detectSpreadFromQuestion(question) {
-  // 1. Détection par mots-clés pour le "tirage-vérité"
-  // Utilise une regex pour une détection plus robuste et insensible à la casse.
+  // Priorité à la détection par LLM si la clé API est disponible
+  if (process.env.LLM_API_KEY && process.env.LLM_API_KEY !== "DUMMY_KEY") {
+    console.log(`[rag] Début de la détection de tirage par LLM pour la question : "${question}"`);
+
+    const systemPrompt = `
+Tu es un expert du Tarot de Marseille. Ton unique rôle est de choisir le tirage (spread) le plus adapté à la question de l'utilisateur.
+Tu as deux options de tirage :
+1. **spread-advice**: Pour les questions générales (développement personnel, choix, relations, carrière).
+2. **spread-truth**: Spécifiquement pour les questions exprimant peur, doute, anxiété, ou angoisse.
+Analyse la question et réponds UNIQUEMENT avec "spread-advice" ou "spread-truth".`.trim();
+
+    try {
+      const response = await openai.chat.completions.create({
+        model: process.env.LLM_MODEL || "gpt-4o-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: question },
+        ],
+        temperature: 0,
+        max_tokens: 10,
+      });
+
+      const spreadId = response.choices[0]?.message?.content.trim();
+      console.log(`[rag] Le LLM a choisi le tirage : "${spreadId}"`);
+
+      if (spreadId === "spread-advice" || spreadId === "spread-truth") {
+        return spreadId;
+      }
+      console.warn(`[rag] Le LLM a renvoyé une valeur inattendue. Basculement vers la logique de secours.`);
+    } catch (error) {
+      console.error("[rag] Erreur lors de l'appel au LLM. Basculement vers la logique de secours.");
+    }
+  }
+
+  // Logique de secours : détection par mots-clés
+  console.log('[rag] Utilisation de la logique de détection par mots-clés (secours).');
   const truthKeywords = [
     "peur", "crain", "dout", "anxiété", "angoisse",
     "pas à la hauteur", "inquiet", "stress", "tracass"
@@ -40,37 +74,12 @@ export async function detectSpreadFromQuestion(question) {
   const truthRegex = new RegExp(truthKeywords.join('|'), 'i');
 
   if (truthRegex.test(question)) {
-    console.log(`[rag] Mot-clé de peur détecté. Forçage du tirage-vérité.`);
-    return "tirage-verite";
+    console.log(`[rag] Mot-clé de peur détecté. Forçage du spread-truth.`);
+    return "spread-truth";
   }
 
-  // 2. Si aucun mot-clé n'est trouvé, utiliser la recherche sémantique (RAG)
-  if (!STORE.length) return "tirage-conseil";
-
-  // On ne cherche que parmi les records de tirage
-  const spreads = STORE.filter((s) => s.meta?.type === "spread");
-  if (!spreads.length) {
-    console.warn("[rag] Aucune fiche de tirage (type: spread) trouvée dans le store.");
-    return "tirage-conseil";
-  }
-
-  const qv = await embed(String(question).slice(0, 4000));
-
-  const scored = spreads.map((r) => ({
-    id: r.id,
-    score: cosine(qv, r.embedding),
-  }));
-
-  scored.sort((a, b) => b.score - a.score);
-
-  const bestMatch = scored[0];
-  // Extrait l'ID du tirage (ex: "tirage-verite") à partir de l'ID du chunk (ex: "spread:tirage-verite:description:1")
-  const idParts = bestMatch.id.split(":");
-  const spreadId = idParts.length > 1 && idParts[0] === "spread" ? idParts[1] : "tirage-conseil";
-
-  console.log(`[rag] Détection du tirage pour "${question}" → ${spreadId} (score: ${bestMatch.score.toFixed(3)})`);
-
-  return spreadId;
+  console.log(`[rag] Aucun mot-clé de peur détecté. Utilisation du spread-advice par défaut.`);
+  return "spread-advice";
 }
 
 async function embed(text) {

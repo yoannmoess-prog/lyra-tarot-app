@@ -1,7 +1,7 @@
-// src/Page4.jsx — deck → 3 cartes (DebugBar retirée)
+// src/SpreadAdvicePage.jsx — Page de tirage pour "spread-advice"
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import "./Page4.css";
+import "./Page4.css"; // Réutilise le même style
 
 /* ---------------- Card Data Helpers ---------------- */
 const FACE_MODULES = import.meta.glob("./assets/cards/*.webp", { eager: true });
@@ -44,12 +44,12 @@ function labelFrom(fileName) {
 const pick = (arr) => (arr?.length ? arr[Math.floor(Math.random() * arr.length)] : null);
 
 /* ---------------- Component ---------------- */
-export default function Page4() {
+export default function SpreadAdvicePage() {
   const { state } = useLocation();
   const nav = useNavigate();
   const name = state?.name || "voyageur";
   const question = state?.question || "";
-  const [spreadType, setSpreadType] = useState("tirage-conseil"); // par défaut
+  const spreadType = "spread-advice"; // Tirage fixe
 
   const [isLandscape, setIsLandscape] = useState(window.innerWidth > window.innerHeight);
   const [pageLoaded, setPageLoaded] = useState(false);
@@ -81,29 +81,12 @@ export default function Page4() {
       setShuffleActive(true);
     });
 
-    // Détecter le type de tirage
-    if (question) {
-      fetch("/api/spread", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.spreadId) {
-          setSpreadType(data.spreadId);
-          console.log("Spread type set to:", data.spreadId); // Pour le débogage
-        }
-      })
-      .catch(err => console.error("Error detecting spread:", err));
-    }
-
     return () => {
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(pageLoadTimer);
       cancelAnimationFrame(arriveTimer);
     };
-  }, [question]);
+  }, []);
 
   const computeFlight = (targetIndex) => {
     const deckEl = deckRef.current;
@@ -131,13 +114,9 @@ export default function Page4() {
       setPopIndex(targetIndex);
       setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
 
-      // Choisir une carte en fonction du tirage
+      // Logique pour spread-advice
+      const slot = chosenSlots.length;
       const newCard = (() => {
-        if (spreadType === "tirage-verite") {
-          return pick(FACE_POOLS.majors);
-        }
-        // Logique pour tirage-conseil
-        const slot = chosenSlots.length;
         if (slot === 0) return pick(FACE_POOLS.majors);
         if (slot === 1) return pick(FACE_POOLS.minorsValues);
         return pick(FACE_POOLS.minorsCourt);
@@ -153,7 +132,7 @@ export default function Page4() {
           setShuffleActive(false);
           setTimeout(() => {
             setBoardFading(true);
-            setTimeout(() => nav("/chat", { state: { name, question, cards: updatedChosenCards, spreadType, isNew: true } }), DUR.boardFade);
+            setTimeout(() => nav("/chat-advice", { state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
           }, DUR.waitBeforeRedirect);
         }
         return newSlots;
