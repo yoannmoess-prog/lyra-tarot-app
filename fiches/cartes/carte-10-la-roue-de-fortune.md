@@ -17,11 +17,6 @@ Cette carte évoque un tournant de vie : fin d’un cycle, début d’un autre. 
 - Sol bleu : l’inconscient mouvant, les flots de la vie
 - Double roue : nature animale et spirituelle de l’homme
 
-## Lecture / guidance (3 cartes)
-→ Enjeu : Un changement inévitable, hors de votre contrôle direct  
-→ Message : Trouve le centre, reste en toi pendant que tout tourne  
-→ Ressource interne : La capacité d’accepter l’impermanence
-
 ## Ombres & risques
 - Passivité face au destin
 - Illusion de contrôle total

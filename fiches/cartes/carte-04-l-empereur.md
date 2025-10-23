@@ -19,11 +19,6 @@ tags: ["marseille", "archetype:pere", "element:terre", "structure", "autorite"]
 - **Regard fixe** : concentration souveraine.  
 - **Couleurs rouge et or** : vitalité maîtrisée, puissance rayonnante.
 
-## Lecture / guidance (3 cartes)
-- **Enjeu** : Prendre sa place, affirmer son autorité dans un domaine de sa vie.  
-- **Message** : Appuie-toi sur des lois intérieures solides ; ordonne ton chaos.  
-- **Ressource** : Ton calme, ta capacité à décider et à tenir bon. Tu es le garant de ton monde.
-
 ## Ombres & risques
 - Autoritarisme, rigidité mentale, repli patriarcal.  
 - Besoin excessif de contrôle sur soi ou les autres.  

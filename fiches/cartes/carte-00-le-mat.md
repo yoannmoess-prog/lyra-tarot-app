@@ -18,11 +18,6 @@ Le Mat incarne un mouvement pur, une énergie en marche qui ne se laisse pas enf
 - **Pas suspendu** : en avant mais sans point d’ancrage visible, tension entre marche et déséquilibre (Ben-Dov).
 - **Pas de numéro** : carte hors-série, « entre les mondes » ; comme l’Excuse dans le tarot ancien (Camoin, Costa).
 
-## Lecture / guidance (3 cartes)
-**Enjeu —** Se confronter à un passage, à une impulsion intérieure irrépressible, quitter ce qui est connu.  
-**Message —** Ton énergie te précède : il ne s'agit pas de tout comprendre, mais de marcher avec ce qui pousse.  
-**Partie de soi qui aide —** Le cœur libre, l'intuition sauvage, la part de toi qui ne demande pas la permission.
-
 ## Ombres & risques
 - Fuite en avant ou refus de toute limite
 - Perte de repères, confusion

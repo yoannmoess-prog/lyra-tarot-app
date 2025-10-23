@@ -17,11 +17,6 @@ tags: ["marseille", "archetype:puissance", "element:feu", "energie:instinct", "c
 - **Un seul pied visible** : ancrage unique, solidité, énergie contenue prête à se manifester (Jodorowsky).
 - **Les ongles rouges** : selon Costa, la vitalité qui perdure au-delà de la mort, symbole d’éternité.
 
-## Lecture / guidance (3 cartes)
-→ Enjeu : Réconcilier l’instinct et la conscience  
-→ Message : La maîtrise commence par l’écoute du vivant en soi  
-→ Ressource : L’intelligence corporelle, patiente et enracinée
-
 ## Ombres & risques
 - Vouloir maîtriser à tout prix → Refoulement, névrose
 - Perdre contact avec l’instinct → Dissociation, fatigue psychique

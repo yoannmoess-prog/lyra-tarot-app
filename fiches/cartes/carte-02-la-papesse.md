@@ -18,11 +18,6 @@ La Papesse incarne le silence fertile, la gestation intérieure. C’est la gard
 - **La tiare à quatre pointes** : connaissance orientée aux quatre directions ; point central de la conscience (Jodo).
 - **Blancheur du visage et robe** : pureté, sublimation, virginité symbolique ; parfois rigidité ou froideur (Jodo, Costa, Marteau).
 
-## Lecture / guidance (3 cartes)
-**Enjeu —** Maturer une connaissance ou un projet avant d’agir.  
-**Message —** Laisse infuser, cultive le silence fertile : ce n’est pas encore le moment d’exprimer.  
-**Partie de soi qui aide —** L’intuition profonde, l’écoute du Soi, le lien avec l’inconscient collectif (Jung).
-
 ## Ombres & risques
 - Frigidité affective ou sexuelle.
 - Rigidité morale ou religieuse.

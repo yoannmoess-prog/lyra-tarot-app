@@ -18,11 +18,6 @@ tags: ["marseille", "archetype:relation", "element:air"]
 - **Costumes colorés** : polarités psychiques (bleu, rouge, jaune, vert).
 - **Terre labourée** : travail préalable de maturité (Camoin, Delcamp).
 
-## Lecture / guidance (3 cartes)
-- **Carte 1 — Le véritable enjeu** : Une décision affective appelle à être prise. L'heure est venue de choisir à partir du coeur, pas des injonctions.
-- **Carte 2 — Le message à entendre** : Reconnaître ses propres projections : qui est-on en train d'aimer ? L'autre ou une image du passé ?
-- **Carte 3 — La part de soi qui peut aider** : L'Amoureux mature en vous sait qu'aimer implique une responsabilité émotionnelle et spirituelle.
-
 ## Ombres & risques
 - Confusion entre amour, besoin, et désir de fusion
 - Difficulté à choisir, paralysie affective ou manipulation

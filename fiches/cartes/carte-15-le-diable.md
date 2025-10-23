@@ -17,11 +17,6 @@ tags: ["marseille", "archetype:ombre", "element:feu", "theme:pulsions", "theme:t
 → Trois paires d’yeux : regard sur soi aux différents niveaux (mental, instinct, matière) (Jung)  
 → Corde maçonnique : symbolisme de l’emprise et de la libération initiatique (Camoin)
 
-## Lecture / guidance (3 cartes)
-→ Enjeu : Affronter ses désirs et ses ombres pour mieux les intégrer  
-→ Message : Ce que tu caches a plus de pouvoir que ce que tu nommes  
-→ Ressource interne : Ton feu vital, ta créativité brute
-
 ## Ombres & risques
 → Dépendances, illusions, désirs autodestructeurs  
 → Manipulation, orgueil spirituel ou intellectuel (Delcamp)  

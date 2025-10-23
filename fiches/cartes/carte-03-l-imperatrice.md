@@ -17,11 +17,6 @@ tags: ["marseille", "archetype:créatrice", "polarité:féminin-actif", "éléme
 - **Chevelure libre** : énergie jeune, vitalité féconde, puissance de séduction (Ben-Dov)
 - **Robe et cape en mouvement** : souffle créatif, expression en train d’éclore (Delcamp)
 
-## Lecture / guidance (3 cartes)
-- **Enjeu** : Faire passer un message, exprimer une idée, mettre au monde une œuvre ou un projet.
-- **Message** : Crois en ta capacité à dire, créer, proposer. Ne retiens pas ton souffle.
-- **Ressource interne** : Une intuition rapide, une intelligence verbale ou artistique prête à éclore.
-
 ## Ombres & risques
 - Disperser son énergie dans le verbe ou le contrôle
 - Prendre la parole pour dominer ou séduire au lieu de créer

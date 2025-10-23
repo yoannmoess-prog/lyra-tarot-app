@@ -17,11 +17,6 @@ tags: ["marseille", "archetype:père", "element:feu", "axe:relationnel", "axe:co
 - **Gouttes colorées** : bénédictions, énergies spirituelles, condensation des influences célestes (13 gouttes = lien avec Arcane XIII).
 - **Lumière sans ombre** : illumination complète, tout est révélé (cf. Justice).
 
-## Lecture / guidance (3 cartes)
-- **Carte 1 – Enjeu** : Retrouver une expression lumineuse et sincère de soi-même.
-- **Carte 2 – Message** : L’amour véritable commence par la transparence et la fraternité.
-- **Carte 3 – Ressource interne** : Ta capacité à irradier, à éclairer les autres sans te perdre.
-
 ## Ombres & risques
 - Égocentrisme ou narcissisme déguisé en amour.
 - Dépendance à une figure paternelle idéalisée ou absente.

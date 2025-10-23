@@ -18,11 +18,6 @@ tags: ["marseille", "archetype:mediateur", "element:ether"]
 - **Couleurs bleu/rouge/vert** : lien entre réceptivité, action et espérance.
 - **Point dans le cercle** (fermoir de cape) : symbole de l'être essentiel en soi.
 
-## Lecture / guidance (3 cartes)
-- **Enjeu** : Cherches-tu un sens, un guide, une direction plus vaste que toi ?
-- **Message** : Sois le lien entre le visible et l'invisible, entre le savoir et le silence.
-- **Ressource interne** : Ta foi profonde, même si elle n'a pas encore de nom.
-
 ## Ombres & risques
 - Dogmatisme, rigidité morale.
 - Autorité paternelle figée ou non intégrée.

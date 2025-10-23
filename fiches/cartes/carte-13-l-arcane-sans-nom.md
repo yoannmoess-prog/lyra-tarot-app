@@ -18,11 +18,6 @@ tags: ["marseille", "archetype:transformation", "element:eau", "concept:mort"]
 → Os percé au sol : os desséché transformé en flûte, prêt à accueillir le souffle divin (Jodo).  
 → Lettres hébraïques Yod-He-Vav-He sur le crâne (Camoin) : trace du Nom Divin — transformation par le Verbe.
 
-## Lecture / guidance (3 cartes)
-**Enjeu —** Se dépouiller de ce qui n’a plus lieu d’être, même si cela provoque peur ou douleur.  
-**Message —** Ce n’est pas une fin, mais une transmutation : ce qui meurt nourrit le terreau d’un renouveau.  
-**Partie de soi qui aide —** La capacité à traverser l’inconnu, à lâcher les illusions de contrôle, à vivre un deuil libérateur.
-
 ## Ombres & risques
 → S’accrocher à des schémas ou relations devenus stériles.  
 → Confondre transformation et destruction compulsive.  

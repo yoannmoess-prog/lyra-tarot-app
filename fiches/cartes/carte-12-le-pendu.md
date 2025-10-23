@@ -18,11 +18,6 @@ tags: ["marseille", "archetype:initié", "chemin:transcendance", "element:eau"]
 - **Corde suspendue** : lien entre ciel et terre, entre les mondes.
 - **Couleurs androgynes** : symbolique de l’union des polarités【148:0†Jodorowsky】.
 
-## Lecture / guidance (3 cartes)
-→ **Carte 1 — L’enjeu :** Lâcher-prise sur un attachement ou une volonté de contrôle.  
-→ **Carte 2 — Le message :** Ce qui semble bloqué est en fait un appel à mûrir.  
-→ **Carte 3 — Ressource :** Ta capacité à observer sans réagir, à méditer profondément.
-
 ## Ombres & risques
 - Auto-punition inconsciente
 - Attente passive ou sacrificielle

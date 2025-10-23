@@ -17,11 +17,6 @@ tags: ["marseille", "archetype:accomplissement", "element:ether", "axe:réalisat
 - **Le sol rouge labouré** : Activité vitale aboutie, conscience du monde incarné (Costa).  
 - **Le bâton** : Pouvoir actif, maîtrise de soi et du monde intérieur.  
 
-## Lecture / guidance (3 cartes)  
-- **Enjeu** : Trouver la plénitude sans se figer.  
-- **Message** : Tu es déjà au centre — respire dans cette totalité.  
-- **Ressource interne** : Ton corps dansant, réconcilié avec l’univers.
-
 ## Ombres & risques  
 - Se replier dans une bulle parfaite, déconnectée de l’autre (Ben-Dov).  
 - Refuser le recommencement, figé dans une image idéalisée de soi (Jung).  
