@@ -36,18 +36,19 @@ const LoadingPage = () => {
     // Promesse qui appelle l'API pour déterminer le tirage
     const fetchSpread = async () => {
       try {
+        // Utilise un chemin relatif simple qui sera intercepté par le proxy
         const response = await fetch('/api/spread', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ question }),
         });
         if (!response.ok) {
-          throw new Error('La réponse du serveur n\'était pas OK');
+          throw new Error(`La réponse du serveur n'était pas OK: ${response.statusText}`);
         }
         const data = await response.json();
         return data.spreadId; // Retourne l'ID du tirage
       } catch (error) {
-        console.error("Erreur lors de la récupération du tirage :", error);
+        console.error("Erreur critique lors de la récupération du tirage :", error);
         return 'spread-advice'; // Retourne le tirage par défaut en cas d'erreur
       }
     };
