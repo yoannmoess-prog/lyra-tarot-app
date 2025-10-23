@@ -249,10 +249,20 @@ app.post("/api/lyra/stream", async (req, res) => {
   }
   
   try {
-    const { name, question, cards, userMessage, history } = req.body || {};
+    const { name, question, cards, userMessage, history, spreadId } = req.body || {};
 
-    // Détecte le 'spreadId' à partir de la question de l'utilisateur.
-    const spreadId = await detectSpreadFromQuestion(question);
+    // Le spreadId est maintenant fourni par le client.
+    if (!spreadId) {
+      console.error("[lyra] Erreur: spreadId est manquant dans la requête.");
+      return res.status(400).json({
+        error: {
+          code: "missing_spread_id",
+          message: "Le spreadId est requis.",
+        },
+      });
+    }
+    console.log(`[lyra] Utilisation du spreadId fourni par le client: ${spreadId}`);
+
 
     // Charge le contenu du tirage en se basant sur le 'spreadId' détecté.
     const spreadPath = path.join(process.cwd(), "records/spreads", `${spreadId}.md`);
