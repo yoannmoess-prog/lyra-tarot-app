@@ -18,11 +18,6 @@ tags: ["marseille", "archetype:integration", "element:eau", "vertu:modération",
 - **Le pied en arrière-plan** : partiellement dissimulé, il suggère l’ancrage discret et la prudence.
 - **Les triangles sur la poitrine** : les 4 centres de l’être (intellect, émotion, corps, sexualité) + quintessence centrale (cf. Jodorowsky).
 
-## Lecture / guidance (3 cartes)
-- **Enjeu** : retrouver un centre intérieur, tempérer les extrêmes, se réconcilier avec ses contradictions.
-- **Message** : « Tu es guidé(e), protégé(e). Cultive la patience et la confiance. »
-- **Ressource interne** : ta capacité à réguler, à faire circuler les émotions, à accueillir sans te dissoudre.
-
 ## Ombres & risques
 - Fuite dans une paix artificielle, passivité.
 - Confusion entre vraie tempérance et évitement émotionnel.

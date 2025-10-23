@@ -17,11 +17,6 @@ tags: ["marseille", "archetype:guide", "element:eau", "polarite:féminine", "mot
 - **Oiseau dans l’arbre** : renaissance, Phénix, voix du subconscient apaisé.
 - **Genou à terre** : enracinement, piété, révérence à la terre.
 
-## Lecture / guidance (3 cartes)
-- **Le véritable enjeu** : Se reconnecter à la source, à son intuition profonde.
-- **Le message à entendre** : Tu es guidé(e), même dans le noir. Fais confiance à la douceur.
-- **La part de soi qui peut aider** : Ta capacité à nourrir les autres sans t’oublier. Laisse-toi être.
-
 ## Ombres & risques
 - Gaspillage d’énergie vers le passé ou dans des relations à sens unique.
 - Tendance à s’oublier ou à fuir dans l’idéalisation.

@@ -19,11 +19,6 @@ tags: ["marseille", "archetype:justice", "element:air", "element:spirit"]
 - **Tache violette** : sagesse, rareté, regard sur la profondeur de l’âme.
 - **Trône dissymétrique** : rappel que la justesse transcende la symétrie.
 
-## Lecture / guidance (3 cartes)
-- **Carte 1 – Le véritable enjeu** : Ai-je besoin d’équité ou de réparation ?
-- **Carte 2 – Le message à entendre** : Quelle vérité dois-je oser reconnaître ?
-- **Carte 3 – La part de moi qui peut aider** : Ma capacité à regarder sans fuir, à trancher avec justesse.
-
 ## Ombres & risques
 - Intransigeance glacée
 - Perfectionnisme destructeur

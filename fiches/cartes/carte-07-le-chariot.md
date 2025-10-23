@@ -17,11 +17,6 @@ tags: ["marseille", "archetype:heros", "element:feu", "axe:action", "motcle:vict
 - **Les lettres V.T.** : symboles énigmatiques, peut-être signature d’auteur, ou signifiants ésotériques (Ben-Dov).
 - **Le blason et la goutte verte** : conscience immortelle enchâssée dans la matière (Jodorowsky).
 
-## Lecture / guidance (3 cartes)
-- **L’enjeu** : Canaliser ses forces intérieures pour avancer avec justesse.
-- **Le message** : Le mouvement est possible, mais nécessite centrage et intégrité.
-- **La ressource** : La confiance en soi forgée par les épreuves déjà surmontées.
-
 ## Ombres & risques
 - Volonté de tout contrôler, rigidité dans les décisions.
 - Culte du succès ou recherche de reconnaissance.

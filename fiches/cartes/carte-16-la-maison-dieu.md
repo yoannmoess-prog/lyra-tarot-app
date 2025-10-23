@@ -18,11 +18,6 @@ tags: ["marseille", "archetype:effondrement", "element:feu", "chakra:coronal"]
 - **Flamme / éclair** : feu divin, révélation brutale.
 - **Porte ajoutée (Camoin)** : voie initiatique, ouverture symbolique.
 
-## Lecture / guidance (3 cartes)
-- **Enjeu** : Ce qui s’écroule n’avait plus lieu d’être. C’est le moment de regarder en face les structures obsolètes.
-- **Message** : Une force plus grande agit pour vous réveiller. Le chaos apparent est une opportunité d’éveil.
-- **Ressource interne** : La capacité à accueillir l’inattendu, à vous ouvrir à une nouvelle vérité.
-
 ## Ombres & risques
 - Résistance au changement, peur de lâcher prise.
 - Sentiment d’abandon, désorientation.

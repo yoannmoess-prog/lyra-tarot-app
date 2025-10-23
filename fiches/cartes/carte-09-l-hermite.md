@@ -17,11 +17,6 @@ Figure du retrait et de la sagesse, L’Hermite éclaire le passé pour mieux av
 - Manteau bleu foncé : intériorité, hiver symbolique
 - Trois rides frontales : activité mentale, conscience réfléchie
 
-## Lecture / guidance (3 cartes)
-→ Enjeu : Traverser une crise de conscience ou une transition  
-→ Message : Ralentis, éclaire ton propre chemin  
-→ Ressource interne : La sagesse de ton expérience vécue
-
 ## Ombres & risques
 - Isolement émotionnel ou social
 - Obsession pour le passé

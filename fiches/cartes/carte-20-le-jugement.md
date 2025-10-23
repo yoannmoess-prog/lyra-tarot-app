@@ -18,11 +18,6 @@ tags: ["marseille", "archetype:appel", "element:feu"]
 - **Le nuage circulaire** : ouverture du mental (Costa).
 - **Le mont Golgotha** : symbole caché (Camoin) du lieu de résurrection.
 
-## Lecture / guidance (3 cartes)
-- **Enjeu** : Sortir du sommeil, entendre l'appel de l'âme.
-- **Message** : Tu es prêt à renaître à toi-même, à te libérer d'anciens conditionnements.
-- **Ressource interne** : Ton élan vital renaissant, la part en toi qui croit en un renouveau.
-
 ## Ombres & risques
 - Ignorer l'appel, être sourd à sa vocation.
 - Vivre dans la peur du jugement extérieur ou de l'échec.

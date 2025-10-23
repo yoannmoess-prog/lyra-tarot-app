@@ -18,11 +18,6 @@ Le Bateleur incarne l’élan du commencement. Il symbolise le potentiel brut, l
 - **Forme féminine entre les jambes** : androgynie sacrée, pouvoir de création sexuelle et spirituelle (Camoin).  
 - **Couleurs primaires** : Jaune (conscience), Rouge (action), Bleu (réceptivité), Vert (vitalité) – synthèse énergétique de l’être en devenir.
 
-## Lecture / guidance (3 cartes)
-**Enjeu —** Commencer quelque chose de neuf, prendre sa place. L’énergie est disponible mais cherche encore sa direction.  
-**Message —** Ce n’est pas encore le moment d’agir pleinement : il faut sentir, explorer, affiner. Ose poser un premier geste imparfait.  
-**Partie de soi qui aide —** L’intuition créative, le jeu, la spontanéité sans contrôle. Ton désir d’essayer est déjà une sagesse.
-
 ## Ombres & risques
 - Illusion de contrôle ou dispersion.  
 - Superficialité, absence de vision claire.  

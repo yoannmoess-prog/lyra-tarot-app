@@ -17,11 +17,6 @@ tags: ["marseille", "archetype:inconscient", "element:eau", "motcle:émotion", "
 - **Gouttes inversées** : influence lunaire descendante, fécondation de l’imaginaire.
 - **Lune triple** : symbolique de la déesse, des cycles, du féminin sacré.
 
-## Lecture / guidance (3 cartes)
-- **Le véritable enjeu** : Traverser la confusion ou une période d’émotions intenses.
-- **Le message à entendre** : Il faut parfois marcher dans le flou pour retrouver l’axe.
-- **La ressource interne** : Ton lien à l’imaginaire, aux rêves, à l’écoute subtile.
-
 ## Ombres & risques
 - Confusion, projections affectives, illusions.
 - Nostalgie excessive, retour au passé paralysant.
