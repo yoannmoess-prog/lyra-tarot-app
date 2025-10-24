@@ -14,7 +14,50 @@ const STORE_PATH = process.env.RAG_STORE || "build/rag/index.vec.jsonl";
 
 const openai = new OpenAI({ apiKey: LLM_API_KEY });
 
-let STORE = []; // { id, text, meta, embedding: number[] }[]
+let STORE = null; // Les données ne sont plus chargées au démarrage
+let storePromise = null; // Pour gérer les chargements concurrents
+
+async function loadStore() {
+  const file = path.resolve(process.cwd(), STORE_PATH);
+  console.log(`[rag] Lecture du store : ${file}`);
+  if (!fs.existsSync(file)) {
+    console.warn(`[rag] Store introuvable : ${file}. Lancez d'abord : npm run rag:embed`);
+    return [];
+  }
+  const input = fs.createReadStream(file, "utf8");
+  const rl = readline.createInterface({ input, crlfDelay: Infinity });
+
+  const tmp = [];
+  for await (const line of rl) {
+    const l = line.trim();
+    if (!l) continue;
+    try {
+      const row = JSON.parse(l);
+      if (Array.isArray(row.embedding) && typeof row.text === "string") {
+        row.embedding = norm(row.embedding);
+        tmp.push(row);
+      }
+    } catch (e) {
+      console.warn(`[rag] Ligne JSON invalide ignorée : ${l}`, e);
+    }
+  }
+  console.log(`[rag] ${tmp.length} chunks chargés en mémoire.`);
+  return tmp;
+}
+
+// `getStore` garantit que le store n'est chargé qu'une seule fois.
+async function getStore() {
+  if (STORE) return STORE;
+  if (!storePromise) {
+    storePromise = loadStore().then(loadedStore => {
+      STORE = loadedStore;
+      globalThis.__RAG_STORE_COUNT__ = STORE.length;
+      return STORE;
+    });
+  }
+  return storePromise;
+}
+
 
 function norm(v) {
   let s = 0;
@@ -76,39 +119,21 @@ async function embed(text) {
   return norm(v);
 }
 
+// `initRag` ne fait plus rien, le chargement est maintenant paresseux.
 export async function initRag() {
-  const file = path.resolve(process.cwd(), STORE_PATH);
-  console.log(`[rag] lecture du store: ${file}`);
-  if (!fs.existsSync(file)) {
-    console.warn(`[rag] store introuvable: ${file}. Lance d’abord: npm run rag:embed`);
-    STORE = [];
+  console.log("[rag] Initialisation différée. Le store sera chargé à la première requête.");
+  // On s'assure que la variable globale est initialisée pour la compatibilité
+  if (typeof globalThis.__RAG_STORE_COUNT__ === 'undefined') {
     globalThis.__RAG_STORE_COUNT__ = 0;
-    return;
   }
-  const input = fs.createReadStream(file, "utf8");
-  const rl = readline.createInterface({ input, crlfDelay: Infinity });
-
-  const tmp = [];
-  for await (const line of rl) {
-    const l = line.trim();
-    if (!l) continue;
-    try {
-      const row = JSON.parse(l);
-      if (Array.isArray(row.embedding) && typeof row.text === "string") {
-        row.embedding = norm(row.embedding);
-        tmp.push(row);
-      }
-    } catch {}
-  }
-  STORE = tmp;
-  globalThis.__RAG_STORE_COUNT__ = STORE.length;
-  console.log(`[rag] ${STORE.length} chunks chargés en mémoire.`);
 }
 
 export async function searchRag(query, k = 6, opts = {}) {
-  if (!STORE.length) return [];
+  const store = await getStore();
+  if (!store.length) return [];
+
   const qv = await embed(String(query).slice(0, 4000));
-  const scored = STORE.map((r) => ({
+  const scored = store.map((r) => ({
     id: r.id,
     text: r.text,
     meta: r.meta,
