@@ -270,9 +270,11 @@ app.post("/api/lyra/stream", async (req, res) => {
 
     // Charge le contenu du tirage en se basant sur le 'spreadId' détecté.
     const spreadPath = path.join(process.cwd(), "records/spreads", `${spreadId}.md`);
+    console.log(`[lyra] Chargement du contenu du tirage depuis : ${spreadPath}`);
     let spreadContent = "";
     try {
       spreadContent = fs.readFileSync(spreadPath, "utf8");
+      console.log(`[lyra] Contenu du tirage "${spreadId}" chargé avec succès.`);
     } catch (e) {
       console.warn(`[server] Fichier de tirage "${spreadId}.md" non trouvé. Utilisation d'un contenu par défaut.`);
       // Vous pouvez définir un contenu par défaut ici si nécessaire.
@@ -292,8 +294,9 @@ app.post("/api/lyra/stream", async (req, res) => {
     }
     
     const messages = buildMessages({ name, question, cards, userMessage, history, spreadContent });
+    console.log("[lyra] Messages pour OpenAI construits :", JSON.stringify(messages, null, 2));
 
-    console.log("[lyra] Envoi de la requête à OpenAI");
+    console.log("[lyra] Envoi de la requête à OpenAI...");
 
     const stream = await openai.chat.completions.create({
       model: LLM_MODEL,

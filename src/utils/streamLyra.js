@@ -1,6 +1,7 @@
 // src/utils/streamLyra.js
 export async function* streamLyra(payload, onError) {
-  const API_BASE_URL = process.env.VITE_API_BASE_URL || '';
+  // Correction : Utilise import.meta.env pour les variables d'environnement Vite.
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
   try {
     const res = await fetch(`${API_BASE_URL}/api/lyra/stream`, {
       method: "POST",

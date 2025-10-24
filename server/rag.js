@@ -52,42 +52,9 @@ export async function detectSpreadFromQuestion(question) {
     return "spread-truth";
   }
 
-  // Étape 2 : Si aucun mot-clé n'est trouvé, utiliser le LLM si la clé API est disponible
-  if (process.env.LLM_API_KEY && process.env.LLM_API_KEY !== "DUMMY_KEY") {
-    console.log(`[rag] Méthode : LLM. Aucun mot-clé détecté, passage à la détection par LLM.`);
-
-    const systemPrompt = `
-Tu es un expert du Tarot de Marseille. Ton unique rôle est de choisir le tirage (spread) le plus adapté à la question de l'utilisateur.
-Tu as deux options de tirage :
-1. **spread-advice**: Pour les questions générales (développement personnel, choix, relations, carrière).
-2. **spread-truth**: Spécifiquement pour les questions exprimant une peur, un doute, une anxiété ou une angoisse profonde.
-Analyse la sémantique de la question et réponds UNIQUEMENT avec "spread-advice" ou "spread-truth". Ne te base pas uniquement sur des mots-clés, mais sur le sentiment général de la question.`.trim();
-
-    try {
-      const response = await openai.chat.completions.create({
-        model: process.env.LLM_MODEL || "gpt-4o-mini",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: question },
-        ],
-        temperature: 0,
-        max_tokens: 10,
-      });
-
-      const spreadId = response.choices[0]?.message?.content.trim();
-      console.log(`[rag] Le LLM a choisi le tirage : "${spreadId}"`);
-
-      if (spreadId === "spread-advice" || spreadId === "spread-truth") {
-        return spreadId;
-      }
-      console.warn(`[rag] Le LLM a renvoyé une valeur inattendue ("${spreadId}"). Basculement vers le tirage par défaut.`);
-    } catch (error) {
-      console.error("[rag] Erreur lors de l'appel au LLM. Basculement vers le tirage par défaut.", error);
-    }
-  }
-
-  // Étape 3 : Tirage par défaut si le LLM n'est pas disponible ou échoue
-  console.log(`[rag] Méthode : Défaut. Utilisation du spread-advice.`);
+  // Si aucun mot-clé n'est trouvé, on utilise le tirage par défaut sans appeler le LLM.
+  // C'est plus rapide, plus fiable et moins coûteux.
+  console.log(`[rag] Méthode : Défaut. Aucun mot-clé de peur détecté. Utilisation du spread-advice.`);
   return "spread-advice";
 }
 
