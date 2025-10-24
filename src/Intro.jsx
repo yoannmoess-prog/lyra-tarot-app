@@ -4,6 +4,15 @@ import { useNavigate } from "react-router-dom";
 import "./Intro.css";
 import logo from "./assets/logo.webp";
 import arrow from "./assets/arrowtoright_01.webp";
+// Correction: Utilise une image de carte existante comme dos de carte
+import cardBack from "./assets/cards/00_LeMat.webp";
+
+// Fonction utilitaire pour précharger les images
+const preloadImages = (srcArray) => {
+  srcArray.forEach((src) => {
+    new Image().src = src;
+  });
+};
 
 export default function Intro() {
   const nav = useNavigate();
@@ -22,6 +31,9 @@ export default function Intro() {
 
   // Fade-in + focus automatique du conteneur
   useEffect(() => {
+    // Précharge les images essentielles dès que le composant est monté
+    preloadImages([cardBack, logo, arrow]);
+
     const id = requestAnimationFrame(() => {
       setEntered(true);
       mainRef.current?.focus(); // ✅ focus via ref
