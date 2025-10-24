@@ -3,6 +3,14 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Page4.css"; // Réutilise le même style
 
+// Fonction utilitaire pour précharger les images en retournant une promesse
+const preloadImage = (src) => new Promise((resolve, reject) => {
+  const img = new Image();
+  img.src = src;
+  img.onload = resolve;
+  img.onerror = reject;
+});
+
 /* ---------------- Card Data Helpers ---------------- */
 const FACE_MODULES = import.meta.glob("./assets/cards/*.webp", { eager: true });
 const asUrl = (m) => (typeof m === "string" ? m : m?.default ?? null);
@@ -126,10 +134,20 @@ export default function SpreadAdvicePage() {
       const updatedChosenCards = [...chosenCards, newChosenCard];
       setChosenCards(updatedChosenCards);
 
-      setChosenSlots((prevSlots) => {
+      setChosenSlots(async (prevSlots) => {
         const newSlots = [...prevSlots, targetIndex];
         if (newSlots.length === 3) {
           setShuffleActive(false);
+
+          // Précharge les images des 3 cartes avant la redirection
+          const cardImageUrls = updatedChosenCards.map(card => card.src).filter(Boolean);
+          try {
+            await Promise.all(cardImageUrls.map(preloadImage));
+            console.log("Les 3 cartes ont été préchargées avec succès.");
+          } catch (error) {
+            console.error("Erreur lors du préchargement des cartes :", error);
+          }
+
           setTimeout(() => {
             setBoardFading(true);
             setTimeout(() => nav("/chat-advice", { state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
