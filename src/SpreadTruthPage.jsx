@@ -185,7 +185,9 @@ export default function SpreadTruthPage() {
               aria-label="Jeu de cartes : touchez pour piocher (séquentiel)"
             >
               {[...Array(deckCount)].map((_, i) => (
-                <div key={`deck-${i}`} className="card card-back stack" style={{ zIndex: i }} />
+                <div key={`deck-shadow-${i}`} className="card-shadow-wrapper" style={{ zIndex: i }}>
+                  <div className="card card-back stack" />
+                </div>
               ))}
             </div>
           </div>
@@ -193,7 +195,9 @@ export default function SpreadTruthPage() {
             {[0, 1, 2].map((i) => (
               <div key={`slotwrap-${i}`} ref={slotRefs[i]} className="slot-wrap" onClick={() => pickCardTo(i)}>
                 {chosenSlots.includes(i) ? (
-                  <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
+                  <div className={`card-shadow-wrapper chosen ${i === popIndex ? "pop" : ""}`}>
+                    <div className="card card-back" />
+                  </div>
                 ) : (
                   <div className="card slot-ghost" />
                 )}
