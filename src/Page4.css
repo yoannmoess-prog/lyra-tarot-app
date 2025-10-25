@@ -107,11 +107,17 @@
 }
 
 /* --- Card Styles --- */
-.card {
+.card-shadow-wrapper {
   position: absolute;
   inset: 0;
   border-radius: 14px;
   box-shadow: 0 6px 14px rgba(0,0,0,.22);
+  transform-origin: 50% 70%;
+}
+.card {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
   transform-origin: 50% 70%;
   background-size: cover;
   background-position: center;
@@ -130,13 +136,13 @@
 }
 
 /* Shuffle Animation */
-.shuffling .stack {
+.shuffling .card.stack {
   animation: riffleLoop 1700ms ease-in-out infinite;
 }
-.shuffling .stack:nth-last-child(1){ animation-duration: 1700ms;  animation-delay: -260ms; }
-.shuffling .stack:nth-last-child(2){ animation-duration: 1900ms;  animation-delay: -420ms; }
-.shuffling .stack:nth-last-child(3){ animation-duration: 2100ms;  animation-delay: -580ms; }
-.shuffling .stack:nth-last-child(4){ animation-duration: 2300ms;  animation-delay: -740ms; }
+.shuffling .card.stack:nth-last-child(1){ animation-duration: 1700ms;  animation-delay: -260ms; }
+.shuffling .card.stack:nth-last-child(2){ animation-duration: 1900ms;  animation-delay: -420ms; }
+.shuffling .card.stack:nth-last-child(3){ animation-duration: 2100ms;  animation-delay: -580ms; }
+.shuffling .card.stack:nth-last-child(4){ animation-duration: 2300ms;  animation-delay: -740ms; }
 
 @keyframes riffleLoop {
   0%   { transform: translate(0,0) rotate(0) scale(1.000); }
@@ -158,12 +164,19 @@
     transform: translateY(0) scale(1);
   }
 }
+.chosen.pop .card {
+  animation: popScale 0.42s ease-out;
+}
 .chosen.pop {
-  animation: appear 0.35s ease forwards, popGlow 0.42s ease-out;
+  animation: popGlow 0.42s ease-out;
+}
+@keyframes popScale {
+  from { transform: scale(1); }
+  to { transform: scale(1.06); }
 }
 @keyframes popGlow {
-  from { transform: scale(1); box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
-  to { transform: scale(1.06); box-shadow: 0 0 22px rgba(255, 255, 255, 0.65); }
+  from { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
+  to { box-shadow: 0 0 22px rgba(255, 255, 255, 0.65); }
 }
 
 /* --- Flying Card Animation --- */
