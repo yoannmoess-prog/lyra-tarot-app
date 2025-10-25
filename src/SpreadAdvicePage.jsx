@@ -131,35 +131,39 @@ export default function SpreadAdvicePage() {
       })();
 
       const newChosenCard = { src: newCard?.src, name: labelFrom(newCard?.name) };
-      const updatedChosenCards = [...chosenCards, newChosenCard];
-      setChosenCards(updatedChosenCards);
-
-      setChosenSlots(async (prevSlots) => {
-        const newSlots = [...prevSlots, targetIndex];
-        if (newSlots.length === 3) {
-          setShuffleActive(false);
-
-          // Précharge les images des 3 cartes avant la redirection
-          const cardImageUrls = updatedChosenCards.map(card => card.src).filter(Boolean);
-          try {
-            await Promise.all(cardImageUrls.map(preloadImage));
-            console.log("Les 3 cartes ont été préchargées avec succès.");
-          } catch (error) {
-            console.error("Erreur lors du préchargement des cartes :", error);
-          }
-
-          setTimeout(() => {
-            setBoardFading(true);
-            setTimeout(() => nav("/chat-advice", { state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
-          }, DUR.waitBeforeRedirect);
-        }
-        return newSlots;
-      });
+      setChosenCards(prev => [...prev, newChosenCard]);
+      setChosenSlots(prev => [...prev, targetIndex]);
 
       setFlight(null);
       pickingRef.current = false;
     }, DUR.fly);
   };
+
+  // Le useEffect gère maintenant la redirection et le préchargement
+  // de manière sécurisée après que les 3 cartes ont été choisies.
+  useEffect(() => {
+    if (chosenCards.length === 3) {
+      setShuffleActive(false);
+
+      const preloadAndRedirect = async () => {
+        const cardImageUrls = chosenCards.map(card => card.src).filter(Boolean);
+        try {
+          await Promise.all(cardImageUrls.map(preloadImage));
+          console.log("Les 3 cartes ont été préchargées avec succès.");
+        } catch (error) {
+          console.error("Erreur lors du préchargement des cartes :", error);
+        }
+
+        setTimeout(() => {
+          setBoardFading(true);
+          setTimeout(() => nav("/chat-advice", { state: { name, question, cards: chosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
+        }, DUR.waitBeforeRedirect);
+      };
+
+      preloadAndRedirect();
+    }
+  }, [chosenCards, nav, name, question, spreadType, DUR]);
+
 
   const onClickDeck = () => {
     if (chosenSlots.length >= 3) return;
