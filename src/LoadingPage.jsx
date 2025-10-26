@@ -39,6 +39,7 @@ const LoadingPage = () => {
         // Construit l'URL de l'API en utilisant la variable d'environnement VITE_API_BASE_URL.
         // Si elle n'est pas définie (développement local), utilise un chemin relatif pour le proxy.
         const apiUrl = import.meta.env.VITE_API_BASE_URL || '';
+        console.log(`[LoadingPage] Appel de l'API à l'adresse : ${apiUrl}/api/spread`); // Log pour le débogage
         const response = await fetch(`${apiUrl}/api/spread`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -58,12 +59,26 @@ const LoadingPage = () => {
     // Exécute l'animation et l'appel API en parallèle
     // et attend que les deux soient terminés
     const runLoadingSequence = async () => {
-      const [spreadId] = await Promise.all([
-        fetchSpread(),
-        animateSteps()
-      ]);
+      console.log("[LoadingPage] Démarrage de la séquence de chargement.");
 
-      console.log(`Animation terminée. Tirage sélectionné : ${spreadId}. Redirection...`);
+      const fetchPromise = fetchSpread().then(result => {
+        console.log("[LoadingPage] L'appel API s'est terminé avec succès.");
+        return result;
+      }).catch(err => {
+        console.error("[LoadingPage] L'appel API a échoué :", err);
+        return 'spread-advice'; // Fallback
+      });
+
+      const animationPromise = animateSteps().then(() => {
+        console.log("[LoadingPage] L'animation est terminée.");
+      });
+
+      console.log("[LoadingPage] En attente de la fin de l'API et de l'animation...");
+      const [spreadId] = await Promise.all([
+        fetchPromise,
+        animationPromise
+      ]);
+      console.log(`[LoadingPage] Séquence terminée. Tirage sélectionné : ${spreadId}. Redirection...`);
 
       // Redirige vers la page de tirage correspondante APRÈS la fin de l'animation
       navigate(`/spread-${spreadId.replace('spread-', '')}`, { state: { name, question } });

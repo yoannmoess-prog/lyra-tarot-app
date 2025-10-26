@@ -3,14 +3,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Page4.css"; // Réutilise le même style
 
-// Fonction utilitaire pour précharger les images en retournant une promesse
-const preloadImage = (src) => new Promise((resolve, reject) => {
-  const img = new Image();
-  img.src = src;
-  img.onload = resolve;
-  img.onerror = reject;
-});
-
 /* ---------------- Card Data Helpers ---------------- */
 const FACE_MODULES = import.meta.glob("./assets/cards/*.webp", { eager: true });
 const asUrl = (m) => (typeof m === "string" ? m : m?.default ?? null);
@@ -126,38 +118,25 @@ export default function SpreadTruthPage() {
       const newCard = pick(FACE_POOLS.majors);
 
       const newChosenCard = { src: newCard?.src, name: labelFrom(newCard?.name) };
-      setChosenCards(prev => [...prev, newChosenCard]);
-      setChosenSlots(prev => [...prev, targetIndex]);
+      const updatedChosenCards = [...chosenCards, newChosenCard];
+      setChosenCards(updatedChosenCards);
+
+      setChosenSlots((prevSlots) => {
+        const newSlots = [...prevSlots, targetIndex];
+        if (newSlots.length === 3) {
+          setShuffleActive(false);
+          setTimeout(() => {
+            setBoardFading(true);
+            setTimeout(() => nav("/chat-truth", { state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
+          }, DUR.waitBeforeRedirect);
+        }
+        return newSlots;
+      });
 
       setFlight(null);
       pickingRef.current = false;
     }, DUR.fly);
   };
-
-  // Le useEffect gère maintenant la redirection et le préchargement
-  // de manière sécurisée après que les 3 cartes ont été choisies.
-  useEffect(() => {
-    if (chosenCards.length === 3) {
-      setShuffleActive(false);
-
-      const preloadAndRedirect = async () => {
-        const cardImageUrls = chosenCards.map(card => card.src).filter(Boolean);
-        try {
-          await Promise.all(cardImageUrls.map(preloadImage));
-          console.log("Les 3 cartes ont été préchargées avec succès.");
-        } catch (error) {
-          console.error("Erreur lors du préchargement des cartes :", error);
-        }
-
-        setTimeout(() => {
-          setBoardFading(true);
-          setTimeout(() => nav("/chat-truth", { state: { name, question, cards: chosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
-        }, DUR.waitBeforeRedirect);
-      };
-
-      preloadAndRedirect();
-    }
-  }, [chosenCards, nav, name, question, spreadType, DUR]);
 
   const onClickDeck = () => {
     if (chosenSlots.length >= 3) return;
@@ -195,9 +174,7 @@ export default function SpreadTruthPage() {
             {[0, 1, 2].map((i) => (
               <div key={`slotwrap-${i}`} ref={slotRefs[i]} className="slot-wrap" onClick={() => pickCardTo(i)}>
                 {chosenSlots.includes(i) ? (
-                  <div className={`card-shadow-wrapper chosen ${i === popIndex ? "pop" : ""}`}>
-                    <div className="card card-back" />
-                  </div>
+                  <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
                 ) : (
                   <div className="card slot-ghost" />
                 )}
