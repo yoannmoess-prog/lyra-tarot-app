@@ -64,7 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(22px, 4vw, 64px);
+  gap: clamp(40px, 6vw, 100px); /* Augmentation de l'espacement */
   width: 100%;
 }
 .board.col {
@@ -78,7 +78,7 @@
 }
 .deck-area {
   position: relative;
-  width: min(16vw, 21vh, 160px);
+  width: min(15vw, 20vh, 150px); /* Légère réduction de la taille */
   aspect-ratio: 9.27 / 18;
   cursor: pointer;
   user-select: none;
@@ -136,7 +136,7 @@
 
 /* Shuffle Animation */
 .shuffling .card.stack { /* Cible uniquement les cartes animées */
-  animation: riffleLoop 1.6s ease-in-out infinite;
+  animation: riffleLoop 4.8s ease-in-out infinite;
 }
 .shuffling .card-shadow-wrapper:nth-last-child(1) .card { animation-delay: 0s; }
 .shuffling .card-shadow-wrapper:nth-last-child(2) .card { animation-delay: 0.04s; }
@@ -147,11 +147,33 @@
 .shuffling .card-shadow-wrapper:nth-last-child(7) .card { animation-delay: 0.24s; }
 
 @keyframes riffleLoop {
-  0%   { transform: translate(0,0) rotate(0) scale(1.000); }
-  25%  { transform: translate(24px,20px) rotate(22deg) scale(1.02); }
-  50%  { transform: translate(0,2px) rotate(.2deg) scale(1.004); }
-  75%  { transform: translate(-24px,-16px) rotate(-21deg) scale(1.02); }
-  100% { transform: translate(0,0) rotate(0) scale(1.000); }
+  0% {
+    transform: translate(0, 0) rotate(0);
+  }
+  /* 1. Coupe et soulève la moitié supérieure */
+  20% {
+    transform: translate(30px, -25px) rotate(18deg);
+  }
+  /* 2. La déplace vers la gauche, au-dessus */
+  40% {
+    transform: translate(-25px, -20px) rotate(-15deg);
+  }
+  /* 3. La repose avec un léger rebond */
+  50% {
+    transform: translate(0, 5px) rotate(2deg);
+  }
+  /* 4. Soulève la nouvelle moitié supérieure vers la gauche */
+  70% {
+    transform: translate(-30px, -25px) rotate(-18deg);
+  }
+  /* 5. La déplace vers la droite, au-dessus */
+  90% {
+    transform: translate(25px, -20px) rotate(15deg);
+  }
+  /* 6. La repose et revient à la position initiale */
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
 }
 
 /* Chosen Card Animation */
