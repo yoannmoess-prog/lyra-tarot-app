@@ -145,12 +145,15 @@ export default function SpreadTruthPage() {
 }
 
 function DraggableDeck({ children }) {
-  const { attributes, listeners, setNodeRef } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: "deck",
   });
 
+  // This prevents the draggable source from moving, as we are using a DragOverlay.
+  const style = transform ? { ...attributes.style, transform: "none" } : attributes.style;
+
   return (
-    <div ref={setNodeRef} {...listeners} {...attributes}>
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
       {children}
     </div>
   );
