@@ -145,15 +145,20 @@ export default function SpreadTruthPage() {
 }
 
 function DraggableDeck({ children }) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: "deck",
   });
 
-  // Prevent the original draggable element from moving by overriding the transform style.
-  // The DragOverlay will be used to show the dragged item.
-  const style = transform
-    ? { ...attributes.style, transform: 'none' }
-    : attributes.style;
+  // Keep the deck visible and in place while dragging, as a DragOverlay is used.
+  const style = {
+    ...attributes.style,
+    // When dragging, dnd-kit applies transform and visibility styles. Override them.
+    ...(isDragging && {
+      transform: "none",
+      opacity: 1,
+      visibility: "visible",
+    }),
+  };
 
   return (
     <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
