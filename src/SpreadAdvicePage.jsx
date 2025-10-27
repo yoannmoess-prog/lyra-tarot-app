@@ -145,7 +145,11 @@ export default function SpreadAdvicePage() {
           </div>
         )}
         <DragOverlay>
-          {activeId ? <div className="card card-back" /> : null}
+          {activeId ? (
+            <div style={{ width: "120px", height: "210px" }}>
+              <div className="card card-back" />
+            </div>
+          ) : null}
         </DragOverlay>
       </div>
     </DndContext>
