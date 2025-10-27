@@ -107,13 +107,6 @@
 }
 
 /* --- Card Styles --- */
-.card-shadow-wrapper {
-  position: absolute;
-  inset: 0;
-  border-radius: 14px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  transform-origin: 50% 70%;
-}
 .card {
   position: absolute;
   inset: 0;
@@ -123,6 +116,7 @@
   background-position: center;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 .card-back {
   background-image: url("./assets/desk_02.webp");
@@ -135,72 +129,57 @@
 }
 
 /* Shuffle Animation */
-/* Cartes du dessus (celles qui sont brassées visiblement) */
-.shuffling .card-shadow-wrapper:nth-child(n+4) .card {
-  animation: riffleUpperLoop 4.8s ease-in-out infinite;
+.shuffling .card:nth-child(3n) {
+  animation: shuffle-loop-1 2.8s ease-in-out infinite;
 }
-/* Cartes de la base (celles qui bougent subtilement) */
-.shuffling .card-shadow-wrapper:nth-child(-n+3) .card {
-  animation: riffleBaseLoop 4.8s ease-in-out infinite;
+.shuffling .card:nth-child(3n + 1) {
+  animation: shuffle-loop-2 2.8s ease-in-out infinite 0.2s;
 }
-
-/* Délais pour l'animation de la base pour un effet subtil et décalé */
-.shuffling .card-shadow-wrapper:nth-child(1) { animation-delay: 0.05s; }
-.shuffling .card-shadow-wrapper:nth-child(2) { animation-delay: 0.02s; }
-.shuffling .card-shadow-wrapper:nth-child(3) { animation-delay: 0s; }
-
-/* Délais pour l'animation de brassage principale pour un effet de cascade */
-.shuffling .card-shadow-wrapper:nth-child(4) { animation-delay: 0.08s; }
-.shuffling .card-shadow-wrapper:nth-child(5) { animation-delay: 0.12s; }
-.shuffling .card-shadow-wrapper:nth-child(6) { animation-delay: 0.16s; }
-.shuffling .card-shadow-wrapper:nth-child(7) { animation-delay: 0.20s; }
-.shuffling .card-shadow-wrapper:nth-child(8) { animation-delay: 0.24s; }
-/* ... et ainsi de suite si plus de cartes sont visibles */
-
-
-@keyframes riffleUpperLoop {
-  0% {
-    transform: translate(0, 0) rotate(0);
-  }
-  /* 1. Coupe et soulève la moitié supérieure */
-  20% {
-    transform: translate(30px, -25px) rotate(18deg);
-  }
-  /* 2. La déplace vers la gauche, au-dessus */
-  40% {
-    transform: translate(-25px, -20px) rotate(-15deg);
-  }
-  /* 3. La repose avec un léger rebond */
-  50% {
-    transform: translate(0, 5px) rotate(2deg);
-  }
-  /* 4. Soulève la nouvelle moitié supérieure vers la gauche */
-  70% {
-    transform: translate(-30px, -25px) rotate(-18deg);
-  }
-  /* 5. La déplace vers la droite, au-dessus */
-  90% {
-    transform: translate(25px, -20px) rotate(15deg);
-  }
-  /* 6. La repose et revient à la position initiale */
-  100% {
-    transform: translate(0, 0) rotate(0);
-  }
+.shuffling .card:nth-child(3n + 2) {
+  animation: shuffle-loop-3 2.8s ease-in-out infinite 0.4s;
+}
+/* Animation spéciale pour la carte qui "coupe" le jeu */
+.shuffling .card:nth-child(18) {
+  animation: cut-the-deck 5.6s ease-in-out infinite 0.1s;
 }
 
-@keyframes riffleBaseLoop {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0);
-  }
-  25% {
-    transform: translate(-5px, 0) rotate(-2deg);
-  }
-  50% {
-    transform: translate(0, 0) rotate(0);
-  }
-  75% {
-    transform: translate(5px, 0) rotate(2deg);
-  }
+@keyframes cut-the-deck {
+  /* La carte suit un mouvement de base au début */
+  0%, 100% { transform: translate(0, 0) rotate(0); z-index: 18; }
+  15% { transform: translate(5px, -2px) rotate(3deg); z-index: 18; }
+
+  /* La carte commence à sortir par le bas */
+  25% { transform: translate(0, 15px) rotate(-2deg); z-index: 25; }
+
+  /* Elle s'envole par-dessus le paquet */
+  50% { transform: translate(-40px, -60px) rotate(-15deg); z-index: 25; }
+
+  /* Elle revient se placer sur le dessus */
+  75% { transform: translate(10px, 5px) rotate(5deg); z-index: 25; }
+
+  /* Elle reste sur le dessus pour la fin du cycle */
+  90% { transform: translate(0, 0) rotate(0); z-index: 25; }
+}
+
+@keyframes shuffle-loop-1 {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  25% { transform: translate(5px, -2px) rotate(3deg); }
+  50% { transform: translate(0, 0) rotate(0); }
+  75% { transform: translate(-5px, 2px) rotate(-3deg); }
+}
+
+@keyframes shuffle-loop-2 {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  25% { transform: translate(-6px, 0) rotate(-4deg); }
+  50% { transform: translate(0, 3px) rotate(0); }
+  75% { transform: translate(6px, 0) rotate(4deg); }
+}
+
+@keyframes shuffle-loop-3 {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  25% { transform: translate(0, -3px) rotate(-2deg); }
+  50% { transform: translate(4px, 4px) rotate(0); }
+  75% { transform: translate(0, 3px) rotate(2deg); }
 }
 
 /* Chosen Card Animation */
