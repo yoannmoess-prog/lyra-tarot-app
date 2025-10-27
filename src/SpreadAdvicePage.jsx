@@ -1,7 +1,8 @@
-// src/SpreadAdvicePage.jsx — Page de tirage pour "spread-advice"
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import "./Page4.css"; // Réutilise le même style
+// src/SpreadAdvicePage.jsx
+import React from "react";
+import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
+import { useSpreadPage } from "./hooks/useSpreadPage";
+import "./Page4.css";
 
 /* ---------------- Card Data Helpers ---------------- */
 const FACE_MODULES = import.meta.glob("./assets/cards/*.webp", { eager: true });
@@ -45,167 +46,134 @@ const pick = (arr) => (arr?.length ? arr[Math.floor(Math.random() * arr.length)]
 
 /* ---------------- Component ---------------- */
 export default function SpreadAdvicePage() {
-  const { state } = useLocation();
-  const nav = useNavigate();
-  const name = state?.name || "voyageur";
-  const question = state?.question || "";
-  const spreadType = "spread-advice"; // Tirage fixe
-
-  const [isLandscape, setIsLandscape] = useState(window.innerWidth > window.innerHeight);
-  const [pageLoaded, setPageLoaded] = useState(false);
-  const [arrive, setArrive] = useState(false);
-  const [boardFading, setBoardFading] = useState(false);
-  const [shuffleActive, setShuffleActive] = useState(false);
-  const [deckCount, setDeckCount] = useState(22);
-  const [chosenSlots, setChosenSlots] = useState([]);
-  const [chosenCards, setChosenCards] = useState([]);
-  const [popIndex, setPopIndex] = useState(null);
-  const pickingRef = useRef(false);
-  const deckRef = useRef(null);
-  const slotRefs = [useRef(null), useRef(null), useRef(null)];
-  const [flight, setFlight] = useState(null);
-
-  const prefersReduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  const DUR = useMemo(() => ({
-    fly: prefersReduced ? 60 : 600,
-    waitBeforeRedirect: prefersReduced ? 200 : 1000,
-    boardFade: prefersReduced ? 300 : 2000,
-  }), [prefersReduced]);
-
-  useEffect(() => {
-    const handleResize = () => setIsLandscape(window.innerWidth > window.innerHeight);
-    window.addEventListener("resize", handleResize);
-    const pageLoadTimer = requestAnimationFrame(() => setTimeout(() => setPageLoaded(true), 80));
-    const arriveTimer = requestAnimationFrame(() => {
-      setArrive(true);
-      setShuffleActive(true);
-    });
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(pageLoadTimer);
-      cancelAnimationFrame(arriveTimer);
-    };
-  }, []);
-
-  const computeFlight = (targetIndex) => {
-    const deckEl = deckRef.current;
-    const slotEl = slotRefs[targetIndex]?.current;
-    if (!deckEl || !slotEl) return null;
-    const d = deckEl.getBoundingClientRect();
-    const s = slotEl.getBoundingClientRect();
-    const dx = s.left + s.width / 2 - (d.left + d.width / 2);
-    const dy = s.top + s.height / 2 - (d.top + d.height / 2);
-    const scale = s.width / d.width;
-    return { key: Date.now(), left: d.left, top: d.top, dx, dy, scale, width: d.width, height: d.height };
+  const pickCardLogic = (slot) => {
+    const newCard = (() => {
+      if (slot === 0) return pick(FACE_POOLS.majors);
+      if (slot === 1) return pick(FACE_POOLS.minorsValues);
+      return pick(FACE_POOLS.minorsCourt);
+    })();
+    return { src: newCard?.src, name: labelFrom(newCard?.name) };
   };
 
-  const pickCardTo = (targetIndex) => {
-    if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) return;
-    const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
-    if (!availableSlots.includes(targetIndex)) return;
-
-    pickingRef.current = true;
-    const fl = computeFlight(targetIndex);
-    if (fl) setFlight(fl);
-
-    setTimeout(() => {
-      setDeckCount((n) => Math.max(0, n - 1));
-      setPopIndex(targetIndex);
-      setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
-
-      // Logique pour spread-advice
-      const slot = chosenSlots.length;
-      const newCard = (() => {
-        if (slot === 0) return pick(FACE_POOLS.majors);
-        if (slot === 1) return pick(FACE_POOLS.minorsValues);
-        return pick(FACE_POOLS.minorsCourt);
-      })();
-
-      const newChosenCard = { src: newCard?.src, name: labelFrom(newCard?.name) };
-      const updatedChosenCards = [...chosenCards, newChosenCard];
-      setChosenCards(updatedChosenCards);
-
-      setChosenSlots((prevSlots) => {
-        const newSlots = [...prevSlots, targetIndex];
-        if (newSlots.length === 3) {
-          setShuffleActive(false);
-          setTimeout(() => {
-            setBoardFading(true);
-            setTimeout(() => nav("/chat-advice", { state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
-          }, DUR.waitBeforeRedirect);
-        }
-        return newSlots;
-      });
-
-      setFlight(null);
-      pickingRef.current = false;
-    }, DUR.fly);
-  };
-
-  const onClickDeck = () => {
-    if (chosenSlots.length >= 3) return;
-    const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
-    pickCardTo(availableSlots[0]);
-  };
+  const {
+    question,
+    isLandscape,
+    pageLoaded,
+    arrive,
+    boardFading,
+    shuffleActive,
+    deckCount,
+    chosenSlots,
+    popIndex,
+    deckRef,
+    slotRefs,
+    flight,
+    isDragging,
+    targetSlot,
+    DUR,
+    pickCardTo,
+    onClickDeck,
+    handleDragStart,
+    handleDragEnd,
+  } = useSpreadPage("spread-advice", pickCardLogic);
 
   const animationClass = boardFading ? "fade-out-2s" : arrive ? "fade-in-soft" : "pre-fade";
 
   return (
-    <div className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
-      <div className={`page4-container ${animationClass}`}>
-        <div className="title-block">
-          <div className="p4-fixed-title">{question}</div>
-        </div>
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
+        <div className={`page4-container ${animationClass}`}>
+          <div className="title-block">
+            <div className="p4-fixed-title">{question}</div>
+          </div>
 
-        <div className={`board ${isLandscape ? "" : "col"}`}>
-          <div className="deck-block">
-            <div
-              ref={deckRef}
-              className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
-              onClick={onClickDeck}
-              role="button"
-              tabIndex={0}
-              aria-label="Jeu de cartes : touchez pour piocher (séquentiel)"
-            >
-              {/* Toutes les cartes sont maintenant animées */}
-              {[...Array(deckCount)].map((_, i) => (
+          <div className={`board ${isLandscape ? "" : "col"}`}>
+            <div className="deck-block">
+              <DraggableDeck>
                 <div
-                  key={`deck-card-${i}`}
-                  id={`deck-card-${i}`}
-                  className="card card-back stack"
-                  style={{ zIndex: i + 1 }}
-                />
-              ))}
+                  ref={deckRef}
+                  className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
+                  onClick={onClickDeck}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Jeu de cartes : touchez pour piocher (séquentiel) ou glissez une carte"
+                >
+                  {isDragging && <div className="card card-back" style={{ opacity: 0.5 }} />}
+                  {!isDragging && [...Array(deckCount)].map((_, i) => (
+                    <div
+                      key={`deck-card-${i}`}
+                      id={`deck-card-${i}`}
+                      className="card card-back stack"
+                      style={{ zIndex: i + 1 }}
+                    />
+                  ))}
+                </div>
+              </DraggableDeck>
             </div>
-          </div>
-          <div className="chosen-rail">
-            {[0, 1, 2].map((i) => (
-              <div key={`slotwrap-${i}`} ref={slotRefs[i]} className="slot-wrap" onClick={() => pickCardTo(i)}>
-                {chosenSlots.includes(i) ? (
-                  <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
-                ) : (
-                  <div className="card slot-ghost" />
-                )}
-              </div>
-            ))}
+            <DroppableRail>
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={`slotwrap-${i}`}
+                  ref={slotRefs[i]}
+                  className={`slot-wrap ${isDragging && targetSlot === i ? "highlight" : ""}`}
+                >
+                  {chosenSlots.includes(i) ? (
+                    <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
+                  ) : (
+                    <div className="card slot-ghost" />
+                  )}
+                </div>
+              ))}
+            </DroppableRail>
           </div>
         </div>
-      </div>
 
-      {flight && (
-        <div
-          key={flight.key}
-          className="fly-phys"
-          style={{
-            left: `${flight.left}px`, top: `${flight.top}px`, width: `${flight.width}px`, height: `${flight.height}px`,
-            "--dx": `${flight.dx}px`, "--dy": `${flight.dy}px`, "--scale": flight.scale,
-            animationDuration: `${DUR.fly}ms`,
-          }}
-        >
-          <div className="card card-back" />
-        </div>
-      )}
+        {flight && (
+          <div
+            key={flight.key}
+            className="fly-phys"
+            style={{
+              left: `${flight.left}px`,
+              top: `${flight.top}px`,
+              width: `${flight.width}px`,
+              height: `${flight.height}px`,
+              "--dx": `${flight.dx}px`,
+              "--dy": `${flight.dy}px`,
+              "--scale": flight.scale,
+              animationDuration: `${DUR.fly}ms`,
+            }}
+          >
+            <div className="card card-back" />
+          </div>
+        )}
+      </div>
+    </DndContext>
+  );
+}
+
+function DraggableDeck({ children }) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: "deck",
+  });
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        zIndex: 10,
+      }
+    : undefined;
+
+  return (
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+      {children}
+    </div>
+  );
+}
+
+function DroppableRail({ children }) {
+  const { isOver, setNodeRef } = useDroppable({ id: "rail" });
+  return (
+    <div ref={setNodeRef} className={`chosen-rail ${isOver ? "highlight-rail" : ""}`}>
+      {children}
     </div>
   );
 }
