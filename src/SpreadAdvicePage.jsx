@@ -161,10 +161,19 @@ function DraggableDeck({ children }) {
     id: "deck",
   });
 
-  const className = isDragging ? "is-dragging" : "";
+  const style = {
+    // Other styles may be passed via attributes
+    ...attributes.style,
+    // When dragging, dnd-kit applies styles to hide the source. Override them.
+    ...(isDragging && {
+      transform: 'none',
+      opacity: 1,
+      visibility: 'visible',
+    }),
+  };
 
   return (
-    <div ref={setNodeRef} className={className} {...listeners} {...attributes}>
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
       {children}
     </div>
   );
