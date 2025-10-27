@@ -168,11 +168,7 @@ export default function SpreadAdvicePage() {
               tabIndex={0}
               aria-label="Jeu de cartes : touchez pour piocher (séquentiel)"
             >
-              {/* Carte de base statique pour éviter l'ombre "fantôme" */}
-              <div className="card-shadow-wrapper" style={{ zIndex: 0 }}>
-                <div className="card card-back" />
-              </div>
-              {/* Cartes animées */}
+              {/* Toutes les cartes sont maintenant animées */}
               {[...Array(deckCount)].map((_, i) => (
                 <div key={`deck-shadow-${i}`} className="card-shadow-wrapper" style={{ zIndex: i + 1 }}>
                   <div className="card card-back stack" />
