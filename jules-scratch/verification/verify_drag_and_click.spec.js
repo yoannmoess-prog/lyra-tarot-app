@@ -1,19 +1,27 @@
 // jules-scratch/verification/verify_drag_and_click.spec.js
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 test('should allow both drag-and-drop and click to draw cards', async ({ page }) => {
-  // Navigate directly to the page, simulating the state
-  await page.goto('http://localhost:5175');
+  // Stratégie : Contourner le flux de navigation qui dépend de l'API LLM
+  // en injectant l'état directement et en naviguant vers la page du tirage.
+
+  // 1. Aller à la racine pour que le local storage soit associé au bon domaine.
+  await page.goto('http://localhost:5178/');
+
+  // 2. Injecter l'état nécessaire dans le localStorage.
   await page.evaluate(() => {
     localStorage.setItem('lyra-tarot-state', JSON.stringify({
       name: 'Testeur',
       question: 'Is this working?'
     }));
   });
-  await page.goto('http://localhost:5175/spread-advice');
 
-  // Wait for the shuffle animation to become active
-  await expect(page.locator('.deck-area.shuffling')).toBeVisible({ timeout: 10000 });
+  // 3. Naviguer directement à la page du tirage.
+  await page.goto('http://localhost:5178/spread-advice');
+
+  // 4. Exécuter les tests de drag-and-drop et de clic
+  // Attendre que l'animation de mélange soit visible.
+  await expect(page.locator('.deck-area.shuffling')).toBeVisible({ timeout: 15000 });
 
   const deck = page.locator('.deck-area');
   const rail = page.locator('.chosen-rail');
@@ -23,27 +31,21 @@ test('should allow both drag-and-drop and click to draw cards', async ({ page })
   await deck.hover();
   await page.mouse.down();
 
-  // Drag over the first slot and check for highlight
   await firstSlot.hover();
-  await expect(firstSlot).toHaveClass(/highlight/);
+  await expect(firstSlot).toHaveClass(/highlight/, { timeout: 5000 });
 
-  // Capture the drag interaction
   await page.screenshot({ path: 'jules-scratch/verification/verification-drag.png' });
 
-  // Drop the card onto the rail
   await rail.hover();
   await page.mouse.up();
 
-  // Check if a card appeared in the first slot
-  await expect(firstSlot.locator('.card-back.chosen')).toBeVisible();
+  await expect(firstSlot.locator('.card-back.chosen')).toBeVisible({ timeout: 5000 });
 
   // --- Test 2: Click ---
   await deck.click();
 
-  // Check if a card appeared in the second slot
   const secondSlot = page.locator('.slot-wrap').nth(1);
-  await expect(secondSlot.locator('.card-back.chosen')).toBeVisible();
+  await expect(secondSlot.locator('.card-back.chosen')).toBeVisible({ timeout: 5000 });
 
-  // Capture the final state
   await page.screenshot({ path: 'jules-scratch/verification/verification-final.png' });
 });

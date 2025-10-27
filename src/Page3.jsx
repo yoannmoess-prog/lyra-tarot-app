@@ -156,6 +156,7 @@ function Page3() {
         </div>
         <div className="input-bubble textarea">
           <textarea
+            id="question"
             ref={inputRef}
             rows="1"
             placeholder="Écris ta question ici..."
