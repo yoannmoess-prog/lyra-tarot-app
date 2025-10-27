@@ -56,7 +56,7 @@ export default function SpreadTruthPage() {
   const [arrive, setArrive] = useState(false);
   const [boardFading, setBoardFading] = useState(false);
   const [shuffleActive, setShuffleActive] = useState(false);
-  const [deckCount, setDeckCount] = useState(14);
+  const [deckCount, setDeckCount] = useState(22);
   const [chosenSlots, setChosenSlots] = useState([]);
   const [chosenCards, setChosenCards] = useState([]);
   const [popIndex, setPopIndex] = useState(null);
@@ -164,9 +164,12 @@ export default function SpreadTruthPage() {
               aria-label="Jeu de cartes : touchez pour piocher (séquentiel)"
             >
               {[...Array(deckCount)].map((_, i) => (
-                <div key={`deck-shadow-${i}`} className="card-shadow-wrapper" style={{ zIndex: i }}>
-                  <div className="card card-back stack" />
-                </div>
+                <div
+                  key={`deck-card-${i}`}
+                  id={`deck-card-${i}`}
+                  className="card card-back stack"
+                  style={{ zIndex: i + 1 }}
+                />
               ))}
             </div>
           </div>
