@@ -60,14 +60,21 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     return { key: Date.now(), left: d.left, top: d.top, dx, dy, scale, width: d.width, height: d.height };
   };
 
-  const pickCardTo = (targetIndex) => {
+  const pickCardTo = (targetIndex, options = {}) => {
+    const { isDragEnd = false } = options;
     if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) return;
     const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
     if (!availableSlots.includes(targetIndex)) return;
 
     pickingRef.current = true;
-    const fl = computeFlight(targetIndex);
-    if (fl) setFlight(fl);
+
+    // A drag-and-drop action should feel instant, no flight animation needed
+    const animationDuration = isDragEnd ? 0 : DUR.fly;
+
+    if (!isDragEnd) {
+      const fl = computeFlight(targetIndex);
+      if (fl) setFlight(fl);
+    }
 
     setTimeout(() => {
       setDeckCount((n) => Math.max(0, n - 1));
@@ -97,9 +104,11 @@ export function useSpreadPage(spreadType, pickCardLogic) {
         return newSlots;
       });
 
-      setFlight(null);
+      if (!isDragEnd) {
+        setFlight(null);
+      }
       pickingRef.current = false;
-    }, DUR.fly);
+    }, animationDuration);
   };
 
   const getNextSlot = () => {
@@ -129,16 +138,11 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     setActiveId(null);
     setTargetSlot(null);
 
-    // Case 1: Successful drop on the rail
+    // If the card is dropped over the rail, draw it without the flight animation.
     if (event.over && event.over.id === "rail") {
-      pickCardTo(getNextSlot());
-      return;
+      pickCardTo(getNextSlot(), { isDragEnd: true });
     }
-
-    // Case 2: Click emulation (no drag distance)
-    if (event.delta.x === 0 && event.delta.y === 0) {
-      onClickDeck();
-    }
+    // If dropped anywhere else, the card simply disappears from the DragOverlay; no action needed.
   };
 
   return {

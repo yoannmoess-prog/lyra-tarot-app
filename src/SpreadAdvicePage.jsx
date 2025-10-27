@@ -89,7 +89,7 @@ export default function SpreadAdvicePage() {
 
           <div className={`board ${isLandscape ? "" : "col"}`}>
             <div className="deck-block">
-              <DraggableDeck>
+              <DraggableDeck onClick={onClickDeck}>
                 <div
                   ref={deckRef}
                   className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
@@ -156,24 +156,19 @@ export default function SpreadAdvicePage() {
   );
 }
 
-function DraggableDeck({ children }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+function DraggableDeck({ children, onClick }) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: "deck",
   });
 
-  const style = {
-    // Other styles may be passed via attributes
-    ...attributes.style,
-    // When dragging, dnd-kit applies styles to hide the source. Override them.
-    ...(isDragging && {
-      transform: 'none',
-      opacity: 1,
-      visibility: 'visible',
-    }),
-  };
+  // We capture the `transform` from `useDraggable` but override it
+  // to ensure the deck component itself never moves from its position.
+  const style = transform
+    ? { transform: `translate3d(0px, 0px, 0)` }
+    : undefined;
 
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes} onClick={onClick}>
       {children}
     </div>
   );
