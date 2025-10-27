@@ -77,24 +77,24 @@ export default function SpreadTruthPage() {
 
           <div className={`board ${isLandscape ? "" : "col"}`}>
             <div className="deck-block">
-              <DraggableDeck onClick={onClickDeck}>
-                <div
-                  ref={deckRef}
-                  className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Jeu de cartes : touchez pour piocher (séquentiel) ou glissez une carte"
-                >
-                  {[...Array(deckCount)].map((_, i) => (
-                    <div
-                      key={`deck-card-${i}`}
-                      id={`deck-card-${i}`}
-                      className="card card-back stack"
-                      style={{ zIndex: i + 1 }}
-                    />
-                  ))}
-                </div>
-              </DraggableDeck>
+              <DraggableHandle />
+              <div
+                ref={deckRef}
+                className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
+                role="button"
+                tabIndex={0}
+                aria-label="Jeu de cartes : touchez pour piocher (séquentiel) ou glissez une carte"
+                onClick={onClickDeck}
+              >
+                {[...Array(deckCount)].map((_, i) => (
+                  <div
+                    key={`deck-card-${i}`}
+                    id={`deck-card-${i}`}
+                    className="card card-back stack"
+                    style={{ zIndex: i + 1 }}
+                  />
+                ))}
+              </div>
             </div>
             <DroppableRail>
               {[0, 1, 2].map((i) => (
@@ -144,21 +144,19 @@ export default function SpreadTruthPage() {
   );
 }
 
-function DraggableDeck({ children, onClick }) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: "deck",
+function DraggableHandle() {
+  const { attributes, listeners, setNodeRef } = useDraggable({
+    id: "deck-handle",
   });
 
-  // We capture the `transform` from `useDraggable` but override it
-  // to ensure the deck component itself never moves from its position.
-  const style = transform
-    ? { transform: `translate3d(0px, 0px, 0)` }
-    : undefined;
-
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes} onClick={onClick}>
-      {children}
-    </div>
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      className="draggable-handle"
+      aria-label="Glissez pour piocher une carte"
+    />
   );
 }
 

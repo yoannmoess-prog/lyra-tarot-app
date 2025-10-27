@@ -130,8 +130,10 @@ export function useSpreadPage(spreadType, pickCardLogic) {
 
   const handleDragStart = (event) => {
     if (pickingRef.current || chosenSlots.length >= 3) return;
-    setTargetSlot(getNextSlot());
-    setActiveId(event.active.id);
+    if (event.active.id === 'deck-handle') {
+      setTargetSlot(getNextSlot());
+      setActiveId(event.active.id);
+    }
   };
 
   const handleDragEnd = (event) => {
