@@ -149,19 +149,10 @@ function DraggableDeck({ children }) {
     id: "deck",
   });
 
-  // Keep the deck visible and in place while dragging, as a DragOverlay is used.
-  const style = {
-    ...attributes.style,
-    // When dragging, dnd-kit applies transform and visibility styles. Override them.
-    ...(isDragging && {
-      transform: "none",
-      opacity: 1,
-      visibility: "visible",
-    }),
-  };
+  const className = isDragging ? "is-dragging" : "";
 
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+    <div ref={setNodeRef} className={className} {...listeners} {...attributes}>
       {children}
     </div>
   );
