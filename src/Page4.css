@@ -138,29 +138,6 @@
 .shuffling .card:nth-child(3n + 2) {
   animation: shuffle-loop-3 3.5s ease-in-out infinite 0.4s;
 }
-/* Animation spéciale pour la carte qui "coupe" le jeu */
-.shuffling .card:nth-child(18) {
-  animation: cut-the-deck 6s ease-in-out infinite;
-}
-
-@keyframes cut-the-deck {
-  /* La carte suit une animation de base pour la première moitié */
-  0%, 50%, 100% {
-    transform: translate(0, 0) rotate(0);
-    z-index: 18;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  }
-  25% {
-    transform: translate(8px, 12px) rotate(5deg);
-  }
-
-  /* La carte s'envole au-dessus du paquet */
-  75% {
-    transform: translate(-30px, -50px) rotate(-12deg) scale(1.1);
-    z-index: 25;
-    box-shadow: 0 15px 25px rgba(0,0,0,0.3);
-  }
-}
 
 @keyframes shuffle-loop-1 {
   0%, 100% { transform: translate(0, 0) rotate(0); }
