@@ -135,29 +135,30 @@
 }
 
 /* Shuffle Animation */
-.shuffling .card-shadow-wrapper:nth-child(n+4) .card.stack {
-  animation: riffleLoop 4.8s ease-in-out infinite;
+/* Cartes du dessus (celles qui sont brassées visiblement) */
+.shuffling .card-shadow-wrapper:nth-child(n+4) .card {
+  animation: riffleUpperLoop 4.8s ease-in-out infinite;
 }
-/* Animation pour la base du paquet (3 premières cartes) */
-.shuffling .card-shadow-wrapper:nth-child(-n+3) .card.stack {
+/* Cartes de la base (celles qui bougent subtilement) */
+.shuffling .card-shadow-wrapper:nth-child(-n+3) .card {
   animation: riffleBaseLoop 4.8s ease-in-out infinite;
 }
 
-/* Delais pour l'animation de brassage principale */
-.shuffling .card-shadow-wrapper:nth-last-child(1) .card { animation-delay: 0s; }
-.shuffling .card-shadow-wrapper:nth-last-child(2) .card { animation-delay: 0.04s; }
-.shuffling .card-shadow-wrapper:nth-last-child(3) .card { animation-delay: 0.08s; }
-.shuffling .card-shadow-wrapper:nth-last-child(4) .card { animation-delay: 0.12s; }
-.shuffling .card-shadow-wrapper:nth-last-child(5) .card { animation-delay: 0.16s; }
-.shuffling .card-shadow-wrapper:nth-last-child(6) .card { animation-delay: 0.2s; }
-.shuffling .card-shadow-wrapper:nth-last-child(7) .card { animation-delay: 0.24s; }
+/* Délais pour l'animation de la base pour un effet subtil et décalé */
+.shuffling .card-shadow-wrapper:nth-child(1) { animation-delay: 0.05s; }
+.shuffling .card-shadow-wrapper:nth-child(2) { animation-delay: 0.02s; }
+.shuffling .card-shadow-wrapper:nth-child(3) { animation-delay: 0s; }
 
-/* Délais pour l'animation de la base pour un effet subtil */
-.shuffling .card-shadow-wrapper:nth-child(1) .card { animation-delay: 0.05s; }
-.shuffling .card-shadow-wrapper:nth-child(2) .card { animation-delay: 0.02s; }
-.shuffling .card-shadow-wrapper:nth-child(3) .card { animation-delay: 0s; }
+/* Délais pour l'animation de brassage principale pour un effet de cascade */
+.shuffling .card-shadow-wrapper:nth-child(4) { animation-delay: 0.08s; }
+.shuffling .card-shadow-wrapper:nth-child(5) { animation-delay: 0.12s; }
+.shuffling .card-shadow-wrapper:nth-child(6) { animation-delay: 0.16s; }
+.shuffling .card-shadow-wrapper:nth-child(7) { animation-delay: 0.20s; }
+.shuffling .card-shadow-wrapper:nth-child(8) { animation-delay: 0.24s; }
+/* ... et ainsi de suite si plus de cartes sont visibles */
 
-@keyframes riffleLoop {
+
+@keyframes riffleUpperLoop {
   0% {
     transform: translate(0, 0) rotate(0);
   }

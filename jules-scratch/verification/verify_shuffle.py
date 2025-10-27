@@ -1,50 +1,50 @@
 
-import time
-from playwright.sync_api import sync_playwright
+import asyncio
+from playwright.async_api import async_playwright, expect
 
-def run(playwright):
-    browser = playwright.chromium.launch(headless=True)
-    context = browser.new_context()
-    page = context.new_page()
+async def main():
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        page = await browser.new_page()
 
-    try:
-        # 1. Naviguer vers la page d'introduction
-        page.goto("http://localhost:5173/", timeout=60000)
+        try:
+            # Naviguer vers la page d'accueil
+            await page.goto("http://localhost:5176/")
 
-        # 2. Démarrer le flux utilisateur
-        page.locator('main.intro-root').click()
-        page.wait_for_url("**/name", timeout=5000)
+            # Page 1: Intro - Cliquer pour commencer
+            await page.locator('main.intro-root[role="button"]').click()
+            await expect(page).to_have_url("http://localhost:5176/name")
 
-        # 3. Entrer le nom
-        page.locator('input#name').fill("Jules")
-        page.locator('button[type="submit"]').click()
-        page.wait_for_url("**/question", timeout=5000)
+            # Page 2: Name - Entrer un nom et continuer
+            await page.get_by_placeholder("Ton prénom").fill("Jules")
+            await page.get_by_role("button", name="Envoyer").click()
+            await expect(page).to_have_url("http://localhost:5176/question", timeout=10000)
 
-        # 4. Entrer une question valide
-        page.get_by_placeholder("Écris ta question ici...").fill("Quelle est la meilleure voie à suivre pour mon projet ?")
-        page.locator('button[type="submit"]').click()
-        page.wait_for_url("**/loading", timeout=5000)
+            # Page 3: Question - Poser une question valide et continuer
+            await page.get_by_placeholder("Écris ta question ici...").fill("Quel est mon avenir professionnel ?")
+            await page.get_by_role("button", name="Envoyer la question").click()
 
-        # 5. Attendre la fin de la page de chargement et l'arrivée sur la page de tirage
-        page.wait_for_url("**/spread-advice", timeout=15000) # Timeout plus long pour l'API
+            # Page 4: Loading - Attendre la redirection vers la page du tirage
+            # L'API peut être lente, donc on met un timeout généreux
+            await expect(page).to_have_url("http://localhost:5176/spread-advice", timeout=20000)
 
-        # 6. Attendre que l'animation de brassage commence
-        page.wait_for_selector(".shuffling", timeout=5000)
+            # Page 5: Spread - La page avec l'animation de brassage
+            await expect(page.locator(".board")).to_be_visible(timeout=10000)
 
-        # Laisser le temps à l'animation de jouer un peu pour la capture d'écran
-        time.sleep(2.5)
+            # Laisser à l'animation le temps de démarrer pour une capture pertinente
+            await page.wait_for_timeout(2000)
 
-        # 7. Prendre une capture d'écran
-        screenshot_path = "jules-scratch/verification/verification.png"
-        page.screenshot(path=screenshot_path)
-        print(f"Screenshot saved to {screenshot_path}")
+            # Prendre la capture d'écran
+            await page.screenshot(path="jules-scratch/verification/verification.png")
 
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        page.screenshot(path="jules-scratch/verification/error.png")
+            print("Screenshot saved to jules-scratch/verification/verification.png")
 
-    finally:
-        browser.close()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            await page.screenshot(path="jules-scratch/verification/error.png")
 
-with sync_playwright() as playwright:
-    run(playwright)
+        finally:
+            await browser.close()
+
+if __name__ == "__main__":
+    asyncio.run(main())
