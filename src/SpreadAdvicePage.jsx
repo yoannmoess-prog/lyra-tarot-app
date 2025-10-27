@@ -92,7 +92,7 @@ export default function SpreadAdvicePage() {
               <DraggableDeck>
                 <div
                   ref={deckRef}
-                  className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
+                  className="deck-area"
                   role="button"
                   tabIndex={0}
                   aria-label="Jeu de cartes : touchez pour piocher (séquentiel) ou glissez une carte"
@@ -157,15 +157,12 @@ export default function SpreadAdvicePage() {
 }
 
 function DraggableDeck({ children }) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef } = useDraggable({
     id: "deck",
   });
 
-  // This prevents the draggable source from moving, as we are using a DragOverlay.
-  const style = transform ? { ...attributes.style, transform: "none" } : attributes.style;
-
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+    <div ref={setNodeRef} {...listeners} {...attributes}>
       {children}
     </div>
   );
