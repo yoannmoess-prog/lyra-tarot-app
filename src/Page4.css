@@ -129,57 +129,39 @@
 }
 
 /* Shuffle Animation */
-.shuffling .card:nth-child(3n) {
-  animation: shuffle-loop-1 2.8s ease-in-out infinite;
-}
-.shuffling .card:nth-child(3n + 1) {
-  animation: shuffle-loop-2 2.8s ease-in-out infinite 0.2s;
-}
-.shuffling .card:nth-child(3n + 2) {
-  animation: shuffle-loop-3 2.8s ease-in-out infinite 0.4s;
-}
-/* Animation spéciale pour la carte qui "coupe" le jeu */
-.shuffling .card:nth-child(18) {
-  animation: cut-the-deck 5.6s ease-in-out infinite 0.1s;
+.shuffling .card {
+  animation: a-shuffle-main 1.8s ease-in-out infinite;
 }
 
-@keyframes cut-the-deck {
-  /* La carte suit un mouvement de base au début */
-  0%, 100% { transform: translate(0, 0) rotate(0); z-index: 18; }
-  15% { transform: translate(5px, -2px) rotate(3deg); z-index: 18; }
+/* Crée un effet de vague en décalant l'animation de chaque carte */
+.shuffling .card:nth-child(1) { animation-delay: 0.05s; }
+.shuffling .card:nth-child(2) { animation-delay: 0.1s; }
+.shuffling .card:nth-child(3) { animation-delay: 0.15s; }
+.shuffling .card:nth-child(4) { animation-delay: 0.2s; }
+.shuffling .card:nth-child(5) { animation-delay: 0.25s; }
+.shuffling .card:nth-child(6) { animation-delay: 0.3s; }
+.shuffling .card:nth-child(7) { animation-delay: 0.35s; }
+.shuffling .card:nth-child(8) { animation-delay: 0.4s; }
+.shuffling .card:nth-child(9) { animation-delay: 0.45s; }
+.shuffling .card:nth-child(10) { animation-delay: 0.5s; }
+.shuffling .card:nth-child(11) { animation-delay: 0.55s; }
+.shuffling .card:nth-child(12) { animation-delay: 0.6s; }
+.shuffling .card:nth-child(13) { animation-delay: 0.65s; }
+.shuffling .card:nth-child(14) { animation-delay: 0.7s; }
+.shuffling .card:nth-child(15) { animation-delay: 0.75s; }
+.shuffling .card:nth-child(16) { animation-delay: 0.8s; }
+.shuffling .card:nth-child(17) { animation-delay: 0.85s; }
+.shuffling .card:nth-child(18) { animation-delay: 0.9s; }
+.shuffling .card:nth-child(19) { animation-delay: 0.95s; }
+.shuffling .card:nth-child(20) { animation-delay: 1.0s; }
+.shuffling .card:nth-child(21) { animation-delay: 1.05s; }
+.shuffling .card:nth-child(22) { animation-delay: 1.1s; }
 
-  /* La carte commence à sortir par le bas */
-  25% { transform: translate(0, 15px) rotate(-2deg); z-index: 25; }
 
-  /* Elle s'envole par-dessus le paquet */
-  50% { transform: translate(-40px, -60px) rotate(-15deg); z-index: 25; }
-
-  /* Elle revient se placer sur le dessus */
-  75% { transform: translate(10px, 5px) rotate(5deg); z-index: 25; }
-
-  /* Elle reste sur le dessus pour la fin du cycle */
-  90% { transform: translate(0, 0) rotate(0); z-index: 25; }
-}
-
-@keyframes shuffle-loop-1 {
-  0%, 100% { transform: translate(0, 0) rotate(0); }
-  25% { transform: translate(5px, -2px) rotate(3deg); }
-  50% { transform: translate(0, 0) rotate(0); }
-  75% { transform: translate(-5px, 2px) rotate(-3deg); }
-}
-
-@keyframes shuffle-loop-2 {
-  0%, 100% { transform: translate(0, 0) rotate(0); }
-  25% { transform: translate(-6px, 0) rotate(-4deg); }
-  50% { transform: translate(0, 3px) rotate(0); }
-  75% { transform: translate(6px, 0) rotate(4deg); }
-}
-
-@keyframes shuffle-loop-3 {
-  0%, 100% { transform: translate(0, 0) rotate(0); }
-  25% { transform: translate(0, -3px) rotate(-2deg); }
-  50% { transform: translate(4px, 4px) rotate(0); }
-  75% { transform: translate(0, 3px) rotate(2deg); }
+@keyframes a-shuffle-main {
+  0% { transform: translate(0, 0) rotate(0); }
+  50% { transform: translate(15px, -5px) rotate(8deg); }
+  100% { transform: translate(0, 0) rotate(0); }
 }
 
 /* Chosen Card Animation */
