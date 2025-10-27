@@ -22,7 +22,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   const slotRefs = [useRef(null), useRef(null), useRef(null)];
   const [flight, setFlight] = useState(null);
 
-  const [isDragging, setIsDragging] = useState(false);
+  const [activeId, setActiveId] = useState(null);
   const [targetSlot, setTargetSlot] = useState(null);
 
   const prefersReduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -119,17 +119,25 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     pickCardTo(getNextSlot());
   };
 
-  const handleDragStart = () => {
+  const handleDragStart = (event) => {
     if (pickingRef.current || chosenSlots.length >= 3) return;
     setTargetSlot(getNextSlot());
-    setIsDragging(true);
+    setActiveId(event.active.id);
   };
 
   const handleDragEnd = (event) => {
-    setIsDragging(false);
+    setActiveId(null);
     setTargetSlot(null);
+
+    // Case 1: Successful drop on the rail
     if (event.over && event.over.id === "rail") {
       pickCardTo(getNextSlot());
+      return;
+    }
+
+    // Case 2: Click emulation (no drag distance)
+    if (event.delta.x === 0 && event.delta.y === 0) {
+      onClickDeck();
     }
   };
 
@@ -148,7 +156,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     deckRef,
     slotRefs,
     flight,
-    isDragging,
+    activeId,
     targetSlot,
     DUR,
     pickCardTo,

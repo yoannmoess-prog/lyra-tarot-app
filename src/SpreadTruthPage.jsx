@@ -1,6 +1,6 @@
 // src/SpreadTruthPage.jsx
 import React from "react";
-import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
+import { DndContext, DragOverlay, useDraggable, useDroppable } from "@dnd-kit/core";
 import { useSpreadPage } from "./hooks/useSpreadPage";
 import "./Page4.css";
 
@@ -56,7 +56,7 @@ export default function SpreadTruthPage() {
     deckRef,
     slotRefs,
     flight,
-    isDragging,
+    activeId,
     targetSlot,
     DUR,
     pickCardTo,
@@ -81,13 +81,11 @@ export default function SpreadTruthPage() {
                 <div
                   ref={deckRef}
                   className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
-                  onClick={onClickDeck}
                   role="button"
                   tabIndex={0}
                   aria-label="Jeu de cartes : touchez pour piocher (séquentiel) ou glissez une carte"
                 >
-                  {isDragging && <div className="card card-back" style={{ opacity: 0.5 }} />}
-                  {!isDragging && [...Array(deckCount)].map((_, i) => (
+                  {[...Array(deckCount)].map((_, i) => (
                     <div
                       key={`deck-card-${i}`}
                       id={`deck-card-${i}`}
@@ -103,7 +101,7 @@ export default function SpreadTruthPage() {
                 <div
                   key={`slotwrap-${i}`}
                   ref={slotRefs[i]}
-                  className={`slot-wrap ${isDragging && targetSlot === i ? "highlight" : ""}`}
+                  className={`slot-wrap ${activeId && targetSlot === i ? "highlight" : ""}`}
                 >
                   {chosenSlots.includes(i) ? (
                     <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
@@ -134,6 +132,9 @@ export default function SpreadTruthPage() {
             <div className="card card-back" />
           </div>
         )}
+        <DragOverlay>
+          {activeId ? <div className="card card-back" /> : null}
+        </DragOverlay>
       </div>
     </DndContext>
   );
@@ -158,10 +159,6 @@ function DraggableDeck({ children }) {
 }
 
 function DroppableRail({ children }) {
-  const { isOver, setNodeRef } = useDroppable({ id: "rail" });
-  return (
-    <div ref={setNodeRef} className={`chosen-rail ${isOver ? "highlight-rail" : ""}`}>
-      {children}
-    </div>
-  );
+  const { setNodeRef } = useDroppable({ id: "rail" });
+  return <div ref={setNodeRef} className="chosen-rail">{children}</div>;
 }
