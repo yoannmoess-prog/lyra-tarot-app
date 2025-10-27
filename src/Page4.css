@@ -85,12 +85,6 @@
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
 }
-/* This is the dnd-kit override to prevent the deck from disappearing */
-.deck-block > .is-dragging {
-  transform: none !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-}
 .deck-area:focus { outline: none; }
 .deck-area:focus-visible {
   outline: 2px solid rgba(248, 245, 225, 0.85);
