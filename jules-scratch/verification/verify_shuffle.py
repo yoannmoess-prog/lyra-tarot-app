@@ -1,5 +1,6 @@
 
-from playwright.sync_api import sync_playwright, expect
+import time
+from playwright.sync_api import sync_playwright
 
 def run(playwright):
     browser = playwright.chromium.launch(headless=True)
@@ -7,40 +8,40 @@ def run(playwright):
     page = context.new_page()
 
     try:
-        # Naviguer à la racine
-        page.goto("http://localhost:5173/")
-        page.locator("main").click()
+        # 1. Naviguer vers la page d'introduction
+        page.goto("http://localhost:5173/", timeout=60000)
 
-        # Page 'name'
-        # Utilise le sélecteur d'ID correct et attend que l'élément soit visible
-        name_input = page.locator('input#name')
-        expect(name_input).to_be_visible(timeout=10000)
-        name_input.fill("Jules")
+        # 2. Démarrer le flux utilisateur
+        page.locator('main.intro-root').click()
+        page.wait_for_url("**/name", timeout=5000)
+
+        # 3. Entrer le nom
+        page.locator('input#name').fill("Jules")
         page.locator('button[type="submit"]').click()
+        page.wait_for_url("**/question", timeout=5000)
 
-        # Page 'question'
-        question_input = page.locator('textarea')
-        expect(question_input).to_be_visible(timeout=10000)
-        question_input.fill("Quel est mon avenir ?")
+        # 4. Entrer une question valide
+        page.get_by_placeholder("Écris ta question ici...").fill("Quelle est la meilleure voie à suivre pour mon projet ?")
         page.locator('button[type="submit"]').click()
+        page.wait_for_url("**/loading", timeout=5000)
 
+        # 5. Attendre la fin de la page de chargement et l'arrivée sur la page de tirage
+        page.wait_for_url("**/spread-advice", timeout=15000) # Timeout plus long pour l'API
 
-        # Page 'loading' puis 'spread-advice'
-        page.wait_for_url("**/spread-advice", timeout=30000)
+        # 6. Attendre que l'animation de brassage commence
+        page.wait_for_selector(".shuffling", timeout=5000)
 
-        # Attendre que l'animation de brassage soit visible
-        shuffle_area = page.locator(".deck-area.shuffling")
-        expect(shuffle_area).to_be_visible(timeout=10000)
+        # Laisser le temps à l'animation de jouer un peu pour la capture d'écran
+        time.sleep(2.5)
 
-        # Prendre une capture d'écran
-        page.screenshot(path="jules-scratch/verification/verification.png")
-        print("Screenshot saved to jules-scratch/verification/verification.png")
+        # 7. Prendre une capture d'écran
+        screenshot_path = "jules-scratch/verification/verification.png"
+        page.screenshot(path=screenshot_path)
+        print(f"Screenshot saved to {screenshot_path}")
 
     except Exception as e:
-        print(f"Une erreur est survenue : {e}")
+        print(f"An error occurred: {e}")
         page.screenshot(path="jules-scratch/verification/error.png")
-        print("Error screenshot saved to jules-scratch/verification/error.png")
-
 
     finally:
         browser.close()

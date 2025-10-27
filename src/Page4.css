@@ -138,6 +138,11 @@
 .shuffling .card.stack { /* Cible uniquement les cartes animées */
   animation: riffleLoop 4.8s ease-in-out infinite;
 }
+/* Animation pour la carte de base du paquet */
+.shuffling .card-shadow-wrapper:first-child .card {
+  animation: riffleBaseLoop 4.8s ease-in-out infinite;
+}
+
 .shuffling .card-shadow-wrapper:nth-last-child(1) .card { animation-delay: 0s; }
 .shuffling .card-shadow-wrapper:nth-last-child(2) .card { animation-delay: 0.04s; }
 .shuffling .card-shadow-wrapper:nth-last-child(3) .card { animation-delay: 0.08s; }
@@ -173,6 +178,21 @@
   /* 6. La repose et revient à la position initiale */
   100% {
     transform: translate(0, 0) rotate(0);
+  }
+}
+
+@keyframes riffleBaseLoop {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0);
+  }
+  25% {
+    transform: translate(-5px, 0) rotate(-2deg);
+  }
+  50% {
+    transform: translate(0, 0) rotate(0);
+  }
+  75% {
+    transform: translate(5px, 0) rotate(2deg);
   }
 }
 
