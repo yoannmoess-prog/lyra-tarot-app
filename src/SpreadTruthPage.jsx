@@ -80,7 +80,7 @@ export default function SpreadTruthPage() {
               <DraggableDeck>
                 <div
                   ref={deckRef}
-                  className="deck-area"
+                  className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
                   role="button"
                   tabIndex={0}
                   aria-label="Jeu de cartes : touchez pour piocher (séquentiel) ou glissez une carte"
@@ -145,12 +145,18 @@ export default function SpreadTruthPage() {
 }
 
 function DraggableDeck({ children }) {
-  const { attributes, listeners, setNodeRef } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: "deck",
   });
 
+  // Prevent the original draggable element from moving by overriding the transform style.
+  // The DragOverlay will be used to show the dragged item.
+  const style = transform
+    ? { ...attributes.style, transform: 'none' }
+    : attributes.style;
+
   return (
-    <div ref={setNodeRef} {...listeners} {...attributes}>
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
       {children}
     </div>
   );
