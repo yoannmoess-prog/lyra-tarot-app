@@ -60,8 +60,6 @@ export default function SpreadTruthPage() {
     targetSlot,
     DUR,
     pickCardTo,
-    onPointerDown,
-    onPointerUp,
     handleDragStart,
     handleDragEnd,
   } = useSpreadPage("spread-truth", pickCardLogic);
@@ -78,7 +76,7 @@ export default function SpreadTruthPage() {
 
           <div className={`board ${isLandscape ? "" : "col"}`}>
             <div className="deck-block">
-              <DraggableDeck onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
+              <DraggableDeck>
                 <div
                   ref={deckRef}
                   className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
@@ -145,20 +143,18 @@ export default function SpreadTruthPage() {
   );
 }
 
-function DraggableDeck({ children, onPointerDown, onPointerUp }) {
-  const { attributes, listeners, setNodeRef } = useDraggable({
+function DraggableDeck({ children }) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: "deck",
   });
 
+  // Force transform to none to keep the deck stationary
+  const style = {
+    transform: 'none',
+  };
+
   return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      style={{ transform: 'none' }} // Keep the deck stationary
-    >
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
       {children}
     </div>
   );

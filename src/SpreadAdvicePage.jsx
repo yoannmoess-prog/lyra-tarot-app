@@ -72,8 +72,6 @@ export default function SpreadAdvicePage() {
     targetSlot,
     DUR,
     pickCardTo,
-    onPointerDown,
-    onPointerUp,
     handleDragStart,
     handleDragEnd,
   } = useSpreadPage("spread-advice", pickCardLogic);
@@ -90,7 +88,7 @@ export default function SpreadAdvicePage() {
 
           <div className={`board ${isLandscape ? "" : "col"}`}>
             <div className="deck-block">
-              <DraggableDeck onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
+              <DraggableDeck>
                 <div
                   ref={deckRef}
                   className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
@@ -157,20 +155,18 @@ export default function SpreadAdvicePage() {
   );
 }
 
-function DraggableDeck({ children, onPointerDown, onPointerUp }) {
-  const { attributes, listeners, setNodeRef } = useDraggable({
+function DraggableDeck({ children }) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: "deck",
   });
 
+  // Force transform to none to keep the deck stationary
+  const style = {
+    transform: 'none',
+  };
+
   return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      style={{ transform: 'none' }} // Keep the deck stationary
-    >
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
       {children}
     </div>
   );
