@@ -24,8 +24,6 @@ export function useSpreadPage(spreadType, pickCardLogic) {
 
   const [activeId, setActiveId] = useState(null);
   const [targetSlot, setTargetSlot] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const pointerDownRef = useRef(false);
 
   const prefersReduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const DUR = useMemo(() => ({
@@ -123,20 +121,8 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     return availableSlots[0];
   };
 
-  const onPointerDown = () => {
-    pointerDownRef.current = true;
-  };
-
-  const onPointerUp = () => {
-    if (!isDragging && pointerDownRef.current) {
-      pickCardTo(getNextSlot());
-    }
-    pointerDownRef.current = false;
-  };
-
   const handleDragStart = (event) => {
     if (pickingRef.current || chosenSlots.length >= 3) return;
-    setIsDragging(true);
     setTargetSlot(getNextSlot());
     setActiveId(event.active.id);
   };
@@ -144,8 +130,14 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   const handleDragEnd = (event) => {
     setActiveId(null);
     setTargetSlot(null);
-    setIsDragging(false);
 
+    // Click is a drag with no distance
+    if (event.delta.x === 0 && event.delta.y === 0) {
+      pickCardTo(getNextSlot());
+      return;
+    }
+
+    // Successful drop on the rail
     if (event.over && event.over.id === "rail") {
       pickCardTo(getNextSlot(), { isDragEnd: true });
     }
@@ -170,8 +162,6 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     targetSlot,
     DUR,
     pickCardTo,
-    onPointerDown,
-    onPointerUp,
     handleDragStart,
     handleDragEnd,
   };
