@@ -81,7 +81,7 @@ export default function SpreadTruthPage() {
                 ref={deckRef}
                 className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
               >
-                {[...Array(deckCount)].map((_, i) => (
+                {[...Array(activeId ? deckCount - 1 : deckCount)].map((_, i) => (
                   <div
                     key={`deck-card-${i}`}
                     className="card card-back stack"
@@ -139,15 +139,17 @@ export default function SpreadTruthPage() {
 }
 
 function DraggableHandle() {
-  const { attributes, listeners, setNodeRef } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: "deck-handle",
   });
 
-  // Appliquer le style pour empêcher le mouvement est crucial.
-  // dnd-kit applique un `transform` par défaut, nous devons le surcharger.
-  const style = {
-    transform: "none",
-  };
+  // Pour que DragOverlay fonctionne, le Draggable source DOIT être transformé.
+  // On le laisse donc être transformé par la librairie, mais on le cache
+  // pour que l'utilisateur ne voit que l'Overlay et le paquet fixe.
+  const style = transform ? {
+    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+    visibility: 'hidden',
+  } : undefined;
 
   return (
     <div
