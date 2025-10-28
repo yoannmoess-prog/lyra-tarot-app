@@ -66,8 +66,6 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     if (!availableSlots.includes(targetIndex)) return;
 
     pickingRef.current = true;
-    const animationDuration = DUR.fly;
-
     const fl = computeFlight(targetIndex);
     if (fl) setFlight(fl);
 
@@ -101,7 +99,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
 
       setFlight(null);
       pickingRef.current = false;
-    }, animationDuration);
+    }, DUR.fly);
   };
 
   const getNextSlot = () => {
@@ -116,29 +114,30 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     return availableSlots[0];
   };
 
+  const onClickDeck = () => {
+    if (chosenSlots.length >= 3) return;
+    pickCardTo(getNextSlot());
+  };
+
   const handleDragStart = (event) => {
     if (pickingRef.current || chosenSlots.length >= 3) return;
-    if (event.active.id === 'deck-handle') {
-      setTargetSlot(getNextSlot());
-      setActiveId(event.active.id);
-    }
+    setTargetSlot(getNextSlot());
+    setActiveId(event.active.id);
   };
 
   const handleDragEnd = (event) => {
     setActiveId(null);
     setTargetSlot(null);
 
-    if (event.active.id !== 'deck-handle') return;
-
-    // Click is a drag with no distance
-    if (event.delta.x === 0 && event.delta.y === 0) {
+    // Case 1: Successful drop on the rail
+    if (event.over && event.over.id === "rail") {
       pickCardTo(getNextSlot());
       return;
     }
 
-    // Successful drop on the rail
-    if (event.over && event.over.id === "rail") {
-      pickCardTo(getNextSlot());
+    // Case 2: Click emulation (no drag distance)
+    if (event.delta.x === 0 && event.delta.y === 0) {
+      onClickDeck();
     }
   };
 
@@ -161,6 +160,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     targetSlot,
     DUR,
     pickCardTo,
+    onClickDeck,
     handleDragStart,
     handleDragEnd,
   };
