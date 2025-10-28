@@ -60,7 +60,8 @@ export default function SpreadTruthPage() {
     targetSlot,
     DUR,
     pickCardTo,
-    onClickDeck,
+    onPointerDown,
+    onPointerUp,
     handleDragStart,
     handleDragEnd,
   } = useSpreadPage("spread-truth", pickCardLogic);
@@ -77,23 +78,24 @@ export default function SpreadTruthPage() {
 
           <div className={`board ${isLandscape ? "" : "col"}`}>
             <div className="deck-block">
-              <DraggableHandle onClick={onClickDeck} />
-              <div
-                ref={deckRef}
-                className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
-                role="button"
-                tabIndex={-1}
-                aria-label="Jeu de cartes : touchez pour piocher (séquentiel) ou glissez une carte"
-              >
-                {[...Array(deckCount)].map((_, i) => (
-                  <div
-                    key={`deck-card-${i}`}
-                    id={`deck-card-${i}`}
-                    className="card card-back stack"
-                    style={{ zIndex: i + 1 }}
-                  />
-                ))}
-              </div>
+              <DraggableDeck onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
+                <div
+                  ref={deckRef}
+                  className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Jeu de cartes : touchez pour piocher (séquentiel) ou glissez une carte"
+                >
+                  {[...Array(deckCount)].map((_, i) => (
+                    <div
+                      key={`deck-card-${i}`}
+                      id={`deck-card-${i}`}
+                      className="card card-back stack"
+                      style={{ zIndex: i + 1 }}
+                    />
+                  ))}
+                </div>
+              </DraggableDeck>
             </div>
             <DroppableRail>
               {[0, 1, 2].map((i) => (
@@ -143,9 +145,9 @@ export default function SpreadTruthPage() {
   );
 }
 
-function DraggableHandle({ onClick }) {
+function DraggableDeck({ children, onPointerDown, onPointerUp }) {
   const { attributes, listeners, setNodeRef } = useDraggable({
-    id: "deck-handle",
+    id: "deck",
   });
 
   return (
@@ -153,10 +155,12 @@ function DraggableHandle({ onClick }) {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      onClick={onClick}
-      className="draggable-handle"
-      aria-label="Glissez ou touchez pour piocher une carte"
-    />
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      style={{ transform: 'none' }} // Keep the deck stationary
+    >
+      {children}
+    </div>
   );
 }
 

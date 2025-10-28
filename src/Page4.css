@@ -73,7 +73,6 @@
 
 /* Deck Area */
 .deck-block {
-  position: relative;
   display: flex;
   justify-content: center;
 }
@@ -219,23 +218,4 @@
 @media (min-width: 821px) {
   .deck-area { width: min(20vw, 180px); }
   .slot-wrap { width: min(12vw, 140px); }
-}
-
-/* Draggable Handle for the deck */
-.draggable-handle {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 10; /* Ensures it's above the deck animation */
-  cursor: grab;
-  user-select: none;
-  touch-action: none;
-  -webkit-tap-highlight-color: transparent;
-  border-radius: 14px; /* Matches the card shape */
-  background-color: transparent; /* Makes it a valid event target */
-}
-.draggable-handle:active {
-  cursor: grabbing;
 }

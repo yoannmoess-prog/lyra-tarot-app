@@ -24,6 +24,8 @@ export function useSpreadPage(spreadType, pickCardLogic) {
 
   const [activeId, setActiveId] = useState(null);
   const [targetSlot, setTargetSlot] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const pointerDownRef = useRef(false);
 
   const prefersReduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const DUR = useMemo(() => ({
@@ -67,8 +69,6 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     if (!availableSlots.includes(targetIndex)) return;
 
     pickingRef.current = true;
-
-    // A drag-and-drop action should feel instant, no flight animation needed
     const animationDuration = isDragEnd ? 0 : DUR.fly;
 
     if (!isDragEnd) {
@@ -123,28 +123,32 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     return availableSlots[0];
   };
 
-  const onClickDeck = () => {
-    if (chosenSlots.length >= 3) return;
-    pickCardTo(getNextSlot());
+  const onPointerDown = () => {
+    pointerDownRef.current = true;
+  };
+
+  const onPointerUp = () => {
+    if (!isDragging && pointerDownRef.current) {
+      pickCardTo(getNextSlot());
+    }
+    pointerDownRef.current = false;
   };
 
   const handleDragStart = (event) => {
     if (pickingRef.current || chosenSlots.length >= 3) return;
-    if (event.active.id === 'deck-handle') {
-      setTargetSlot(getNextSlot());
-      setActiveId(event.active.id);
-    }
+    setIsDragging(true);
+    setTargetSlot(getNextSlot());
+    setActiveId(event.active.id);
   };
 
   const handleDragEnd = (event) => {
     setActiveId(null);
     setTargetSlot(null);
+    setIsDragging(false);
 
-    // If the card is dropped over the rail, draw it without the flight animation.
     if (event.over && event.over.id === "rail") {
       pickCardTo(getNextSlot(), { isDragEnd: true });
     }
-    // If dropped anywhere else, the card simply disappears from the DragOverlay; no action needed.
   };
 
   return {
@@ -166,7 +170,8 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     targetSlot,
     DUR,
     pickCardTo,
-    onClickDeck,
+    onPointerDown,
+    onPointerUp,
     handleDragStart,
     handleDragEnd,
   };
