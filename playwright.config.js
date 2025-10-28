@@ -1,16 +1,17 @@
-// playwright.config.js
+
 import { defineConfig } from '@playwright/test';
 
+const baseURL = 'http://localhost:5173';
+
 export default defineConfig({
-  // Look for test files in the "jules-scratch" directory.
   testDir: './jules-scratch',
-  // Use the existing development server.
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173',
+    command: 'npx concurrently "npm run dev:server" "npm run dev:client"',
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
   },
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: baseURL,
   },
 });

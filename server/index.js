@@ -29,8 +29,10 @@ const LLM_MODEL = process.env.LLM_MODEL || "gpt-4o-mini";
 const openai = new OpenAI({ apiKey: LLM_API_KEY });
 
 // --- Middlewares principaux ---
+// Configuration CORS robuste pour la production et le développement
+const corsOrigin = process.env.CORS_ORIGIN || 'https://lyra-frontend.onrender.com';
 app.use(cors({ 
-  origin: process.env.CORS_ORIGIN || "*", 
+  origin: corsOrigin,
   credentials: false 
 }));
 app.use(express.json({ limit: "1mb" }));

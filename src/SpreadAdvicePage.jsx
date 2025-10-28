@@ -155,9 +155,17 @@ function DraggableHandle() {
     id: "deck-handle",
   });
 
+  // Appliquer le style pour empêcher le mouvement est crucial.
+  // dnd-kit applique un `transform` par défaut, nous devons le surcharger.
+  const style = {
+    transform: "none",
+  };
+
   return (
     <div
+      id="deck-handle"
       ref={setNodeRef}
+      style={style}
       {...listeners}
       {...attributes}
       className="draggable-handle"
