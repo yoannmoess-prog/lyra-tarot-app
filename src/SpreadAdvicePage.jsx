@@ -88,24 +88,19 @@ export default function SpreadAdvicePage() {
 
           <div className={`board ${isLandscape ? "" : "col"}`}>
             <div className="deck-block">
-              <DraggableDeck>
-                <div
-                  ref={deckRef}
-                  className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Jeu de cartes : touchez pour piocher (séquentiel) ou glissez une carte"
-                >
-                  {[...Array(deckCount)].map((_, i) => (
-                    <div
-                      key={`deck-card-${i}`}
-                      id={`deck-card-${i}`}
-                      className="card card-back stack"
-                      style={{ zIndex: i + 1 }}
-                    />
-                  ))}
-                </div>
-              </DraggableDeck>
+              <DraggableHandle />
+              <div
+                ref={deckRef}
+                className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
+              >
+                {[...Array(deckCount)].map((_, i) => (
+                  <div
+                    key={`deck-card-${i}`}
+                    className="card card-back stack"
+                    style={{ zIndex: i + 1 }}
+                  />
+                ))}
+              </div>
             </div>
             <DroppableRail>
               {[0, 1, 2].map((i) => (
@@ -155,20 +150,20 @@ export default function SpreadAdvicePage() {
   );
 }
 
-function DraggableDeck({ children }) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: "deck",
+function DraggableHandle() {
+  const { attributes, listeners, setNodeRef } = useDraggable({
+    id: "deck-handle",
   });
 
-  // Force transform to none to keep the deck stationary
-  const style = {
-    transform: 'none',
-  };
-
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-      {children}
-    </div>
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      className="draggable-handle"
+      role="button"
+      aria-label="Touchez ou glissez pour piocher une carte"
+    />
   );
 }
 

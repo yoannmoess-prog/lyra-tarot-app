@@ -60,19 +60,16 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     return { key: Date.now(), left: d.left, top: d.top, dx, dy, scale, width: d.width, height: d.height };
   };
 
-  const pickCardTo = (targetIndex, options = {}) => {
-    const { isDragEnd = false } = options;
+  const pickCardTo = (targetIndex) => {
     if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) return;
     const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
     if (!availableSlots.includes(targetIndex)) return;
 
     pickingRef.current = true;
-    const animationDuration = isDragEnd ? 0 : DUR.fly;
+    const animationDuration = DUR.fly;
 
-    if (!isDragEnd) {
-      const fl = computeFlight(targetIndex);
-      if (fl) setFlight(fl);
-    }
+    const fl = computeFlight(targetIndex);
+    if (fl) setFlight(fl);
 
     setTimeout(() => {
       setDeckCount((n) => Math.max(0, n - 1));
@@ -102,9 +99,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
         return newSlots;
       });
 
-      if (!isDragEnd) {
-        setFlight(null);
-      }
+      setFlight(null);
       pickingRef.current = false;
     }, animationDuration);
   };
@@ -123,13 +118,17 @@ export function useSpreadPage(spreadType, pickCardLogic) {
 
   const handleDragStart = (event) => {
     if (pickingRef.current || chosenSlots.length >= 3) return;
-    setTargetSlot(getNextSlot());
-    setActiveId(event.active.id);
+    if (event.active.id === 'deck-handle') {
+      setTargetSlot(getNextSlot());
+      setActiveId(event.active.id);
+    }
   };
 
   const handleDragEnd = (event) => {
     setActiveId(null);
     setTargetSlot(null);
+
+    if (event.active.id !== 'deck-handle') return;
 
     // Click is a drag with no distance
     if (event.delta.x === 0 && event.delta.y === 0) {
@@ -139,7 +138,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
 
     // Successful drop on the rail
     if (event.over && event.over.id === "rail") {
-      pickCardTo(getNextSlot(), { isDragEnd: true });
+      pickCardTo(getNextSlot());
     }
   };
 
