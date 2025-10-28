@@ -60,14 +60,29 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     return { key: Date.now(), left: d.left, top: d.top, dx, dy, scale, width: d.width, height: d.height };
   };
 
-  const pickCardTo = (targetIndex) => {
+  const computeFlightFromDrop = (targetIndex, dropX, dropY) => {
+    const slotEl = slotRefs[targetIndex]?.current;
+    if (!slotEl) return null;
+    const draggedWidth = 120;
+    const draggedHeight = 210;
+    const s = slotEl.getBoundingClientRect();
+    const startX = dropX - draggedWidth / 2;
+    const startY = dropY - draggedHeight / 2;
+    const endX = s.left + s.width / 2;
+    const endY = s.top + s.height / 2;
+    const dx = endX - (startX + draggedWidth / 2);
+    const dy = endY - (startY + draggedHeight / 2);
+    const scale = s.width / draggedWidth;
+    return { key: Date.now(), left: startX, top: startY, dx, dy, scale, width: draggedWidth, height: draggedHeight };
+  };
+
+  const pickCardTo = (targetIndex, flightConfig) => {
     if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) return;
     const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
     if (!availableSlots.includes(targetIndex)) return;
 
     pickingRef.current = true;
-    const fl = computeFlight(targetIndex);
-    if (fl) setFlight(fl);
+    if (flightConfig) setFlight(flightConfig);
 
     setTimeout(() => {
       setDeckCount((n) => Math.max(0, n - 1));
@@ -116,7 +131,10 @@ export function useSpreadPage(spreadType, pickCardLogic) {
 
   const onClickDeck = () => {
     if (chosenSlots.length >= 3) return;
-    pickCardTo(getNextSlot());
+    const nextSlot = getNextSlot();
+    if (nextSlot === undefined) return;
+    const flightConfig = computeFlight(nextSlot);
+    pickCardTo(nextSlot, flightConfig);
   };
 
   const handleDragStart = (event) => {
@@ -128,10 +146,14 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   const handleDragEnd = (event) => {
     setActiveId(null);
     setTargetSlot(null);
+    const nextSlot = getNextSlot();
+    if (nextSlot === undefined) return;
 
     // Case 1: Successful drop on the rail
     if (event.over && event.over.id === "rail") {
-      pickCardTo(getNextSlot());
+      const { clientX, clientY } = event.activatorEvent;
+      const flightConfig = computeFlightFromDrop(nextSlot, clientX, clientY);
+      pickCardTo(nextSlot, flightConfig);
       return;
     }
 
