@@ -89,14 +89,13 @@ export default function SpreadAdvicePage() {
 
           <div className={`board ${isLandscape ? "" : "col"}`}>
             <div className="deck-block">
-              <DraggableHandle />
+              <DraggableHandle onClick={onClickDeck} />
               <div
                 ref={deckRef}
                 className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
                 role="button"
-                tabIndex={0}
+                tabIndex={-1}
                 aria-label="Jeu de cartes : touchez pour piocher (séquentiel) ou glissez une carte"
-                onClick={onClickDeck}
               >
                 {[...Array(deckCount)].map((_, i) => (
                   <div
@@ -156,7 +155,7 @@ export default function SpreadAdvicePage() {
   );
 }
 
-function DraggableHandle() {
+function DraggableHandle({ onClick }) {
   const { attributes, listeners, setNodeRef } = useDraggable({
     id: "deck-handle",
   });
@@ -166,8 +165,9 @@ function DraggableHandle() {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
+      onClick={onClick}
       className="draggable-handle"
-      aria-label="Glissez pour piocher une carte"
+      aria-label="Glissez ou touchez pour piocher une carte"
     />
   );
 }

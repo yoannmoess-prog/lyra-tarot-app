@@ -234,6 +234,7 @@
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
   border-radius: 14px; /* Matches the card shape */
+  background-color: transparent; /* Makes it a valid event target */
 }
 .draggable-handle:active {
   cursor: grabbing;
