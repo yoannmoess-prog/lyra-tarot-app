@@ -139,17 +139,16 @@ export default function SpreadTruthPage() {
 }
 
 function DraggableHandle() {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: "deck-handle",
   });
 
-  // Pour que DragOverlay fonctionne, le Draggable source DOIT être transformé.
-  // On le laisse donc être transformé par la librairie, mais on le cache
-  // pour que l'utilisateur ne voit que l'Overlay et le paquet fixe.
-  const style = transform ? {
-    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    visibility: 'hidden',
-  } : undefined;
+  // Pour corriger le bug de l'aperçu, nous rendons la poignée invisible
+  // pendant le glisser-déposer. Cela permet au DragOverlay de fonctionner
+  // correctement sans être affecté par le `transform` de l'élément d'origine.
+  const style = {
+    visibility: isDragging ? 'hidden' : 'visible',
+  };
 
   return (
     <div

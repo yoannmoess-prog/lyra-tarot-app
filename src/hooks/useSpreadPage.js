@@ -33,29 +33,6 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     boardFade: prefersReduced ? 300 : 2000,
   }), [prefersReduced]);
 
-  const computeFlightFromDrop = (targetIndex, dropX, dropY) => {
-    const slotEl = slotRefs[targetIndex]?.current;
-    if (!slotEl) return null;
-    const s = slotEl.getBoundingClientRect();
-    // La carte glissée est rendue dans un DragOverlay, nous utilisons sa taille.
-    // Utilisons une taille fixe pour la cohérence visuelle.
-    const dragWidth = 120;
-    const dragHeight = 210;
-    const dx = s.left + s.width / 2 - (dropX);
-    const dy = s.top + s.height / 2 - (dropY);
-    const scale = s.width / dragWidth;
-    return {
-      key: Date.now(),
-      left: dropX - dragWidth / 2, // Centrer la carte sur le curseur
-      top: dropY - dragHeight / 2,
-      dx,
-      dy,
-      scale,
-      width: dragWidth,
-      height: dragHeight,
-    };
-  };
-
   useEffect(() => {
     const handleResize = () => setIsLandscape(window.innerWidth > window.innerHeight);
     window.addEventListener("resize", handleResize);
@@ -164,13 +141,18 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     const isDropOnRail = event.over && event.over.id === "rail";
 
     if ((isClick || isDropOnRail) && draggedCard) {
-      // Pour un clic, l'animation part du paquet.
-      // Pour un drop, elle part du point de relâche.
-      const flightConfig = isClick
-        ? computeFlight(nextSlot)
-        : computeFlightFromDrop(nextSlot, event.activatorEvent.clientX, event.activatorEvent.clientY);
+      let flightConfig;
+      if (isClick) {
+        flightConfig = computeFlight(nextSlot);
+      } else {
+        const { clientX, clientY } = event.activatorEvent;
+        flightConfig = {
+          ...computeFlightFromDrop(nextSlot, clientX, clientY),
+          card: draggedCard,
+        };
+      }
 
-      if (!flightConfig || pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) {
+      if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) {
         setDraggedCard(null);
         return;
       }
