@@ -131,26 +131,23 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   const handleDragEnd = (event) => {
     setActiveId(null);
     setTargetSlot(null);
+
+    const isDropOnRail = event.over && event.over.id === "rail";
+    const isClick = event.delta.x === 0 && event.delta.y === 0;
+
+    if (!isDropOnRail && !isClick) {
+      setDraggedCard(null);
+      return;
+    }
+
     const nextSlot = getNextSlot();
     if (nextSlot === undefined) {
       setDraggedCard(null); // Clean up
       return;
     }
 
-    const isClick = event.delta.x === 0 && event.delta.y === 0;
-    const isDropOnRail = event.over && event.over.id === "rail";
-
-    if ((isClick || isDropOnRail) && draggedCard) {
-      let flightConfig;
-      if (isClick) {
-        flightConfig = computeFlight(nextSlot);
-      } else {
-        const { clientX, clientY } = event.activatorEvent;
-        flightConfig = {
-          ...computeFlightFromDrop(nextSlot, clientX, clientY),
-          card: draggedCard,
-        };
-      }
+    if (draggedCard) {
+      const flightConfig = computeFlight(nextSlot);
 
       if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) {
         setDraggedCard(null);
