@@ -70,6 +70,8 @@ export default function SpreadAdvicePage() {
     flight,
     activeId,
     targetSlot,
+    draggedCard,
+    isDragging,
     DUR,
     pickCardTo,
     handleDragStart,
@@ -77,12 +79,11 @@ export default function SpreadAdvicePage() {
   } = useSpreadPage("spread-advice", pickCardLogic);
 
   const animationClass = boardFading ? "fade-out-2s" : arrive ? "fade-in-soft" : "pre-fade";
-  const dragClass = activeId ? "drag-active" : "";
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
-        <div className={`page4-container ${animationClass} ${dragClass}`}>
+        <div className={`page4-container ${animationClass} ${isDragging ? "drag-active" : ""}`}>
           <div className="title-block">
             <div className="p4-fixed-title">{question}</div>
           </div>

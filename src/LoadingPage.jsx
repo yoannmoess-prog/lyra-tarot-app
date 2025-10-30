@@ -16,13 +16,16 @@ const LoadingPage = () => {
 
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState([]);
+  const sequenceStarted = React.useRef(false);
 
   useEffect(() => {
-    if (!question) {
-      console.warn("Aucune question trouvée, redirection vers la page de question.");
+    if (!question || sequenceStarted.current) {
+      if (!question) console.warn("Aucune question trouvée, redirection vers la page de question.");
+      if (sequenceStarted.current) console.log("[LoadingPage] Séquence déjà démarrée, on ignore.");
       navigate('/question');
       return;
     }
+    sequenceStarted.current = true;
 
     // Promesse qui gère l'animation des étapes
     const animateSteps = async () => {
@@ -33,26 +36,44 @@ const LoadingPage = () => {
       }
     };
 
-    // Promesse qui appelle l'API pour déterminer le tirage
-    const fetchSpread = async () => {
-      try {
-        // Construit l'URL de l'API en utilisant la variable d'environnement VITE_API_BASE_URL.
-        // Si elle n'est pas définie (développement local), utilise un chemin relatif pour le proxy.
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || '';
-        console.log(`[LoadingPage] Appel de l'API à l'adresse : ${apiUrl}/api/spread`); // Log pour le débogage
-        const response = await fetch(`${apiUrl}/api/spread`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question }),
-        });
-        if (!response.ok) {
-          throw new Error(`La réponse du serveur n'était pas OK: ${response.statusText}`);
+    // Promesse qui appelle l'API pour déterminer le tirage, avec une logique de nouvelle tentative.
+    const fetchSpreadWithRetry = async (retries = 3, delay = 2500) => {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL || '';
+      console.log(`[LoadingPage] Début de la tentative de récupération du tirage...`);
+
+      for (let i = 0; i < retries; i++) {
+        try {
+          // Correction: L'URL doit être /api/spread, le proxy Vite gère le reste.
+          const finalUrl = `${apiUrl}/api/spread`.replace(/([^:]\/)\/+/g, "$1");
+          console.log(`[LoadingPage] Tentative d'appel API #${i + 1} à ${finalUrl}`);
+          const response = await fetch(finalUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question }),
+          });
+
+          if (!response.ok) {
+            if (response.status >= 400 && response.status < 500) {
+              console.error(`[LoadingPage] Erreur client (${response.status}), annulation des tentatives.`);
+              throw new Error(`Erreur client non récupérable: ${response.statusText}`);
+            }
+            throw new Error(`La réponse du serveur n'était pas OK: ${response.statusText} (status: ${response.status})`);
+          }
+
+          const data = await response.json();
+          console.log(`[LoadingPage] Appel API réussi à la tentative #${i + 1}.`);
+          return data.spreadId;
+
+        } catch (error) {
+          console.error(`[LoadingPage] Tentative #${i + 1} échouée:`, error.message);
+          if (i < retries - 1) {
+            console.log(`[LoadingPage] Prochaine tentative dans ${delay / 1000} secondes.`);
+            await new Promise(res => setTimeout(res, delay));
+          } else {
+            console.error("Erreur critique : impossible de récupérer le tirage après plusieurs tentatives. Utilisation du tirage par défaut.");
+            return 'spread-advice';
+          }
         }
-        const data = await response.json();
-        return data.spreadId; // Retourne l'ID du tirage
-      } catch (error) {
-        console.error("Erreur critique lors de la récupération du tirage :", error);
-        return 'spread-advice'; // Retourne le tirage par défaut en cas d'erreur
       }
     };
 
@@ -61,12 +82,9 @@ const LoadingPage = () => {
     const runLoadingSequence = async () => {
       console.log("[LoadingPage] Démarrage de la séquence de chargement.");
 
-      const fetchPromise = fetchSpread().then(result => {
-        console.log("[LoadingPage] L'appel API s'est terminé avec succès.");
+      const fetchPromise = fetchSpreadWithRetry().then(result => {
+        console.log("[LoadingPage] La promesse de fetch s'est résolue.");
         return result;
-      }).catch(err => {
-        console.error("[LoadingPage] L'appel API a échoué :", err);
-        return 'spread-advice'; // Fallback
       });
 
       const animationPromise = animateSteps().then(() => {

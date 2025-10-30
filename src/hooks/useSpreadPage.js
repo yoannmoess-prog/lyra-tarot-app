@@ -25,6 +25,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   const [activeId, setActiveId] = useState(null);
   const [targetSlot, setTargetSlot] = useState(null);
   const [draggedCard, setDraggedCard] = useState(null);
+  const isDragging = activeId !== null;
 
   const prefersReduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const DUR = useMemo(() => ({
@@ -131,58 +132,51 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   const handleDragEnd = (event) => {
     setActiveId(null);
     setTargetSlot(null);
+    const nextSlot = getNextSlot();
 
-    const isDropOnRail = event.over && event.over.id === "rail";
-    const isClick = event.delta.x === 0 && event.delta.y === 0;
-
-    if (!isDropOnRail && !isClick) {
+    if (nextSlot === undefined || !draggedCard) {
       setDraggedCard(null);
       return;
     }
 
-    const nextSlot = getNextSlot();
-    if (nextSlot === undefined) {
-      setDraggedCard(null); // Clean up
-      return;
-    }
+    const isClick = event.delta.x === 0 && event.delta.y === 0;
+    const isDropOnRail = event.over && event.over.id === "rail";
 
-    if (draggedCard) {
-      const flightConfig = computeFlight(nextSlot);
+    const placeCard = (cardToPlace) => {
+      setDeckCount((n) => Math.max(0, n - 1));
+      setPopIndex(nextSlot);
+      setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
 
-      if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) {
-        setDraggedCard(null);
-        return;
-      }
+      const updatedChosenCards = [...chosenCards, cardToPlace];
+      setChosenCards(updatedChosenCards);
 
+      setChosenSlots((prevSlots) => {
+        const newSlots = [...prevSlots, nextSlot];
+        if (newSlots.length === 3) {
+          setShuffleActive(false);
+          setTimeout(() => {
+            setBoardFading(true);
+            const chatPath = spreadType === "spread-advice" ? "/chat-advice" : "/chat-truth";
+            setTimeout(() => nav(chatPath, { state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
+          }, DUR.waitBeforeRedirect);
+        }
+        return newSlots;
+      });
+      pickingRef.current = false;
+    };
+
+    if (isClick) {
       pickingRef.current = true;
-      if (flightConfig) setFlight(flightConfig);
-
+      const fl = computeFlight(nextSlot);
+      if (fl) setFlight(fl);
       setTimeout(() => {
-        setDeckCount((n) => Math.max(0, n - 1));
-        setPopIndex(nextSlot);
-        setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
-
-        const updatedChosenCards = [...chosenCards, draggedCard];
-        setChosenCards(updatedChosenCards);
-
-        setChosenSlots((prevSlots) => {
-          const newSlots = [...prevSlots, nextSlot];
-          if (newSlots.length === 3) {
-            setShuffleActive(false);
-            setTimeout(() => {
-              setBoardFading(true);
-              const chatPath = spreadType === "spread-advice" ? "/chat-advice" : "/chat-truth";
-              setTimeout(() => nav(chatPath, { state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
-            }, DUR.waitBeforeRedirect);
-          }
-          return newSlots;
-        });
-
+        placeCard(draggedCard);
         setFlight(null);
-        pickingRef.current = false;
         setDraggedCard(null);
       }, DUR.fly);
-
+    } else if (isDropOnRail) {
+      placeCard(draggedCard);
+      setDraggedCard(null);
     } else {
       setDraggedCard(null);
     }
@@ -205,6 +199,8 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     flight,
     activeId,
     targetSlot,
+    draggedCard,
+    isDragging,
     DUR,
     pickCardTo,
     handleDragStart,
