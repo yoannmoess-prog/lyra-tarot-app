@@ -63,6 +63,19 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     return { key: Date.now(), left: d.left, top: d.top, dx, dy, scale, width: d.width, height: d.height };
   };
 
+  const computeDropFlight = (from, toIndex) => {
+    const slotEl = slotRefs[toIndex]?.current;
+    if (!from || !slotEl) return null;
+    const s = slotEl.getBoundingClientRect();
+    // La carte glissée fait 120x210, on la centre sur le curseur
+    const startX = from.x - 60;
+    const startY = from.y - 105;
+    const dx = s.left + s.width / 2 - (from.x);
+    const dy = s.top + s.height / 2 - (from.y);
+    const scale = s.width / 120;
+    return { key: Date.now(), left: startX, top: startY, dx, dy, scale, width: 120, height: 210 };
+  };
+
   const pickCardTo = (targetIndex) => {
     if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) return;
     const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
@@ -132,6 +145,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   };
 
   const handleDragEnd = (event) => {
+    const { over, delta, active } = event;
     setActiveId(null);
     setTargetSlot(null);
     const nextSlot = getNextSlot();
@@ -141,8 +155,8 @@ export function useSpreadPage(spreadType, pickCardLogic) {
       return;
     }
 
-    const isClick = event.delta.x === 0 && event.delta.y === 0;
-    const isDropOnRail = event.over && event.over.id === "rail";
+    const isClick = delta.x === 0 && delta.y === 0;
+    const isDropOnRail = over && over.id === "rail";
 
     const placeCard = (cardToPlace) => {
       setDeckCount((n) => Math.max(0, n - 1));
@@ -167,7 +181,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
       pickingRef.current = false;
     };
 
-    if (isClick || isDropOnRail) {
+    if (isClick) {
       pickingRef.current = true;
       const fl = computeFlight(nextSlot);
       if (fl) setFlight(fl);
@@ -175,10 +189,21 @@ export function useSpreadPage(spreadType, pickCardLogic) {
         placeCard(draggedCard);
         setFlight(null);
         setDraggedCard(null);
-        if (isDropOnRail) {
-          setDropAnimationCompleted(true);
-        }
       }, DUR.fly);
+    } else if (isDropOnRail) {
+        // On simule l'animation depuis le point de drop
+        pickingRef.current = true;
+        const dropCoords = { x: active.rect.current.translated.left + delta.x, y: active.rect.current.translated.top + delta.y };
+        const fl = computeDropFlight(dropCoords, nextSlot);
+        if (fl) setFlight(fl);
+
+        // On masque la DragOverlay pour que seule la nouvelle animation soit visible
+        setDropAnimationCompleted(true);
+        setTimeout(() => {
+          placeCard(draggedCard);
+          setFlight(null);
+          setDraggedCard(null);
+        }, DUR.fly);
     } else {
       setDraggedCard(null);
     }
