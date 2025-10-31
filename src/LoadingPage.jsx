@@ -16,9 +16,17 @@ const LoadingPage = () => {
 
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState([]);
+  const [error, setError] = useState(null); // State for error message
   const sequenceStarted = React.useRef(false);
 
   useEffect(() => {
+    // --- Diagnostic de l'URL de l'API en production ---
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+    if (import.meta.env.PROD && !apiUrl) {
+      setError("La configuration du serveur est manquante. L'URL de l'API n'est pas définie.");
+      return; // Arrête l'exécution
+    }
+
     if (!question || sequenceStarted.current) {
       if (!question) console.warn("Aucune question trouvée, redirection vers la page de question.");
       if (sequenceStarted.current) console.log("[LoadingPage] Séquence déjà démarrée, on ignore.");
@@ -39,6 +47,7 @@ const LoadingPage = () => {
     // Promesse qui appelle l'API pour déterminer le tirage, avec une logique de nouvelle tentative.
     const fetchSpreadWithRetry = async (retries = 3, delay = 2500) => {
       const apiUrl = import.meta.env.VITE_API_BASE_URL || '';
+      console.log(`[DIAGNOSTIC] VITE_API_BASE_URL reçue : "${apiUrl}"`);
       console.log(`[LoadingPage] Début de la tentative de récupération du tirage...`);
 
       for (let i = 0; i < retries; i++) {
@@ -108,20 +117,29 @@ const LoadingPage = () => {
 
   return (
     <div className="loading-container">
-      <div className="loading-header">
-        <p>Très bien, {name}.</p>
-        <p>Prépare-toi à tirer les cartes.</p>
-      </div>
-      <div className="loading-animation">
-        <ul>
-          {loadingSteps.map((step, index) => (
-            <li key={index} className={completedSteps.includes(step.text) ? 'completed' : (index === currentStep ? 'active' : 'pending')}>
-              <span className="checkmark">✓</span>
-              <span className="text">{step.text}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {error ? (
+        <div className="loading-error">
+          <h2>Erreur de Configuration</h2>
+          <p>{error}</p>
+        </div>
+      ) : (
+        <>
+          <div className="loading-header">
+            <p>Très bien, {name}.</p>
+            <p>Prépare-toi à tirer les cartes.</p>
+          </div>
+          <div className="loading-animation">
+            <ul>
+              {loadingSteps.map((step, index) => (
+                <li key={index} className={completedSteps.includes(step.text) ? 'completed' : (index === currentStep ? 'active' : 'pending')}>
+                  <span className="checkmark">✓</span>
+                  <span className="text">{step.text}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </>
+      )}
     </div>
   );
 };
