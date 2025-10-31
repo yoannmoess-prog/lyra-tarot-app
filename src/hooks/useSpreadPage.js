@@ -25,6 +25,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   const [activeId, setActiveId] = useState(null);
   const [targetSlot, setTargetSlot] = useState(null);
   const [draggedCard, setDraggedCard] = useState(null);
+  const [dropAnimationCompleted, setDropAnimationCompleted] = useState(false);
   const isDragging = activeId !== null;
 
   const prefersReduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -127,6 +128,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     setDraggedCard(newChosenCard);
     setTargetSlot(getNextSlot());
     setActiveId(event.active.id);
+    setDropAnimationCompleted(false); // Reset on new drag
   };
 
   const handleDragEnd = (event) => {
@@ -176,6 +178,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
       }, DUR.fly);
     } else if (isDropOnRail) {
       placeCard(draggedCard);
+      setDropAnimationCompleted(true); // Signal that the drop was successful
       setDraggedCard(null);
     } else {
       setDraggedCard(null);
@@ -201,6 +204,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     targetSlot,
     draggedCard,
     isDragging,
+    dropAnimationCompleted,
     DUR,
     pickCardTo,
     handleDragStart,

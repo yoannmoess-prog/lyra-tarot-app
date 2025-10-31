@@ -72,6 +72,7 @@ export default function SpreadAdvicePage() {
     targetSlot,
     draggedCard,
     isDragging,
+    dropAnimationCompleted,
     DUR,
     pickCardTo,
     handleDragStart,
@@ -142,7 +143,7 @@ export default function SpreadAdvicePage() {
           </div>
         )}
         <DragOverlay>
-          {activeId ? (
+          {activeId && !dropAnimationCompleted ? (
             <div style={{ width: "120px", height: "210px" }}>
               <div className="card card-back" />
             </div>

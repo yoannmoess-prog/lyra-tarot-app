@@ -79,7 +79,7 @@
   display: flex;
   justify-content: center;
   /* Fixer la taille du conteneur pour assurer sa stabilité */
-  width: min(15vw, 20vh, 150px);
+  width: min(18vw, 150px);
   aspect-ratio: 9.27 / 18;
 }
 .deck-area {
@@ -120,7 +120,7 @@
   flex-wrap: wrap;
 }
 .slot-wrap {
-  width: min(14vw, 120px);
+  width: min(15vw, 120px);
   aspect-ratio: 9.27 / 18;
   position: relative;
   cursor: pointer;
@@ -229,13 +229,4 @@
   }
   .shuffling .stack { animation: none !important; }
   .fly-phys { display: none; }
-}
-
-@media (max-width: 520px) {
-  .deck-area { width: min(28vw, 22vh, 150px); }
-  .slot-wrap { width: min(28vw, 100px); }
-}
-@media (min-width: 821px) {
-  .deck-area { width: min(20vw, 180px); }
-  .slot-wrap { width: min(12vw, 140px); }
 }
