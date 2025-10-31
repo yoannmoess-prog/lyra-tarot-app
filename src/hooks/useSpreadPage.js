@@ -167,7 +167,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
       pickingRef.current = false;
     };
 
-    if (isClick) {
+    if (isClick || isDropOnRail) {
       pickingRef.current = true;
       const fl = computeFlight(nextSlot);
       if (fl) setFlight(fl);
@@ -175,11 +175,10 @@ export function useSpreadPage(spreadType, pickCardLogic) {
         placeCard(draggedCard);
         setFlight(null);
         setDraggedCard(null);
+        if (isDropOnRail) {
+          setDropAnimationCompleted(true);
+        }
       }, DUR.fly);
-    } else if (isDropOnRail) {
-      placeCard(draggedCard);
-      setDropAnimationCompleted(true); // Signal that the drop was successful
-      setDraggedCard(null);
     } else {
       setDraggedCard(null);
     }
