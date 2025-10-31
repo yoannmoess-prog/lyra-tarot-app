@@ -228,7 +228,6 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     DUR,
     pickCardTo,
     handleDragStart,
-    handleDragMove,
     handleDragEnd,
   };
 }
