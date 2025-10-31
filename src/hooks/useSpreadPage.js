@@ -51,29 +51,28 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     };
   }, []);
 
-  const computeFlight = (targetIndex) => {
+  const computeFlight = (targetIndex, fromRect) => {
     const deckEl = deckRef.current;
     const slotEl = slotRefs[targetIndex]?.current;
-    if (!deckEl || !slotEl) return null;
-    const d = deckEl.getBoundingClientRect();
-    const s = slotEl.getBoundingClientRect();
-    const dx = s.left + s.width / 2 - (d.left + d.width / 2);
-    const dy = s.top + s.height / 2 - (d.top + d.height / 2);
-    const scale = s.width / d.width;
-    return { key: Date.now(), left: d.left, top: d.top, dx, dy, scale, width: d.width, height: d.height };
-  };
+    if (!slotEl) return null;
 
-  const computeDropFlight = (from, toIndex) => {
-    const slotEl = slotRefs[toIndex]?.current;
-    if (!from || !slotEl) return null;
-    const s = slotEl.getBoundingClientRect();
-    // La carte glissée fait 120x210, on la centre sur le curseur
-    const startX = from.x - 60;
-    const startY = from.y - 105;
-    const dx = s.left + s.width / 2 - (from.x);
-    const dy = s.top + s.height / 2 - (from.y);
-    const scale = s.width / 120;
-    return { key: Date.now(), left: startX, top: startY, dx, dy, scale, width: 120, height: 210 };
+    const from = fromRect || deckEl.getBoundingClientRect();
+    const to = slotEl.getBoundingClientRect();
+
+    const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+    const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+    const scale = to.width / from.width;
+
+    return {
+      key: Date.now(),
+      left: from.left,
+      top: from.top,
+      dx,
+      dy,
+      scale,
+      width: from.width,
+      height: from.height,
+    };
   };
 
   const pickCardTo = (targetIndex) => {
@@ -145,7 +144,6 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   };
 
   const handleDragEnd = (event) => {
-    const { over, delta, active } = event;
     setActiveId(null);
     setTargetSlot(null);
     const nextSlot = getNextSlot();
@@ -155,8 +153,8 @@ export function useSpreadPage(spreadType, pickCardLogic) {
       return;
     }
 
-    const isClick = delta.x === 0 && delta.y === 0;
-    const isDropOnRail = over && over.id === "rail";
+    const isClick = event.delta.x === 0 && event.delta.y === 0;
+    const isDropOnRail = event.over && event.over.id === "rail";
 
     const placeCard = (cardToPlace) => {
       setDeckCount((n) => Math.max(0, n - 1));
@@ -191,19 +189,17 @@ export function useSpreadPage(spreadType, pickCardLogic) {
         setDraggedCard(null);
       }, DUR.fly);
     } else if (isDropOnRail) {
-        // On simule l'animation depuis le point de drop
-        pickingRef.current = true;
-        const dropCoords = { x: active.rect.current.translated.left + delta.x, y: active.rect.current.translated.top + delta.y };
-        const fl = computeDropFlight(dropCoords, nextSlot);
-        if (fl) setFlight(fl);
-
-        // On masque la DragOverlay pour que seule la nouvelle animation soit visible
-        setDropAnimationCompleted(true);
-        setTimeout(() => {
-          placeCard(draggedCard);
-          setFlight(null);
-          setDraggedCard(null);
-        }, DUR.fly);
+      pickingRef.current = true;
+      const { active } = event;
+      const fromRect = active.rect.current.translated;
+      const fl = computeFlight(nextSlot, fromRect);
+      if (fl) setFlight(fl);
+      setDropAnimationCompleted(true);
+      setTimeout(() => {
+        placeCard(draggedCard);
+        setFlight(null);
+        setDraggedCard(null);
+      }, DUR.fly);
     } else {
       setDraggedCard(null);
     }
@@ -232,6 +228,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     DUR,
     pickCardTo,
     handleDragStart,
+    handleDragMove,
     handleDragEnd,
   };
 }
