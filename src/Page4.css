@@ -43,9 +43,6 @@
   max-width: 1100px;
   will-change: opacity, transform;
 }
-.page4-container.drag-active {
-  transform: none !important;
-}
 
 /* --- Title & Instructions --- */
 .title-block {
