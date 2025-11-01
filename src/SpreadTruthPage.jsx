@@ -58,6 +58,9 @@ export default function SpreadTruthPage() {
     flight,
     activeId,
     targetSlot,
+    draggedCard,
+    isDragging,
+    dropAnimationCompleted,
     DUR,
     pickCardTo,
     handleDragStart,
@@ -65,11 +68,12 @@ export default function SpreadTruthPage() {
   } = useSpreadPage("spread-truth", pickCardLogic);
 
   const animationClass = boardFading ? "fade-out-2s" : arrive ? "fade-in-soft" : "pre-fade";
+  const containerStyle = isDragging ? { transform: "none" } : {};
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
-        <div className={`page4-container ${animationClass}`}>
+        <div className={`page4-container ${animationClass}`} style={containerStyle}>
           <div className="title-block">
             <div className="p4-fixed-title">{question}</div>
           </div>
@@ -127,7 +131,7 @@ export default function SpreadTruthPage() {
           </div>
         )}
         <DragOverlay>
-          {activeId ? (
+          {activeId && !dropAnimationCompleted ? (
             <div style={{ width: "120px", height: "210px" }}>
               <div className="card card-back" />
             </div>
