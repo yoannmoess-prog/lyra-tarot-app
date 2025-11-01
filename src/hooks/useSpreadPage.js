@@ -26,7 +26,6 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   const [activeId, setActiveId] = useState(null);
   const [targetSlot, setTargetSlot] = useState(null);
   const [draggedCard, setDraggedCard] = useState(null);
-  const [dropAnimationCompleted, setDropAnimationCompleted] = useState(false);
   const isDragging = activeId !== null;
 
   const prefersReduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -165,7 +164,6 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     setDraggedCard(newChosenCard);
     setTargetSlot(getNextSlot());
     setActiveId(event.active.id);
-    setDropAnimationCompleted(false); // Reset on new drag
   };
 
   const handleDragEnd = (event) => {
@@ -184,22 +182,19 @@ export function useSpreadPage(spreadType, pickCardLogic) {
 
     pickingRef.current = true;
 
-    let fromRect;
-    if (!isClick) {
-      const { active } = event;
-      fromRect = active.rect.current.translated;
-    }
-
+    const fromRect = isClick ? null : event.active.rect.current.translated;
     const fl = computeFlight(nextSlot, fromRect);
-    if (fl) setFlight(fl);
 
-    setDropAnimationCompleted(true);
+    // Pour éviter le conflit d'animation, nous désactivons immédiatement
+    // le glisser-déposer de dnd-kit AVANT de lancer notre animation.
+    setActiveId(null);
+    setDraggedCard(null);
+
+    if (fl) setFlight(fl);
 
     setTimeout(() => {
       placeCardInSlot(draggedCard, nextSlot);
       setFlight(null);
-      setDraggedCard(null);
-      setActiveId(null);
     }, DUR.fly);
   };
 
