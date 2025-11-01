@@ -18,6 +18,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   const [chosenCards, setChosenCards] = useState([]);
   const [popIndex, setPopIndex] = useState(null);
   const pickingRef = useRef(false);
+  const dragStartTime = useRef(0);
   const deckRef = useRef(null);
   const slotRefs = [useRef(null), useRef(null), useRef(null)];
   const [flight, setFlight] = useState(null);
@@ -129,8 +130,32 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     return availableSlots[0];
   };
 
+  const placeCardInSlot = (cardToPlace, slotIndex) => {
+    setDeckCount((n) => Math.max(0, n - 1));
+    setPopIndex(slotIndex);
+    setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
+
+    const updatedChosenCards = [...chosenCards, cardToPlace];
+    setChosenCards(updatedChosenCards);
+
+    setChosenSlots((prevSlots) => {
+      const newSlots = [...prevSlots, slotIndex];
+      if (newSlots.length === 3) {
+        setShuffleActive(false);
+        setTimeout(() => {
+          setBoardFading(true);
+          const chatPath = spreadType === "spread-advice" ? "/chat-advice" : "/chat-truth";
+          setTimeout(() => nav(chatPath, { state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
+        }, DUR.waitBeforeRedirect);
+      }
+      return newSlots;
+    });
+    pickingRef.current = false;
+  };
+
   const handleDragStart = (event) => {
     if (pickingRef.current || chosenSlots.length >= 3) return;
+    dragStartTime.current = Date.now();
     let newChosenCard;
     let isDuplicate;
     do {
@@ -144,65 +169,38 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   };
 
   const handleDragEnd = (event) => {
-    setActiveId(null);
     setTargetSlot(null);
     const nextSlot = getNextSlot();
 
     if (nextSlot === undefined || !draggedCard) {
       setDraggedCard(null);
+      setActiveId(null);
       return;
     }
 
-    const isClick = event.delta.x === 0 && event.delta.y === 0;
-    const isDropOnRail = event.over && event.over.id === "rail";
+    const dragDuration = Date.now() - dragStartTime.current;
+    const dragDistance = Math.sqrt(event.delta.x ** 2 + event.delta.y ** 2);
+    const isClick = dragDuration < 250 && dragDistance < 10;
 
-    const placeCard = (cardToPlace) => {
-      setDeckCount((n) => Math.max(0, n - 1));
-      setPopIndex(nextSlot);
-      setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
+    pickingRef.current = true;
 
-      const updatedChosenCards = [...chosenCards, cardToPlace];
-      setChosenCards(updatedChosenCards);
-
-      setChosenSlots((prevSlots) => {
-        const newSlots = [...prevSlots, nextSlot];
-        if (newSlots.length === 3) {
-          setShuffleActive(false);
-          setTimeout(() => {
-            setBoardFading(true);
-            const chatPath = spreadType === "spread-advice" ? "/chat-advice" : "/chat-truth";
-            setTimeout(() => nav(chatPath, { state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
-          }, DUR.waitBeforeRedirect);
-        }
-        return newSlots;
-      });
-      pickingRef.current = false;
-    };
-
-    if (isClick) {
-      pickingRef.current = true;
-      const fl = computeFlight(nextSlot);
-      if (fl) setFlight(fl);
-      setTimeout(() => {
-        placeCard(draggedCard);
-        setFlight(null);
-        setDraggedCard(null);
-      }, DUR.fly);
-    } else if (isDropOnRail) {
-      pickingRef.current = true;
+    let fromRect;
+    if (!isClick) {
       const { active } = event;
-      const fromRect = active.rect.current.translated;
-      const fl = computeFlight(nextSlot, fromRect);
-      if (fl) setFlight(fl);
-      setDropAnimationCompleted(true);
-      setTimeout(() => {
-        placeCard(draggedCard);
-        setFlight(null);
-        setDraggedCard(null);
-      }, DUR.fly);
-    } else {
-      setDraggedCard(null);
+      fromRect = active.rect.current.translated;
     }
+
+    const fl = computeFlight(nextSlot, fromRect);
+    if (fl) setFlight(fl);
+
+    setDropAnimationCompleted(true);
+
+    setTimeout(() => {
+      placeCardInSlot(draggedCard, nextSlot);
+      setFlight(null);
+      setDraggedCard(null);
+      setActiveId(null);
+    }, DUR.fly);
   };
 
   return {
