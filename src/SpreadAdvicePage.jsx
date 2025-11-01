@@ -83,7 +83,7 @@ export default function SpreadAdvicePage() {
   const containerStyle = isDragging ? { transform: "none" } : {};
 
   return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} dropAnimation={null}>
       <div className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
         <div className={`page4-container ${animationClass}`} style={containerStyle}>
           <div className="title-block">
@@ -143,7 +143,7 @@ export default function SpreadAdvicePage() {
           </div>
         )}
         <DragOverlay>
-          {activeId && !dropAnimationCompleted ? (
+          {activeId ? (
             <div style={{ width: "120px", height: "210px" }}>
               <div className="card card-back" />
             </div>
