@@ -1,11 +1,25 @@
 ---
 type: card
-card_id: "XII"
-title: "Le Pendu"
-source_ids: ["marteau1949", "jodorowsky2004", "ybd2011", "camoin1998", "delcamp1990", "nadolny2015", "jung1935", "meditations_anonymes"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:initié", "chemin:transcendance", "element:eau"]
+card_id: XII
+title: Le Pendu
+display_name: Le Pendu
+source_ids:
+- marteau1949
+- jodorowsky2004
+- ybd2011
+- camoin1998
+- delcamp1990
+- nadolny2015
+- jung1935
+- meditations_anonymes
+category: arcane majeur
+tags:
+- marseille
+- archetype:initié
+- chemin:transcendance
+- element:eau
 ---
+
 
 ## Résumé
 → Le Pendu symbolise un arrêt volontaire, un retournement du regard et un sacrifice fécond. Il évoque une gestation intérieure, un dépouillement de l’ego pour accéder à une sagesse plus haute. Il s’agit d’un passage initiatique qui invite à accueillir la suspension comme un espace de révélation.

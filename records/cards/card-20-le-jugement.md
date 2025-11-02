@@ -1,11 +1,26 @@
 ---
 type: card
-card_id: "20"
-title: "Le Jugement"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2012", "bendov2011", "delcamp1976", "nadolny", "jung", "meditations-anonymes", "archetypal-journey"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:appel", "element:feu"]
+card_id: '20'
+title: Le Jugement
+display_name: Le Jugement
+source_ids:
+- marteau1949
+- jodorowsky2004
+- costa2004
+- camoin2012
+- bendov2011
+- delcamp1976
+- nadolny
+- jung
+- meditations-anonymes
+- archetypal-journey
+category: arcane majeur
+tags:
+- marseille
+- archetype:appel
+- element:feu
 ---
+
 
 ## Résumé
 → Le Jugement représente l'appel à renaître à soi-même. Cette carte annonce un éveil profond, une transformation intérieure préparant l'accès à un niveau de conscience supérieur. C'est l'heure du réveil, de l'appel de l'âme.

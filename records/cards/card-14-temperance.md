@@ -1,11 +1,30 @@
 ---
 type: card
-card_id: "14"
-title: "Tempérance"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2000", "bendov2011", "delcamp1993", "nadolny2005", "jung1950", "meditations_anonymes", "nichols1980"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:integration", "element:eau", "vertu:modération", "chakra:coeur", "ange", "alchimie"]
+card_id: '14'
+title: Tempérance
+display_name: Tempérance
+source_ids:
+- marteau1949
+- jodorowsky2004
+- costa2004
+- camoin2000
+- bendov2011
+- delcamp1993
+- nadolny2005
+- jung1950
+- meditations_anonymes
+- nichols1980
+category: arcane majeur
+tags:
+- marseille
+- archetype:integration
+- element:eau
+- vertu:modération
+- chakra:coeur
+- ange
+- alchimie
 ---
+
 
 ## Résumé
 → Tempérance incarne l'harmonie intérieure, la régulation émotionnelle et la circulation fluide des énergies. C’est un arcane de guérison, d’unification, de pacification. Après la transformation radicale de l’Arcane XIII, elle marque un temps d’intégration et de retour à l’équilibre.

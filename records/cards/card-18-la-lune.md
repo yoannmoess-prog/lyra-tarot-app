@@ -1,11 +1,30 @@
 ---
 type: card
-card_id: "18"
-title: "La Lune"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin1998", "bendov2017", "delcamp1984", "nadolny2005", "jung", "meditations_anonymes", "tarot_archetypal_journey"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:inconscient", "element:eau", "motcle:émotion", "motcle:illusion", "motcle:maternité", "cycle:nuit"]
+card_id: '18'
+title: La Lune
+display_name: La Lune
+source_ids:
+- marteau1949
+- jodorowsky2004
+- costa2004
+- camoin1998
+- bendov2017
+- delcamp1984
+- nadolny2005
+- jung
+- meditations_anonymes
+- tarot_archetypal_journey
+category: arcane majeur
+tags:
+- marseille
+- archetype:inconscient
+- element:eau
+- motcle:émotion
+- motcle:illusion
+- motcle:maternité
+- cycle:nuit
 ---
+
 
 ## Résumé
 → La Lune révèle les paysages ambigus de l’inconscient, du rêve, de l’émotion. Elle invite à marcher dans la pénombre intérieure avec prudence, à accueillir l’incertitude, les intuitions et les reflets. Elle évoque aussi la maternité symbolique et la mémoire des origines.

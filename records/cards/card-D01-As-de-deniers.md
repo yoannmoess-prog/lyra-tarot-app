@@ -2,26 +2,28 @@
 type: card
 card_id: D01
 title: As de Deniers
+display_name: As de Deniers
 category: arcane mineur
 subcategory: deniers
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:semence'
-  - 'element:terre'
-  - deniers
-  - 'serie:deniers'
+- marseille
+- archetype:semence
+- element:terre
+- deniers
+- serie:deniers
 ---
+
 
 ## Résumé
 → L’As de Deniers est la graine de toute manifestation concrète : richesse, corps, maison, projet, incarnation. C’est le commencement tangible, l’opportunité d’ancrer un potentiel dans la matière.

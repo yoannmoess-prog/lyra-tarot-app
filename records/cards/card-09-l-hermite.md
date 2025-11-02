@@ -1,11 +1,23 @@
 ---
 type: card
-card_id: "09"
-title: "L’Hermite"
-source_ids: ["marteau1949", "jodorowsky2004", "ybd2011", "delcamp", "camoin", "nadolny", "jung"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:sage", "element:terre"]
+card_id: '09'
+title: L’Hermite
+display_name: L’Hermite
+source_ids:
+- marteau1949
+- jodorowsky2004
+- ybd2011
+- delcamp
+- camoin
+- nadolny
+- jung
+category: arcane majeur
+tags:
+- marseille
+- archetype:sage
+- element:terre
 ---
+
 
 ## Résumé
 Figure du retrait et de la sagesse, L’Hermite éclaire le passé pour mieux avancer dans l’inconnu. Il symbolise un temps de lenteur, d’introspection et de maturation silencieuse.

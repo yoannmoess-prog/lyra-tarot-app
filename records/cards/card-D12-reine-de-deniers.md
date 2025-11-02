@@ -2,26 +2,28 @@
 type: card
 card_id: D12
 title: Reine de Deniers
+display_name: Reine de Deniers
 category: arcane mineur
 subcategory: deniers
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:nourricière'
-  - 'element:terre'
-  - deniers
-  - 'serie:deniers'
+- marseille
+- archetype:nourricière
+- element:terre
+- deniers
+- serie:deniers
 ---
+
 
 ## Résumé
 → La Reine de Deniers est l’incarnation de la sécurité bienveillante, de la générosité concrète et de la maîtrise des ressources. Elle veille sur la matière avec tendresse et autorité, en guide incarnée du quotidien.

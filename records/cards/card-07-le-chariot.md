@@ -1,11 +1,28 @@
 ---
 type: card
-card_id: "07"
-title: "Le Chariot"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2003", "bendov2017", "delcamp1996", "nadolny2020", "jung1934", "meditationsanon", "tarotjourney"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:heros", "element:feu", "axe:action", "motcle:victoire"]
+card_id: '07'
+title: Le Chariot
+display_name: Le Chariot
+source_ids:
+- marteau1949
+- jodorowsky2004
+- costa2004
+- camoin2003
+- bendov2017
+- delcamp1996
+- nadolny2020
+- jung1934
+- meditationsanon
+- tarotjourney
+category: arcane majeur
+tags:
+- marseille
+- archetype:heros
+- element:feu
+- axe:action
+- motcle:victoire
 ---
+
 
 ## Résumé
 → Le Chariot symbolise la conquête du monde extérieur après une intégration intérieure. Il représente la maîtrise, l’élan vers un objectif, la capacité à se mettre en mouvement en accord avec ses valeurs. Cette carte annonce une victoire, une avancée décisive, mais met en garde contre l’arrogance du triomphateur.

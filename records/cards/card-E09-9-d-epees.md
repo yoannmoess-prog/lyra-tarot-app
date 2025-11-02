@@ -2,26 +2,28 @@
 type: card
 card_id: E09
 title: 9 d’Épées
+display_name: 9 d’Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:angoisse'
-  - 'element:air'
-  - épées
-  - 'serie:epees'
+- marseille
+- archetype:angoisse
+- element:air
+- épées
+- serie:epees
 ---
+
 
 ## Résumé
 → Le 9 d’Épées incarne l’angoisse mentale, les pensées nocturnes, les projections anxieuses. C’est la carte des peurs exagérées, de la souffrance psychique issue de l’imaginaire ou de la mémoire.

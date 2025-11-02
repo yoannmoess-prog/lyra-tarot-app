@@ -1,11 +1,28 @@
 ---
 type: card
-card_id: "19"
-title: "Le Soleil"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin", "bendov", "delcamp", "nadolny", "jung"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:père", "element:feu", "axe:relationnel", "axe:conscience", "symboles:double", "initiation:lumineuse"]
+card_id: '19'
+title: Le Soleil
+display_name: Le Soleil
+source_ids:
+- marteau1949
+- jodorowsky2004
+- costa2004
+- camoin
+- bendov
+- delcamp
+- nadolny
+- jung
+category: arcane majeur
+tags:
+- marseille
+- archetype:père
+- element:feu
+- axe:relationnel
+- axe:conscience
+- symboles:double
+- initiation:lumineuse
 ---
+
 
 ## Résumé
 → Carte de clarté, d’union fraternelle et de nouvelle construction. Elle incarne l’amour rayonnant, la conscience éveillée et la capacité de dépasser les ombres du passé. Symbole du père solaire, elle éclaire les liens humains sincères et guide vers une expression authentique de soi.

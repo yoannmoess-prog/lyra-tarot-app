@@ -2,26 +2,28 @@
 type: card
 card_id: D13
 title: Roi de Deniers
+display_name: Roi de Deniers
 category: arcane mineur
 subcategory: deniers
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:maître'
-  - 'element:terre'
-  - deniers
-  - 'serie:deniers'
+- marseille
+- archetype:maître
+- element:terre
+- deniers
+- serie:deniers
 ---
+
 
 ## Résumé
 → Le Roi de Deniers incarne la maîtrise de la matière, la stabilité acquise, la capacité à faire prospérer ce qui a été semé. Il représente le pouvoir concret, l’entrepreneur sage et le protecteur des ressources.
