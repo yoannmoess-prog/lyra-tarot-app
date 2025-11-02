@@ -1,11 +1,26 @@
 ---
 type: card
-card_id: "D12"
-title: "Reine de Deniers"
-category: "arcane mineur"
-subcategory: "figure"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2008", "camoin", "bendov2011", "delcamp", "nadolny2018", "jung", "meditations_anonymes", "nichols"]
-tags: ["marseille", "archetype:nourricière", "element:terre", "deniers"]
+card_id: D12
+title: Reine de Deniers
+category: arcane mineur
+subcategory: deniers
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
+tags:
+  - marseille
+  - 'archetype:nourricière'
+  - 'element:terre'
+  - deniers
+  - 'serie:deniers'
 ---
 
 ## Résumé

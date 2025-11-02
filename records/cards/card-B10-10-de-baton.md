@@ -1,11 +1,30 @@
 ---
 type: card
-card_id: "B10"
-title: "10 de Bâton"
-category: "arcane mineur"
-subcategory: "valeur"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin", "bendov2013", "delcamp1976", "nadolny2020", "jung", "meditationsanonymes", "nichols_tarot_archetypes"]
-tags: ["marseille", "baton", "feu", "cycle", "charge", "fin", "responsabilite"]
+card_id: B10
+title: 10 de Bâton
+category: arcane mineur
+subcategory: batons
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin
+  - bendov2013
+  - delcamp1976
+  - nadolny2020
+  - jung
+  - meditationsanonymes
+  - nichols_tarot_archetypes
+tags:
+  - marseille
+  - baton
+  - feu
+  - cycle
+  - charge
+  - fin
+  - responsabilite
+  - 'element:feu'
+  - 'serie:batons'
 ---
 
 ## Résumé

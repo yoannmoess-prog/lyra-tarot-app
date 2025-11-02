@@ -1,11 +1,25 @@
 ---
 type: card
-card_id: "B06"
-title: "6 de Bâton"
-category: "arcane mineur"
-subcategory: "valeur"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2011", "bendov2013", "delcamp1984", "nadolny2020", "jung1935", "meditations_anonymes", "tarot_archetypal_journey"]
-tags: ["marseille", "element:feu", "archetype:réussite"]
+card_id: B06
+title: 6 de Bâton
+category: arcane mineur
+subcategory: batons
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin2011
+  - bendov2013
+  - delcamp1984
+  - nadolny2020
+  - jung1935
+  - meditations_anonymes
+  - tarot_archetypal_journey
+tags:
+  - marseille
+  - 'element:feu'
+  - 'archetype:réussite'
+  - 'serie:batons'
 ---
 
 ## Résumé

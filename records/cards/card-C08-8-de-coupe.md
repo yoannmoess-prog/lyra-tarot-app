@@ -1,11 +1,26 @@
 ---
 type: card
-card_id: "C08"
-title: "8 de Coupe"
-category: "arcane mineur"
-subcategory: "valeur"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2008", "camoin", "bendov2011", "delcamp", "nadolny2018", "jung", "meditations_anonymes", "nichols"]
-tags: ["marseille", "archetype:renoncement", "element:eau", "coupes"]
+card_id: C08
+title: 8 de Coupe
+category: arcane mineur
+subcategory: coupes
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
+tags:
+  - marseille
+  - 'archetype:renoncement'
+  - 'element:eau'
+  - coupes
+  - 'serie:coupes'
 ---
 
 ## Résumé

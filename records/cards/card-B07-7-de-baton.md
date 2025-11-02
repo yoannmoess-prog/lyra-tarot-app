@@ -1,11 +1,28 @@
 ---
 type: card
-card_id: "B07"
-title: "7 de Bâton"
-category: "arcane mineur"
-subcategory: "valeur"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2003", "bendov2011", "delcamp2009", "nadolny2020", "jung", "meditations-anonymes", "tarot-archetypal-journey"]
-tags: ["marseille", "bâtons", "élément:feu", "nombre:7", "dynamique:affirmation"]
+card_id: B07
+title: 7 de Bâton
+category: arcane mineur
+subcategory: batons
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin2003
+  - bendov2011
+  - delcamp2009
+  - nadolny2020
+  - jung
+  - meditations-anonymes
+  - tarot-archetypal-journey
+tags:
+  - marseille
+  - bâtons
+  - 'élément:feu'
+  - 'nombre:7'
+  - 'dynamique:affirmation'
+  - 'element:feu'
+  - 'serie:batons'
 ---
 
 ## Résumé

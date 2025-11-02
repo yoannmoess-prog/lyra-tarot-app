@@ -1,11 +1,26 @@
 ---
 type: card
-card_id: "B13"
-title: "Roi de Bâton"
-category: "arcane mineur"
-subcategory: "figure"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2008", "camoin", "bendov2011", "delcamp", "nadolny2018", "jung", "meditations_anonymes", "nichols"]
-tags: ["marseille", "archetype:roi", "element:feu", "bâtons"]
+card_id: B13
+title: Roi de Bâton
+category: arcane mineur
+subcategory: batons
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
+tags:
+  - marseille
+  - 'archetype:roi'
+  - 'element:feu'
+  - bâtons
+  - 'serie:batons'
 ---
 
 ## Résumé

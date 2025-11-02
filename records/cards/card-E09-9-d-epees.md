@@ -1,11 +1,26 @@
 ---
 type: card
-card_id: "E09"
-title: "9 d’Épées"
-category: "arcane mineur"
-subcategory: "valeur"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2008", "camoin", "bendov2011", "delcamp", "nadolny2018", "jung", "meditations_anonymes", "nichols"]
-tags: ["marseille", "archetype:angoisse", "element:air", "épées"]
+card_id: E09
+title: 9 d’Épées
+category: arcane mineur
+subcategory: epees
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
+tags:
+  - marseille
+  - 'archetype:angoisse'
+  - 'element:air'
+  - épées
+  - 'serie:epees'
 ---
 
 ## Résumé

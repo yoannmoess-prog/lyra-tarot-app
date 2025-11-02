@@ -1,11 +1,26 @@
 ---
 type: card
-card_id: "E13"
-title: "Roi d'Épées"
-category: "arcane mineur"
-subcategory: "figure"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2008", "camoin", "bendov2011", "delcamp", "nadolny2018", "jung", "meditations_anonymes", "nichols"]
-tags: ["marseille", "archetype:roi", "element:air", "épées"]
+card_id: E13
+title: Roi d'Épées
+category: arcane mineur
+subcategory: epees
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
+tags:
+  - marseille
+  - 'archetype:roi'
+  - 'element:air'
+  - épées
+  - 'serie:epees'
 ---
 
 ## Résumé
