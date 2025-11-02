@@ -2,7 +2,7 @@
 type: card
 card_id: '10'
 title: La Roue de Fortune
-display_name: La Roue de Fortune
+display_name: La Roue-de-Fortune
 source_ids:
 - marteau1949
 - jodorowsky2004

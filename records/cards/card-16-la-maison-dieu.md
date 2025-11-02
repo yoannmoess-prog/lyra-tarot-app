@@ -2,7 +2,7 @@
 type: card
 card_id: '16'
 title: La Maison Dieu
-display_name: La Maison Dieu
+display_name: La Maison-Dieu
 source_ids:
 - marteau1949
 - jodorowsky2004

@@ -2,7 +2,7 @@
 type: card
 card_id: '01'
 title: Le Bateleur
-display_name: Le Bateleur
+display_name: Le Bâteleur
 source_ids:
 - marteau1949
 - jodorowsky2004
