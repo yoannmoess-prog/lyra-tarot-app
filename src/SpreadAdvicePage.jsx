@@ -1,6 +1,6 @@
 // src/SpreadAdvicePage.jsx
 import React from "react";
-import { DndContext, DragOverlay, useDraggable, useDroppable } from "@dnd-kit/core";
+import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import { useSpreadPage } from "./hooks/useSpreadPage";
 import "./Page4.css";
 
@@ -69,22 +69,17 @@ export default function SpreadAdvicePage() {
     slotRefs,
     flight,
     activeId,
-    targetSlot,
-    draggedCard,
-    isDragging,
     DUR,
-    pickCardTo,
     handleDragStart,
     handleDragEnd,
   } = useSpreadPage("spread-advice", pickCardLogic);
 
   const animationClass = boardFading ? "fade-out-2s" : arrive ? "fade-in-soft" : "pre-fade";
-  const containerStyle = isDragging ? { transform: "none" } : {};
 
   return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} dropAnimation={null}>
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
-        <div className={`page4-container ${animationClass}`} style={containerStyle}>
+        <div className={`page4-container ${animationClass}`}>
           <div className="title-block">
             <div className="p4-fixed-title">{question}</div>
           </div>
@@ -110,7 +105,7 @@ export default function SpreadAdvicePage() {
                 <div
                   key={`slotwrap-${i}`}
                   ref={slotRefs[i]}
-                  className={`slot-wrap ${activeId && targetSlot === i ? "highlight" : ""}`}
+                  className={`slot-wrap`}
                 >
                   {chosenSlots.includes(i) ? (
                     <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
@@ -141,13 +136,6 @@ export default function SpreadAdvicePage() {
             <div className="card card-back" />
           </div>
         )}
-        <DragOverlay>
-          {activeId ? (
-            <div style={{ width: "120px", height: "210px" }}>
-              <div className="card card-back" />
-            </div>
-          ) : null}
-        </DragOverlay>
       </div>
     </DndContext>
   );
@@ -158,9 +146,6 @@ function DraggableHandle() {
     id: "deck-handle",
   });
 
-  // Pour corriger le bug de l'aperçu, nous rendons la poignée invisible
-  // pendant le glisser-déposer. Cela permet au DragOverlay de fonctionner
-  // correctement sans être affecté par le `transform` de l'élément d'origine.
   const style = {
     visibility: isDragging ? 'hidden' : 'visible',
   };

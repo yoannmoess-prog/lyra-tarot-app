@@ -18,14 +18,11 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   const [chosenCards, setChosenCards] = useState([]);
   const [popIndex, setPopIndex] = useState(null);
   const pickingRef = useRef(false);
-  const dragStartTime = useRef(0);
   const deckRef = useRef(null);
   const slotRefs = [useRef(null), useRef(null), useRef(null)];
   const [flight, setFlight] = useState(null);
 
   const [activeId, setActiveId] = useState(null);
-  const [targetSlot, setTargetSlot] = useState(null);
-  const [draggedCard, setDraggedCard] = useState(null);
   const isDragging = activeId !== null;
 
   const prefersReduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -51,28 +48,16 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     };
   }, []);
 
-  const computeFlight = (targetIndex, fromRect) => {
+  const computeFlight = (targetIndex) => {
     const deckEl = deckRef.current;
     const slotEl = slotRefs[targetIndex]?.current;
-    if (!slotEl) return null;
-
-    const from = fromRect || deckEl.getBoundingClientRect();
-    const to = slotEl.getBoundingClientRect();
-
-    const dx = to.left + to.width / 2 - (from.left + from.width / 2);
-    const dy = to.top + to.height / 2 - (from.top + from.height / 2);
-    const scale = to.width / from.width;
-
-    return {
-      key: Date.now(),
-      left: from.left,
-      top: from.top,
-      dx,
-      dy,
-      scale,
-      width: from.width,
-      height: from.height,
-    };
+    if (!deckEl || !slotEl) return null;
+    const d = deckEl.getBoundingClientRect();
+    const s = slotEl.getBoundingClientRect();
+    const dx = s.left + s.width / 2 - (d.left + d.width / 2);
+    const dy = s.top + s.height / 2 - (d.top + d.height / 2);
+    const scale = s.width / d.width;
+    return { key: Date.now(), left: d.left, top: d.top, dx, dy, scale, width: d.width, height: d.height };
   };
 
   const pickCardTo = (targetIndex) => {
@@ -129,73 +114,21 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     return availableSlots[0];
   };
 
-  const placeCardInSlot = (cardToPlace, slotIndex) => {
-    setDeckCount((n) => Math.max(0, n - 1));
-    setPopIndex(slotIndex);
-    setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
-
-    const updatedChosenCards = [...chosenCards, cardToPlace];
-    setChosenCards(updatedChosenCards);
-
-    setChosenSlots((prevSlots) => {
-      const newSlots = [...prevSlots, slotIndex];
-      if (newSlots.length === 3) {
-        setShuffleActive(false);
-        setTimeout(() => {
-          setBoardFading(true);
-          const chatPath = spreadType === "spread-advice" ? "/chat-advice" : "/chat-truth";
-          setTimeout(() => nav(chatPath, { state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
-        }, DUR.waitBeforeRedirect);
-      }
-      return newSlots;
-    });
-    pickingRef.current = false;
-  };
-
   const handleDragStart = (event) => {
+    // On se contente de marquer le début du glissement.
+    // Aucune carte n'est pré-sélectionnée ici.
     if (pickingRef.current || chosenSlots.length >= 3) return;
-    dragStartTime.current = Date.now();
-    let newChosenCard;
-    let isDuplicate;
-    do {
-      newChosenCard = pickCardLogic(chosenSlots.length);
-      isDuplicate = chosenCards.some((card) => card.name === newChosenCard.name);
-    } while (isDuplicate);
-    setDraggedCard(newChosenCard);
-    setTargetSlot(getNextSlot());
     setActiveId(event.active.id);
   };
 
   const handleDragEnd = (event) => {
-    setTargetSlot(null);
-    const nextSlot = getNextSlot();
-
-    if (nextSlot === undefined || !draggedCard) {
-      setDraggedCard(null);
-      setActiveId(null);
-      return;
-    }
-
-    const dragDuration = Date.now() - dragStartTime.current;
-    const dragDistance = Math.sqrt(event.delta.x ** 2 + event.delta.y ** 2);
-    const isClick = dragDuration < 250 && dragDistance < 10;
-
-    pickingRef.current = true;
-
-    const fromRect = isClick ? null : event.active.rect.current.translated;
-    const fl = computeFlight(nextSlot, fromRect);
-
-    // Pour éviter le conflit d'animation, nous désactivons immédiatement
-    // le glisser-déposer de dnd-kit AVANT de lancer notre animation.
+    // Quelle que soit l'interaction (clic, glisser-déposer),
+    // on déclenche la même action : piocher la prochaine carte.
     setActiveId(null);
-    setDraggedCard(null);
-
-    if (fl) setFlight(fl);
-
-    setTimeout(() => {
-      placeCardInSlot(draggedCard, nextSlot);
-      setFlight(null);
-    }, DUR.fly);
+    const nextSlot = getNextSlot();
+    if (nextSlot !== undefined) {
+      pickCardTo(nextSlot);
+    }
   };
 
   return {
@@ -214,8 +147,6 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     slotRefs,
     flight,
     activeId,
-    targetSlot,
-    draggedCard,
     isDragging,
     DUR,
     pickCardTo,
