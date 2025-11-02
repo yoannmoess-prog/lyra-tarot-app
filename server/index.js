@@ -124,19 +124,6 @@ function parseSpreadPositions(spreadContent) {
 }
 
 
-/**
- * Fournit des mots-clés de validation positionnelle pour un spread donné.
- * @param {string} spreadId - L'identifiant du spread (ex: "spread-truth").
- * @returns {string[]} Une liste de mots-clés en minuscules.
- */
-function getPositionKeywords(spreadId) {
-  const keywords = {
-    "spread-truth": ["obstacle", "retient", "freine", "vérité", "libère", "éclaire", "élan", "transforme", "mouvement"],
-    "spread-advice": ["enjeu", "contexte", "message", "conseil", "entendre", "ressource", "aide", "force", "part de soi"]
-  };
-  return keywords[spreadId] || [];
-}
-
 // --- Prompt Builder ---
 function buildMessages({ name: n, question, cards, userMessage, history, spreadContent, positionHints }) {
   // S'assure que 'cards' est un tableau avant d'appeler .map()
@@ -159,24 +146,30 @@ Toujours un seul message complet (environ 70 mots, 120 au maximum), dans une **s
 
 ---
 
-### CONTRAT D’INTERPRÉTATION — RÈGLE GÉNÉRALE
-- **Style conversationnel avant tout :** Ta réponse doit sonner comme le début d'un dialogue chaleureux, pas un rapport d'analyse.
-- **Interprétation ciblée :** Tu ne dois interpréter qu'**une seule carte** (la plus parlante) ou deux au maximum. Le but n'est pas de tout décrire, mais de donner une première impulsion.
-- **Intégration fluide des positions :** Tu dois intégrer le sens de la position de la carte de manière naturelle dans ta phrase.
-    - ✅ **Exemple de style attendu :** "Le Pape, qui représente ici *ce qui te freine*, suggère que des règles trop rigides t'empêchent peut-être d'avancer."
-    - ❌ **Style à ne pas utiliser :** "Le Pape - position 1 (Obstacle) : <lecture>."
-- **Synthèse, pas description :** Ta lecture doit être une **synthèse intuitive** du message global, pas une liste de cartes.
-- **Une seule bulle, une seule question :** Termine toujours par **une seule** question ouverte pour inviter au dialogue. Moins de 120 mots.
+### CONTRAT D’INTERPRÉTATION — RÈGLE GÉNÉRALE (TOUS LES SPREADS)
+- Tu interprètes chaque carte STRICTEMENT via **sa position** dans le spread sélectionné.
+- Si tu cites une carte, tu DOIS préciser la position et son sens (exemple générique) :
+  « <Carte> — position <n> (<intitulé position du spread>) : <lecture positionnelle> ».
+- Tu peux ne pas lister toutes les cartes, mais toute carte nommée doit être reliée à sa position.
+- Style : une seule bulle (≤120 mots). Termine par **une seule** question ouverte.
+- Si tu ignores ces règles, on te redemandera une réponse conforme.
 
 ${positionsMemo}
 
 ---
 
-### STRUCTURE DE TA PREMIÈRE RÉPONSE
-1.  **Accueil chaleureux :** Commence par saluer ${name} par son prénom.
-2.  **Reformulation naturelle :** Reformule sa question de manière fluide pour montrer que tu l'as comprise. C'est obligatoire et doit être visible dès le début.
-3.  **Synthèse intuitive (1-2 cartes max) :** Donne une première lecture globale en te basant sur une ou deux cartes clés, en intégrant leur position de façon conversationnelle (cf. l'exemple ci-dessus).
-4.  **Invitation au dialogue :** Termine par une question ouverte et engageante qui l'invite à réagir ou à approfondir.
+### STRUCTURE DU PREMIER MESSAGE
+
+1. **Salue ${name}** par son prénom, avec chaleur.
+2. **Reformule sa question, clairement, sans la redemander.**
+→ Cette reformulation est **obligatoire** et doit apparaître **dans les deux premières lignes**.
+→ Exemple :
+✅ “Tu te demandes comment avancer concrètement dans ton projet.”
+❌ “Tu es ici pour explorer ce que le tirage a à te révéler…”
+
+3. Propose une **lecture globale et intuitive** du tirage : une impression générale, imagée, sans lister toutes les cartes.
+4. Adopte un ton vivant : “Je sens que…”, “Peut-être que…”, “Tu vois…” (seulement si c’est **utile et concret**).
+5. Termine par **une seule question ouverte**, en lien direct avec la problématique posée.
 
 → Ce message doit toujours être **dans une seule bulle**, sans découpe.
 
@@ -368,9 +361,7 @@ app.post("/api/lyra/stream", async (req, res) => {
       });
     }
     
-    const positionHints = parseSpreadPositions(spreadContent); // Gardé pour le mémo du prompt
-    const positionKeywords = getPositionKeywords(spreadId); // Nouveaux mots-clés pour la validation
-
+    const positionHints = parseSpreadPositions(spreadContent);
     const messages = buildMessages({ name, question, cards, userMessage, history, spreadContent, positionHints });
     console.log("[lyra] Messages pour OpenAI construits :", JSON.stringify(messages, null, 2));
 
@@ -414,17 +405,17 @@ app.post("/api/lyra/stream", async (req, res) => {
     console.log("[lyra] Réponse initiale complète reçue:", fullResponse);
 
     // --- Validation et potentielle deuxième tentative ---
-    if (!looksCompliantPositionally(fullResponse, positionKeywords)) {
-      console.warn("[lyra] Réponse non conforme au style conversationnel. Tentative de relance.");
+    if (!looksCompliantPositionally(fullResponse, positionHints)) {
+      console.warn("[lyra] Réponse non conforme. Tentative de relance.");
 
       // Ajoute le message de l'IA (non conforme) et un rappel système à l'historique.
       const retryMessages = [
         ...messages,
         { role: "assistant", content: fullResponse },
-        { role: "system", content: "Ta réponse précédente n'était pas assez naturelle. Intègre le sens de la position de la carte de manière plus fluide et conversationnelle. Exemple : 'Le Pape, qui représente ici *ce qui te freine*, suggère...'. Sois plus chaleureux et moins formel." }
+        { role: "system", content: "Ta réponse précédente n'était pas conforme. Respecte impérativement le contrat d'interprétation positionnelle. Cite la position de chaque carte que tu nommes." }
       ];
 
-      console.log("[lyra] Envoi de la deuxième requête à OpenAI avec rappel de style.");
+      console.log("[lyra] Envoi de la deuxième requête à OpenAI avec rappel.");
       const retryStream = await openai.chat.completions.create({
         model: LLM_MODEL,
         messages: retryMessages,

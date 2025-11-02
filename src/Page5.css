@@ -262,12 +262,3 @@
   .final-card-outer { width:min(30vw, 26vh, 156px); }
   .p5-fixed-title { font-size: 1rem; }
 }
-
-/* --- Spread-Truth Specific Layout --- */
-.final-rail.rail-truth {
-  align-items: flex-start;
-}
-
-.final-rail.rail-truth .final-card-outer:nth-child(2) {
-  transform: translateY(30%);
-}
