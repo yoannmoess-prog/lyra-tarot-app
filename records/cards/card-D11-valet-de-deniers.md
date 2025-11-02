@@ -2,28 +2,26 @@
 type: card
 card_id: D11
 title: Valet de Deniers
-display_name: Valet de Deniers
 category: arcane mineur
 subcategory: deniers
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:apprenti
-- element:terre
-- deniers
-- serie:deniers
+  - marseille
+  - 'archetype:apprenti'
+  - 'element:terre'
+  - deniers
+  - 'serie:deniers'
 ---
-
 
 ## Résumé
 → Le Valet de Deniers incarne l’apprenti du monde matériel. Il symbolise l’étude, l’exploration concrète, le soin apporté aux détails et la curiosité patiente face à la matière et aux ressources.

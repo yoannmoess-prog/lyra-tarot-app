@@ -2,28 +2,26 @@
 type: card
 card_id: C08
 title: 8 de Coupe
-display_name: 8 de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:renoncement
-- element:eau
-- coupes
-- serie:coupes
+  - marseille
+  - 'archetype:renoncement'
+  - 'element:eau'
+  - coupes
+  - 'serie:coupes'
 ---
-
 
 ## Résumé
 → Le 8 de Coupe représente un départ émotionnel, un renoncement volontaire à une situation affective ou intérieure devenue stérile. Il parle du courage de tourner une page pour chercher une vérité plus profonde, souvent solitaire.

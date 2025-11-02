@@ -2,31 +2,29 @@
 type: card
 card_id: B01
 title: As de Bâton
-display_name: As de Bâton
 category: arcane mineur
 subcategory: batons
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin
-- bendov2011
-- delcamp1976
-- nadolny
-- jung
-- meditationsanonymes
-- archetypaljourney
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin
+  - bendov2011
+  - delcamp1976
+  - nadolny
+  - jung
+  - meditationsanonymes
+  - archetypaljourney
 tags:
-- marseille
-- element:feu
-- bâtons
-- energie
-- créativité
-- volonté
-- sexualité
-- serie:batons
+  - marseille
+  - 'element:feu'
+  - bâtons
+  - energie
+  - créativité
+  - volonté
+  - sexualité
+  - 'serie:batons'
 ---
-
 
 ## Résumé
 → L’As de Bâton représente une énergie brute et créatrice, un jaillissement de vie, de désir, ou de projet. Il marque le début d’un cycle d’action, nourri par la passion, la volonté et l’élan vital.

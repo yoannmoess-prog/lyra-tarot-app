@@ -2,28 +2,26 @@
 type: card
 card_id: D05
 title: 5 de Deniers
-display_name: 5 de Deniers
 category: arcane mineur
 subcategory: deniers
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:manque
-- element:terre
-- deniers
-- serie:deniers
+  - marseille
+  - 'archetype:manque'
+  - 'element:terre'
+  - deniers
+  - 'serie:deniers'
 ---
-
 
 ## Résumé
 → Le 5 de Deniers évoque le manque matériel ou affectif, l’insécurité, la vulnérabilité, mais aussi la solidarité possible dans l’épreuve. C’est une carte de crise concrète, qui invite à chercher du soutien et à redéfinir ses valeurs.

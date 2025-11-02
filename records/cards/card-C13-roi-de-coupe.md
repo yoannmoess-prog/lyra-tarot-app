@@ -2,28 +2,26 @@
 type: card
 card_id: C13
 title: Roi de Coupe
-display_name: Roi de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:roi
-- element:eau
-- coupes
-- serie:coupes
+  - marseille
+  - 'archetype:roi'
+  - 'element:eau'
+  - coupes
+  - 'serie:coupes'
 ---
-
 
 ## Résumé
 → Le Roi de Coupe incarne la maturité affective, la maîtrise émotionnelle alliée à la compassion. C’est une figure d’autorité bienveillante, capable de ressentir profondément sans se laisser submerger.

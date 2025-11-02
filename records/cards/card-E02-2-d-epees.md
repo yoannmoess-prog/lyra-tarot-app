@@ -2,28 +2,26 @@
 type: card
 card_id: E02
 title: 2 d’Épées
-display_name: 2 d’Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:doute
-- element:air
-- épées
-- serie:epees
+  - marseille
+  - 'archetype:doute'
+  - 'element:air'
+  - épées
+  - 'serie:epees'
 ---
-
 
 ## Résumé
 → Le 2 d’Épées représente la tension mentale entre deux options, le besoin de pause avant décision. C’est la carte de la réflexion, du doute fécond et du silence intérieur qui prépare le choix.

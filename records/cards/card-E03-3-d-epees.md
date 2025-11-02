@@ -2,28 +2,26 @@
 type: card
 card_id: E03
 title: 3 d’Épées
-display_name: 3 d’Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:blessure
-- element:air
-- épées
-- serie:epees
+  - marseille
+  - 'archetype:blessure'
+  - 'element:air'
+  - épées
+  - 'serie:epees'
 ---
-
 
 ## Résumé
 → Le 3 d’Épées évoque la douleur mentale, la trahison ou la déception qui traverse le cœur par le biais de la pensée. C’est la carte de la lucidité blessante, mais aussi de la vérité qui libère.

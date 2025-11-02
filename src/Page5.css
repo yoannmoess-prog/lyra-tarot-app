@@ -137,16 +137,6 @@
   gap: 24px;
   opacity: 0;
 }
-.final-rail.rail-truth {
-  display: flex;
-  justify-content: center;
-  gap: clamp(10px, 3vw, 26px);
-  margin-bottom: 4rem; /* Espace pour éviter chevauchement avec le chat */
-}
-
-.final-rail.rail-truth .final-card-outer:nth-child(2) {
-  transform: translateY(70%);
-}
 .appear-slow { animation: finalAppear 1.2s ease .2s forwards; }
 
 /* ... (styles des cartes inchangés) ... */

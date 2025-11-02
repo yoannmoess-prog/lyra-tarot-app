@@ -2,28 +2,26 @@
 type: card
 card_id: E14
 title: Cavalier d'Épées
-display_name: Cavalier d'Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:cavalier
-- element:air
-- épées
-- serie:epees
+  - marseille
+  - 'archetype:cavalier'
+  - 'element:air'
+  - épées
+  - 'serie:epees'
 ---
-
 
 ## Résumé
 → Le Cavalier d'Épées symbolise la mise en mouvement de la pensée, la conquête par le verbe, l’intervention rapide du mental pour trancher, argumenter ou défendre une idée. Il incarne l'intellect en marche, parfois tranchant.

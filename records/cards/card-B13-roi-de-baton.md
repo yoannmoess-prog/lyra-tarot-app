@@ -2,28 +2,26 @@
 type: card
 card_id: B13
 title: Roi de Bâton
-display_name: Roi de Bâton
 category: arcane mineur
 subcategory: batons
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:roi
-- element:feu
-- bâtons
-- serie:batons
+  - marseille
+  - 'archetype:roi'
+  - 'element:feu'
+  - bâtons
+  - 'serie:batons'
 ---
-
 
 ## Résumé
 → Le Roi de Bâton incarne la force de l’autorité intérieure, la maîtrise du feu créatif et l’élan de réalisation concrète dans le monde. C’est un bâtisseur visionnaire qui agit avec assurance et inspire le respect.

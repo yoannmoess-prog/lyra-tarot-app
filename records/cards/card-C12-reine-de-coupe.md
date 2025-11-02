@@ -2,28 +2,26 @@
 type: card
 card_id: C12
 title: Reine de Coupe
-display_name: Reine de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:reine
-- element:eau
-- coupes
-- serie:coupes
+  - marseille
+  - 'archetype:reine'
+  - 'element:eau'
+  - coupes
+  - 'serie:coupes'
 ---
-
 
 ## Résumé
 → La Reine de Coupe est l’incarnation de la sensibilité mature, de l’écoute profonde et de l’intuition bienveillante. Elle représente l’accueil inconditionnel, la sagesse émotionnelle, la capacité à sentir au-delà des mots.

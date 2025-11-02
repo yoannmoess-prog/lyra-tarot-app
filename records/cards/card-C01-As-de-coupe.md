@@ -2,28 +2,26 @@
 type: card
 card_id: C01
 title: As de Coupe
-display_name: As de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:source
-- element:eau
-- coupes
-- serie:coupes
+  - marseille
+  - 'archetype:source'
+  - 'element:eau'
+  - coupes
+  - 'serie:coupes'
 ---
-
 
 ## Résumé
 → L’As de Coupe est la source vive de l’amour, du lien et de l’émotion authentique. Il représente l’ouverture du cœur, la réceptivité à l’invisible, la naissance d’un sentiment vrai ou d’une guérison intérieure.

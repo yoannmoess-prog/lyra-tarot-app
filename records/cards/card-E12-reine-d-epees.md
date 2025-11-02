@@ -2,28 +2,26 @@
 type: card
 card_id: E12
 title: Reine d’Épées
-display_name: Reine d’Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:lucidité
-- element:air
-- épées
-- serie:epees
+  - marseille
+  - 'archetype:lucidité'
+  - 'element:air'
+  - épées
+  - 'serie:epees'
 ---
-
 
 ## Résumé
 → La Reine d’Épées est la figure de la lucidité souveraine, de l’intelligence affûtée et de la parole juste. Elle représente l’alliance entre la clarté mentale et la maturité émotionnelle, entre discernement et vérité.

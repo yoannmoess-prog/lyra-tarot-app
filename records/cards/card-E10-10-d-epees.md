@@ -2,28 +2,26 @@
 type: card
 card_id: E10
 title: 10 d’Épées
-display_name: 10 d’Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:effondrement
-- element:air
-- épées
-- serie:epees
+  - marseille
+  - 'archetype:effondrement'
+  - 'element:air'
+  - épées
+  - 'serie:epees'
 ---
-
 
 ## Résumé
 → Le 10 d’Épées symbolise une fin brutale, une saturation mentale, ou un écroulement nécessaire. Il invite à reconnaître que quelque chose doit mourir — une idée, une croyance, un schéma — pour laisser place à une renaissance.

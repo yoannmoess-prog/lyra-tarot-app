@@ -2,28 +2,26 @@
 type: card
 card_id: D09
 title: 9 de Deniers
-display_name: 9 de Deniers
 category: arcane mineur
 subcategory: deniers
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:abondance
-- element:terre
-- deniers
-- serie:deniers
+  - marseille
+  - 'archetype:abondance'
+  - 'element:terre'
+  - deniers
+  - 'serie:deniers'
 ---
-
 
 ## Résumé
 → Le 9 de Deniers symbolise l’accomplissement matériel, l’autonomie et la gratitude. C’est une carte de satisfaction discrète, d’abondance récoltée avec justesse, et d’un lien apaisé avec la matière.

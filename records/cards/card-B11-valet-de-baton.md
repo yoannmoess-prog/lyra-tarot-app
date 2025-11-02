@@ -2,28 +2,26 @@
 type: card
 card_id: B11
 title: Valet de Bâton
-display_name: Valet de Bâton
 category: arcane mineur
 subcategory: batons
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin2000
-- bendov2011
-- delcamp1986
-- nadolny2020
-- jung
-- meditations-anonymes
-- tarot-archetypal-journey
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin2000
+  - bendov2011
+  - delcamp1986
+  - nadolny2020
+  - jung
+  - meditations-anonymes
+  - tarot-archetypal-journey
 tags:
-- marseille
-- baton
-- element:feu
-- archetype:jeunesse
-- serie:batons
+  - marseille
+  - baton
+  - 'element:feu'
+  - 'archetype:jeunesse'
+  - 'serie:batons'
 ---
-
 
 ## Résumé
 → Le Valet de Bâton est l’archétype de l’enthousiasme naissant, du feu adolescent. Il est prêt à se lancer, à expérimenter, mais sans toujours mesurer les conséquences. Messager, messianique parfois, il incarne l’élan, l’exploration, l’identité en devenir.

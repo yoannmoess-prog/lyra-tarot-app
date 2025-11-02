@@ -1,29 +1,11 @@
 ---
 type: card
-card_id: '17'
-title: L'Étoile
-display_name: L'Étoile
-source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin1999
-- bendov2017
-- delcamp1984
-- nadolny2008
-- jung
-- meditations_anonymes
-- tarot_archetypal_journey
-category: arcane majeur
-tags:
-- marseille
-- archetype:guide
-- element:eau
-- polarite:féminine
-- motcle:espérance
-- motcle:guérison
+card_id: "17"
+title: "L'Étoile"
+source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin1999", "bendov2017", "delcamp1984", "nadolny2008", "jung", "meditations_anonymes", "tarot_archetypal_journey"]
+category: "arcane majeur"
+tags: ["marseille", "archetype:guide", "element:eau", "polarite:féminine", "motcle:espérance", "motcle:guérison"]
 ---
-
 
 ## Résumé
 → L’Étoile est une carte d’espérance, de réceptivité pure et de retour à la simplicité essentielle. Elle représente la connexion entre la terre et le cosmos à travers le corps et l’âme, dans une nudité assumée et sacrée. Elle nous guide par l’intuition, la douceur, la foi en un monde intérieur fécond et réparateur.

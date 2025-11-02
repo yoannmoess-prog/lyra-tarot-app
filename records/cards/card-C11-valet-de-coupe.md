@@ -2,28 +2,26 @@
 type: card
 card_id: C11
 title: Valet de Coupe
-display_name: Valet de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:messager
-- element:eau
-- coupes
-- serie:coupes
+  - marseille
+  - 'archetype:messager'
+  - 'element:eau'
+  - coupes
+  - 'serie:coupes'
 ---
-
 
 ## Résumé
 → Le Valet de Coupe est le messager du cœur, celui qui explore les émotions nouvelles ou renaissantes. Il incarne la fraîcheur émotionnelle, la curiosité affective, l’ouverture sensible à soi et aux autres.

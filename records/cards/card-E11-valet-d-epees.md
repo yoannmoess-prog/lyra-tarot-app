@@ -2,28 +2,26 @@
 type: card
 card_id: E11
 title: Valet d’Épées
-display_name: Valet d’Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:veilleur
-- element:air
-- épées
-- serie:epees
+  - marseille
+  - 'archetype:veilleur'
+  - 'element:air'
+  - épées
+  - 'serie:epees'
 ---
-
 
 ## Résumé
 → Le Valet d’Épées est le guetteur, l’observateur affûté, le messager du mental en éveil. Il incarne la jeunesse intellectuelle, la vigilance et la quête d’une vérité encore fragile mais déterminée.

@@ -1,27 +1,12 @@
 ---
 type: card
-card_id: '08'
-title: La Justice
-display_name: La Justice
-source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin2008
-- bendov2013
-- delcamp1976
-- nadolny2022
-- jung1950
-- meditationsanonymes1980
-- tarotarchjourney2021
-category: arcane majeur
-tags:
-- marseille
-- archetype:justice
-- element:air
-- element:spirit
----
+card_id: "08"
+title: "La Justice"
+source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2008", "bendov2013", "delcamp1976", "nadolny2022", "jung1950", "meditationsanonymes1980", "tarotarchjourney2021"]
+category: "arcane majeur"
+tags: ["marseille", "archetype:justice", "element:air", "element:spirit"]
 
+---
 
 ## Résumé
 → La Justice incarne l'équilibre intérieur, la clarté d’esprit et le discernement radical. Assise face au consultant, elle tranche l’illusion pour révéler la vérité. Sa présence appelle à une introspection lucide, à la responsabilité, et à une juste réciprocité envers soi et les autres.

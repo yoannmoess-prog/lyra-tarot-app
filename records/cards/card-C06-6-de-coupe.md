@@ -2,28 +2,26 @@
 type: card
 card_id: C06
 title: 6 de Coupe
-display_name: 6 de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:harmonie
-- element:eau
-- coupes
-- serie:coupes
+  - marseille
+  - 'archetype:harmonie'
+  - 'element:eau'
+  - coupes
+  - 'serie:coupes'
 ---
-
 
 ## Résumé
 → Le 6 de Coupe évoque l’harmonie retrouvée, la douceur du passé, la mémoire affective qui guérit. C’est une carte de réconciliation, de tendresse, et d’ouverture du cœur à ce qui fut bon, simple et vrai.

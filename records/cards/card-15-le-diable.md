@@ -1,30 +1,11 @@
 ---
 type: card
-card_id: XV
-title: Le Diable
-display_name: Le Diable
-source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin1997
-- bendov2011
-- delcamp1976
-- nadolny2007
-- jung1934
-- meditationsanonymes2023
-- archetypaljourney2020
-category: arcane majeur
-tags:
-- marseille
-- archetype:ombre
-- element:feu
-- theme:pulsions
-- theme:transgression
-- theme:libido
-- axe:profondeurs
+card_id: "XV"
+title: "Le Diable"
+source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin1997", "bendov2011", "delcamp1976", "nadolny2007", "jung1934", "meditationsanonymes2023", "archetypaljourney2020"]
+category: "arcane majeur"
+tags: ["marseille", "archetype:ombre", "element:feu", "theme:pulsions", "theme:transgression", "theme:libido", "axe:profondeurs"]
 ---
-
 
 ## Résumé
 → Le Diable est l’archétype de l’énergie brute, de la libido, des désirs inavoués et de l’inconscient refoulé. Il pousse à transgresser, à s’émanciper des chaînes intérieures, mais invite aussi à voir les pièges de l’illusion et de la compulsion.

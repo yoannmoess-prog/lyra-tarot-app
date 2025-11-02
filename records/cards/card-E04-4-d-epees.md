@@ -2,28 +2,26 @@
 type: card
 card_id: E04
 title: 4 d’Épées
-display_name: 4 d’Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:retrait
-- element:air
-- épées
-- serie:epees
+  - marseille
+  - 'archetype:retrait'
+  - 'element:air'
+  - épées
+  - 'serie:epees'
 ---
-
 
 ## Résumé
 → Le 4 d’Épées est la carte du repos mental, du retrait stratégique, de la consolidation après la tempête. Elle invite à la pause consciente pour reconstruire ses forces et clarifier sa pensée.

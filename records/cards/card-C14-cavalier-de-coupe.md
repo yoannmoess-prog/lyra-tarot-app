@@ -2,28 +2,26 @@
 type: card
 card_id: C14
 title: Cavalier de Coupe
-display_name: Cavalier de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:chevalier
-- element:eau
-- coupes
-- serie:coupes
+  - marseille
+  - 'archetype:chevalier'
+  - 'element:eau'
+  - coupes
+  - 'serie:coupes'
 ---
-
 
 ## Résumé
 → Le Cavalier de Coupe incarne la quête affective, l’élan vers l’autre guidé par l’émotion. Il symbolise le mouvement du cœur, la recherche d’amour, d’inspiration ou de guérison intérieure à travers une action ou une rencontre.

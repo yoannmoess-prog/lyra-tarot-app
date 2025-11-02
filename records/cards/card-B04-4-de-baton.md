@@ -2,31 +2,29 @@
 type: card
 card_id: B04
 title: 4 de Bâton
-display_name: 4 de Bâton
 category: arcane mineur
 subcategory: batons
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin2000
-- bendov2011
-- delcamp1976
-- nadolny2019
-- jung1930
-- meditations-anonymes
-- archetypal-journey
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin2000
+  - bendov2011
+  - delcamp1976
+  - nadolny2019
+  - jung1930
+  - meditations-anonymes
+  - archetypal-journey
 tags:
-- marseille
-- element:feu
-- numero:4
-- arcane:mineur
-- structure
-- plaisir
-- stabilité
-- serie:batons
+  - marseille
+  - 'element:feu'
+  - 'numero:4'
+  - 'arcane:mineur'
+  - structure
+  - plaisir
+  - stabilité
+  - 'serie:batons'
 ---
-
 
 ## Résumé
 → Carte de stabilisation dans le domaine de l’élan créatif ou sexuel. Elle évoque un plaisir durable, une construction harmonieuse, un cadre fécond. Elle peut indiquer un besoin de rituel ou de répétition pour maintenir une énergie créatrice.

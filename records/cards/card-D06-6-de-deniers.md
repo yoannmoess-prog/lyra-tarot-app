@@ -2,28 +2,26 @@
 type: card
 card_id: D06
 title: 6 de Deniers
-display_name: 6 de Deniers
 category: arcane mineur
 subcategory: deniers
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:don
-- element:terre
-- deniers
-- serie:deniers
+  - marseille
+  - 'archetype:don'
+  - 'element:terre'
+  - deniers
+  - 'serie:deniers'
 ---
-
 
 ## Résumé
 → Le 6 de Deniers est la carte de l’échange juste, du don et de la réciprocité. Elle évoque un équilibre fluide entre donner et recevoir, une circulation saine des ressources matérielles, affectives ou spirituelles.

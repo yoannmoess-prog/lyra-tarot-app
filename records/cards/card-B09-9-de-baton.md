@@ -1,29 +1,27 @@
 ---
 type: card
-card_id: B09
 title: 9 de Bâton
-display_name: 9 de Bâton
+card_id: B09
 category: arcane mineur
 subcategory: batons
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin2005
-- bendov2013
-- delcamp1990
-- nadolny2020
-- jung
-- meditations_anonymes
-- tarot_archetypal_journey
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin2005
+  - bendov2013
+  - delcamp1990
+  - nadolny2020
+  - jung
+  - meditations_anonymes
+  - tarot_archetypal_journey
 tags:
-- marseille
-- baton
-- archetype:crise
-- element:feu
-- serie:batons
+  - marseille
+  - baton
+  - 'archetype:crise'
+  - 'element:feu'
+  - 'serie:batons'
 ---
-
 
 ## Résumé
 → Le 9 de Bâton symbolise une étape charnière : celle où l’on sent que la fin d’un cycle approche, mais où l’on doit faire preuve de vigilance et d’endurance. C’est une carte de maturité intérieure, de choix créatif majeur, de canalisation des forces.

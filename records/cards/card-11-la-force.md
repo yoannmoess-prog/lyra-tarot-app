@@ -1,27 +1,11 @@
 ---
 type: card
-card_id: '11'
-title: La Force
-display_name: La Force
-source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin2005
-- bendov2011
-- delcamp2019
-- nadolny2020
-- jung1935
-- meditations-anonymes
-category: arcane majeur
-tags:
-- marseille
-- archetype:puissance
-- element:feu
-- energie:instinct
-- chakra:coronal
+card_id: "11"
+title: "La Force"
+source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2005", "bendov2011", "delcamp2019", "nadolny2020", "jung1935", "meditations-anonymes"]
+category: "arcane majeur"
+tags: ["marseille", "archetype:puissance", "element:feu", "energie:instinct", "chakra:coronal"]
 ---
-
 
 ## Résumé
 → La Force est le seuil d’une transformation intérieure : l’énergie vitale, d’abord obscure, devient puissance consciente. Elle symbolise la capacité à accueillir nos pulsions pour les transmuter en conscience créatrice. Elle marque un début nouveau, où la domination laisse place à l’intégration.

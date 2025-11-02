@@ -1,26 +1,11 @@
 ---
 type: card
-card_id: '06'
-title: L'Amoureux
-display_name: L'Amoureux
-source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin1997
-- bendov2013
-- delcamp
-- nadolny2018
-- jung
-- meditations-anonymes
-- greer2021
-category: arcane majeur
-tags:
-- marseille
-- archetype:relation
-- element:air
+card_id: "06"
+title: "L'Amoureux"
+source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin1997", "bendov2013", "delcamp", "nadolny2018", "jung", "meditations-anonymes", "greer2021"]
+category: "arcane majeur"
+tags: ["marseille", "archetype:relation", "element:air"]
 ---
-
 
 ## Résumé
 → L'Amoureux représente le moment de l'hésitation, du choix crucial où l'amour, le désir ou le lien affectif se heurtent à des enjeux plus profonds. Entre la fusion et l'individuation, cette carte interroge nos projections, nos attachements, et notre liberté d'aimer. Elle invite à une conscience éclairée de soi dans la relation à l'autre.

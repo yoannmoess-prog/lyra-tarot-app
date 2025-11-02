@@ -56,6 +56,7 @@ function getRandomThinkingTime() {
 /* ---------------- Component ---------------- */
 // Le composant accepte maintenant `spreadId` en tant que prop
 export default function ChatPage({ spreadId }) {
+  console.log("--- DIAGNOSTIC: ChatPage component is running version from last commit ---");
   const { state } = useLocation();
   const nav = useNavigate();
   const name = useMemo(() => (state?.name || "voyageur").trim(), [state?.name]);
@@ -288,7 +289,7 @@ export default function ChatPage({ spreadId }) {
       <main className="page5-main-scroll">
         <div className="final-stack">
           <section className="final-hero" ref={spreadRef}>
-            <div className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`} ref={finalRailRef}>
+            <div className={`final-rail appear-slow${sealed ? " sealed" : ""}`} ref={finalRailRef}>
               {[0, 1, 2].map((i) => (
                 <div key={`final-${i}`} className="final-card-outer">
                   <div
@@ -328,7 +329,7 @@ export default function ChatPage({ spreadId }) {
           {isSpreadModalOpen && (
             <Modal onClose={() => setIsSpreadModalOpen(false)}>
               <div className="spread-modal-container">
-                <div className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
+                <div className="final-rail sealed">
                   {[0, 1, 2].map((i) => (
                     <div key={`modal-final-${i}`} className="final-card-outer">
                       <div className="final-card-flip is-flipped">

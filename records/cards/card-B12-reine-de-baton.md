@@ -2,27 +2,25 @@
 type: card
 card_id: B12
 title: Reine de Bâton
-display_name: Reine de Bâton
 category: arcane mineur
 subcategory: batons
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin2008
-- bendov2011
-- delcamp2020
-- nadolny2010
-- jung
-- meditations-anonymes
-- tarot-archetypal-journey
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin2008
+  - bendov2011
+  - delcamp2020
+  - nadolny2010
+  - jung
+  - meditations-anonymes
+  - tarot-archetypal-journey
 tags:
-- marseille
-- archetype:la-reine
-- element:feu
-- serie:batons
+  - marseille
+  - 'archetype:la-reine'
+  - 'element:feu'
+  - 'serie:batons'
 ---
-
 
 ## Résumé
 → La Reine de Bâton incarne la souveraineté du feu féminin : charismatique, passionnée, indépendante. Elle symbolise une créativité assumée et une autorité naturelle empreinte de sensualité et d’instinct.

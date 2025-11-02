@@ -2,28 +2,26 @@
 type: card
 card_id: D07
 title: 7 de Deniers
-display_name: 7 de Deniers
 category: arcane mineur
 subcategory: deniers
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:maturation
-- element:terre
-- deniers
-- serie:deniers
+  - marseille
+  - 'archetype:maturation'
+  - 'element:terre'
+  - deniers
+  - 'serie:deniers'
 ---
-
 
 ## Résumé
 → Le 7 de Deniers parle du temps, de la patience et de la maturation lente. Il invite à évaluer le travail accompli, à faire une pause consciente, à observer les fruits en formation sans forcer leur récolte.

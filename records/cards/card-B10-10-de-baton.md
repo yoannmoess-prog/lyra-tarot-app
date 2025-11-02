@@ -2,32 +2,30 @@
 type: card
 card_id: B10
 title: 10 de Bâton
-display_name: 10 de Bâton
 category: arcane mineur
 subcategory: batons
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin
-- bendov2013
-- delcamp1976
-- nadolny2020
-- jung
-- meditationsanonymes
-- nichols_tarot_archetypes
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin
+  - bendov2013
+  - delcamp1976
+  - nadolny2020
+  - jung
+  - meditationsanonymes
+  - nichols_tarot_archetypes
 tags:
-- marseille
-- baton
-- feu
-- cycle
-- charge
-- fin
-- responsabilite
-- element:feu
-- serie:batons
+  - marseille
+  - baton
+  - feu
+  - cycle
+  - charge
+  - fin
+  - responsabilite
+  - 'element:feu'
+  - 'serie:batons'
 ---
-
 
 ## Résumé
 → Le 10 de Bâton évoque la fin d’un cycle de création, où le feu de l’action devient lourd à porter. Cette carte parle d’engagement, de responsabilités accumulées, mais aussi de passage vers un nouveau plan.

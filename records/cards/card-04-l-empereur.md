@@ -1,26 +1,11 @@
 ---
 type: card
-card_id: IIII
-title: L'Empereur
-display_name: L'Empereur
-source_ids:
-- marteau1949
-- jodorowsky2004
-- camoin1998
-- bendov2011
-- delcamp1967
-- nadolny2019
-- jung
-- meditations_anonymes
-category: arcane majeur
-tags:
-- marseille
-- archetype:pere
-- element:terre
-- structure
-- autorite
+card_id: "IIII"
+title: "L'Empereur"
+source_ids: ["marteau1949", "jodorowsky2004", "camoin1998", "bendov2011", "delcamp1967", "nadolny2019", "jung", "meditations_anonymes"]
+category: "arcane majeur"
+tags: ["marseille", "archetype:pere", "element:terre", "structure", "autorite"]
 ---
-
 
 ## Résumé
 → L'Empereur incarne la stabilité, la loi, le pouvoir et l'autorité qui structurent le monde matériel. Il symbolise le père intérieur, l’axe autour duquel tout s’ordonne. Par sa présence, il invite à prendre la responsabilité de sa vie, à fonder son autorité sur des lois justes et à devenir souverain de son propre royaume.

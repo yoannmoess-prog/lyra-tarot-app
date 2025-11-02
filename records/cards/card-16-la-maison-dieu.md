@@ -1,27 +1,11 @@
 ---
 type: card
-card_id: '16'
-title: La Maison Dieu
-display_name: La Maison-Dieu
-source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin2008
-- bendov2011
-- delcamp1984
-- nadolny2021
-- jung1933
-- meditations_anonymes
-- nichols_tarot_archetypes
-category: arcane majeur
-tags:
-- marseille
-- archetype:effondrement
-- element:feu
-- chakra:coronal
+card_id: "16"
+title: "La Maison Dieu"
+source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2008", "bendov2011", "delcamp1984", "nadolny2021", "jung1933", "meditations_anonymes", "nichols_tarot_archetypes"]
+category: "arcane majeur"
+tags: ["marseille", "archetype:effondrement", "element:feu", "chakra:coronal"]
 ---
-
 
 ## Résumé
 → Cette carte symbolise l’irruption d’une énergie spirituelle qui vient bouleverser l’ordre établi. Elle évoque la chute des illusions, les révélations soudaines, les effondrements nécessaires pour ouvrir à une reconstruction plus authentique. C’est la libération par le chaos.

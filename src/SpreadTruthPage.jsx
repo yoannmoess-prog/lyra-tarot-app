@@ -154,5 +154,5 @@ function DraggableHandle() {
 
 function DroppableRail({ children }) {
   const { setNodeRef } = useDroppable({ id: "rail" });
-  return <div ref={setNodeRef} className="chosen-rail rail-truth">{children}</div>;
+  return <div ref={setNodeRef} className="chosen-rail">{children}</div>;
 }

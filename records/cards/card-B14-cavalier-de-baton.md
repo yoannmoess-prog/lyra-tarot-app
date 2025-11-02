@@ -2,28 +2,26 @@
 type: card
 card_id: B14
 title: Cavalier de Bâton
-display_name: Cavalier de Bâton
 category: arcane mineur
 subcategory: batons
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:cavalier
-- element:feu
-- bâtons
-- serie:batons
+  - marseille
+  - 'archetype:cavalier'
+  - 'element:feu'
+  - bâtons
+  - 'serie:batons'
 ---
-
 
 ## Résumé
 → Le Cavalier de Bâton incarne le mouvement du feu, l’enthousiasme créatif, la conquête de territoires nouveaux. C’est l’archétype de l’explorateur passionné, prêt à agir vite pour concrétiser une vision ou une impulsion.

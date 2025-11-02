@@ -1,31 +1,11 @@
 ---
 type: card
-card_id: '00'
-title: Le Mat
-display_name: Le Mât
-source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2004
-- camoin2007
-- bendov2011
-- delcamp1994
-- nadolny2021
-- jung1938
-- meditations-jung
-category: arcane majeur
-tags:
-- marseille
-- archetype:elan
-- element:air
-- archétype:anima
-- initié
-- errance
-- joker
-- voyage
-- symbolisme
+card_id: "00"
+title: "Le Mat"
+source_ids: ["marteau1949","jodorowsky2004","costa2004","camoin2007","bendov2011","delcamp1994","nadolny2021","jung1938","meditations-jung"]
+category: "arcane majeur"
+tags: ["marseille","archetype:elan","element:air","archétype:anima","initié","errance","joker","voyage","symbolisme"]
 ---
-
 
 ## Résumé
 Le Mat incarne un mouvement pur, une énergie en marche qui ne se laisse pas enfermer. Hors-norme, hors-nombre, il évoque la liberté brute, le départ, l’instinct de vie qui pousse à l’avant. C’est le souffle du commencement, mais aussi le vertige de l’inconnu.

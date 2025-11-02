@@ -2,28 +2,26 @@
 type: card
 card_id: D08
 title: 8 de Deniers
-display_name: 8 de Deniers
 category: arcane mineur
 subcategory: deniers
 source_ids:
-- marteau1949
-- jodorowsky2004
-- costa2008
-- camoin
-- bendov2011
-- delcamp
-- nadolny2018
-- jung
-- meditations_anonymes
-- nichols
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
 tags:
-- marseille
-- archetype:artisan
-- element:terre
-- deniers
-- serie:deniers
+  - marseille
+  - 'archetype:artisan'
+  - 'element:terre'
+  - deniers
+  - 'serie:deniers'
 ---
-
 
 ## Résumé
 → Le 8 de Deniers célèbre le travail appliqué, la discipline et l’apprentissage par la répétition. C’est la carte de l’artisan, de celui qui façonne, améliore et affine patiemment son œuvre dans le monde matériel.
