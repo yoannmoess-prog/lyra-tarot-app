@@ -40,6 +40,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
+    // CORRECTIF CORS : Assure que la configuration est bien déployée.
     // Les requêtes sans origine (ex: curl, applis mobiles) sont autorisées
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
