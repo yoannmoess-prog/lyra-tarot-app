@@ -131,8 +131,7 @@
   opacity: 0;
 }
 .final-rail.rail-truth {
-  /* La suppression de 'display: flex' rétablit la grille par défaut,
-     ce qui corrige le problème de scroll et de mise en page. */
+  /* Correction pour assurer la mise en page verticale en colonne unique. */
   margin-bottom: 9rem; /* Espace ajusté pour la carte décalée */
 }
 
