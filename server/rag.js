@@ -79,7 +79,8 @@ export async function detectSpreadFromQuestion(question) {
   // Étape 1 : Détection prioritaire par mots-clés
   const truthKeywords = [
     "peur", "crain", "crains", "dout", "anxiété", "angoisse", "permis de conduire",
-    "pas à la hauteur", "inquiet", "stress", "tracass", "trembler"
+    "pas à la hauteur", "inquiet", "stress", "tracass", "trembler",
+    "étape", "période", "moment de vie", "transition", "cycle", "où en suis-je", "chemin de vie", "mission"
   ];
   const truthRegex = new RegExp(truthKeywords.join('|'), 'i');
 
