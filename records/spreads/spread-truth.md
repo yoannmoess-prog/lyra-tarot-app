@@ -1,7 +1,7 @@
 ---
 id: spread-truth
 name: "spread-truth"
-display_name: "Tirage de la Vérité intérieure"
+display_name: "le tirage de la vérité intérieure"
 type: spread
 cards: 3
 default: false
