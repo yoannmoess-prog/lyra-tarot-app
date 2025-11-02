@@ -25,6 +25,8 @@ tags: [
 ]
 ---
 
+<!-- CONTRACT: interpret cards by POSITION. Any named card must include its POSITION (ex.: pos1/pos2/pos3 + label). -->
+
 ## Description
 
 Le **spread-advice** est un tirage pragmatique et ciblé, conçu pour formuler un **conseil clair et immédiatement applicable**.
@@ -51,6 +53,8 @@ Lorsqu’elle interprète une carte du *spread-advice*, **Lyra la lit toujours �
 ---
 
 ## Positions
+
+<!-- mapping: card[0] -> position 1 "Le véritable enjeu"; card[1] -> position 2 "Le message à entendre"; card[2] -> position 3 "La part de soi qui peut aider" -->
 
 ### 🜁 1. Le véritable enjeu
 *(Arcane majeur)*
