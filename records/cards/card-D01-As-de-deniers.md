@@ -1,11 +1,26 @@
 ---
 type: card
-card_id: "D01"
-title: "As de Deniers"
-category: "arcane mineur"
-subcategory: "valeur"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2008", "camoin", "bendov2011", "delcamp", "nadolny2018", "jung", "meditations_anonymes", "nichols"]
-tags: ["marseille", "archetype:semence", "element:terre", "deniers"]
+card_id: D01
+title: As de Deniers
+category: arcane mineur
+subcategory: deniers
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin
+  - bendov2011
+  - delcamp
+  - nadolny2018
+  - jung
+  - meditations_anonymes
+  - nichols
+tags:
+  - marseille
+  - 'archetype:semence'
+  - 'element:terre'
+  - deniers
+  - 'serie:deniers'
 ---
 
 ## Résumé

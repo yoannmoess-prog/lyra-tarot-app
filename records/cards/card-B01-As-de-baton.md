@@ -1,11 +1,29 @@
 ---
 type: card
-card_id: "B01"
-title: "As de Bâton"
-category: "arcane mineur"
-subcategory: "valeur"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin", "bendov2011", "delcamp1976", "nadolny", "jung", "meditationsanonymes", "archetypaljourney"]
-tags: ["marseille", "element:feu", "bâtons", "energie", "créativité", "volonté", "sexualité"]
+card_id: B01
+title: As de Bâton
+category: arcane mineur
+subcategory: batons
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin
+  - bendov2011
+  - delcamp1976
+  - nadolny
+  - jung
+  - meditationsanonymes
+  - archetypaljourney
+tags:
+  - marseille
+  - 'element:feu'
+  - bâtons
+  - energie
+  - créativité
+  - volonté
+  - sexualité
+  - 'serie:batons'
 ---
 
 ## Résumé

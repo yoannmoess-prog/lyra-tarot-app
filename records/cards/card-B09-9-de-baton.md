@@ -1,11 +1,26 @@
 ---
 type: card
-title: "9 de Bâton"
-card_id: "B09"
-category: "arcane mineur"
-subcategory: "valeur"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2005", "bendov2013", "delcamp1990", "nadolny2020", "jung", "meditations_anonymes", "tarot_archetypal_journey"]
-tags: ["marseille", "baton", "archetype:crise", "element:feu"]
+title: 9 de Bâton
+card_id: B09
+category: arcane mineur
+subcategory: batons
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin2005
+  - bendov2013
+  - delcamp1990
+  - nadolny2020
+  - jung
+  - meditations_anonymes
+  - tarot_archetypal_journey
+tags:
+  - marseille
+  - baton
+  - 'archetype:crise'
+  - 'element:feu'
+  - 'serie:batons'
 ---
 
 ## Résumé

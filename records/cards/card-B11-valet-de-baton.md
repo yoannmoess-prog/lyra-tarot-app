@@ -1,11 +1,26 @@
 ---
 type: card
-card_id: "B11"
-title: "Valet de Bâton"
-category: "arcane mineur"
-subcategory: "figure"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2000", "bendov2011", "delcamp1986", "nadolny2020", "jung", "meditations-anonymes", "tarot-archetypal-journey"]
-tags: ["marseille", "baton", "element:feu", "archetype:jeunesse"]
+card_id: B11
+title: Valet de Bâton
+category: arcane mineur
+subcategory: batons
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin2000
+  - bendov2011
+  - delcamp1986
+  - nadolny2020
+  - jung
+  - meditations-anonymes
+  - tarot-archetypal-journey
+tags:
+  - marseille
+  - baton
+  - 'element:feu'
+  - 'archetype:jeunesse'
+  - 'serie:batons'
 ---
 
 ## Résumé

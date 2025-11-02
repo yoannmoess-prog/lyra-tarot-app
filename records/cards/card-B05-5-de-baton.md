@@ -1,11 +1,25 @@
 ---
 type: card
-card_id: "B05"
-title: "5 de Bâton"
-category: "arcane mineur"
-subcategory: "valeur"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin1999", "bendov2011", "delcamp2020", "nadolny2021", "jung", "meditations_anonymes", "tarot_archetypal_journey"]
-tags: ["marseille", "element:feu", "number:5"]
+card_id: B05
+title: 5 de Bâton
+category: arcane mineur
+subcategory: batons
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin1999
+  - bendov2011
+  - delcamp2020
+  - nadolny2021
+  - jung
+  - meditations_anonymes
+  - tarot_archetypal_journey
+tags:
+  - marseille
+  - 'element:feu'
+  - 'number:5'
+  - 'serie:batons'
 ---
 
 ## Résumé

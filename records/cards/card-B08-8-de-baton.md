@@ -1,11 +1,25 @@
 ---
 type: card
-card_id: "B08"
-title: "8 de Bâton"
-category: "arcane mineur"
-subcategory: "valeur"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2008", "camoin1998", "bendov2011", "delcamp2012", "nadolny2020", "jung1964", "meditations-anonymes", "tarot-archetypal-journey"]
-tags: ["marseille", "archetype:perfection", "element:feu"]
+card_id: B08
+title: 8 de Bâton
+category: arcane mineur
+subcategory: batons
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2008
+  - camoin1998
+  - bendov2011
+  - delcamp2012
+  - nadolny2020
+  - jung1964
+  - meditations-anonymes
+  - tarot-archetypal-journey
+tags:
+  - marseille
+  - 'archetype:perfection'
+  - 'element:feu'
+  - 'serie:batons'
 ---
 
 ## Résumé

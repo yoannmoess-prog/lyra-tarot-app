@@ -1,11 +1,28 @@
 ---
 type: card
-card_id: "B02"
-title: "2 de Bâton"
-category: "arcane mineur"
-subcategory: "valeur"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2008", "bendov2011", "delcamp1983", "nadolny2020", "jung1959", "meditations-anonymes", "tarot-archetypal-journey"]
-tags: ["marseille", "suit:baton", "number:2", "element:feu", "arcane:mineur", "subcategory:valeur"]
+card_id: B02
+title: 2 de Bâton
+category: arcane mineur
+subcategory: batons
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin2008
+  - bendov2011
+  - delcamp1983
+  - nadolny2020
+  - jung1959
+  - meditations-anonymes
+  - tarot-archetypal-journey
+tags:
+  - marseille
+  - 'suit:baton'
+  - 'number:2'
+  - 'element:feu'
+  - 'arcane:mineur'
+  - 'subcategory:valeur'
+  - 'serie:batons'
 ---
 
 ## Résumé

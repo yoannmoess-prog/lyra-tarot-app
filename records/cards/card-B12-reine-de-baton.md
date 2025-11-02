@@ -1,11 +1,25 @@
 ---
 type: card
-card_id: "B12"
-title: "Reine de Bâton"
-category: "arcane mineur"
-subcategory: "figure"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2008", "bendov2011", "delcamp2020", "nadolny2010", "jung", "meditations-anonymes", "tarot-archetypal-journey"]
-tags: ["marseille", "archetype:la-reine", "element:feu"]
+card_id: B12
+title: Reine de Bâton
+category: arcane mineur
+subcategory: batons
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - costa2004
+  - camoin2008
+  - bendov2011
+  - delcamp2020
+  - nadolny2010
+  - jung
+  - meditations-anonymes
+  - tarot-archetypal-journey
+tags:
+  - marseille
+  - 'archetype:la-reine'
+  - 'element:feu'
+  - 'serie:batons'
 ---
 
 ## Résumé

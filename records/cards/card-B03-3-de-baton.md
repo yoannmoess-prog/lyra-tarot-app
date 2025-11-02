@@ -1,11 +1,25 @@
 ---
 type: card
-card_id: "B03"
-title: "3 de Bâton"
-source_ids: ["marteau1949", "jodorowsky2004", "camoin2010", "costabendov2008", "delcamp1997", "nadolny2020", "jung1964", "meditations-anonymes", "tarot-archetypal-journey"]
-tags: ["marseille", "archetype:jaillissement", "element:feu", "arcane:mineur"]
-category: "arcane mineur"
-subcategory: "valeur"
+card_id: B03
+title: 3 de Bâton
+source_ids:
+  - marteau1949
+  - jodorowsky2004
+  - camoin2010
+  - costabendov2008
+  - delcamp1997
+  - nadolny2020
+  - jung1964
+  - meditations-anonymes
+  - tarot-archetypal-journey
+tags:
+  - marseille
+  - 'archetype:jaillissement'
+  - 'element:feu'
+  - 'arcane:mineur'
+  - 'serie:batons'
+category: arcane mineur
+subcategory: batons
 ---
 
 ## Résumé
