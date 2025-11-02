@@ -105,17 +105,10 @@
 
 /* --- Contenu principal défilable --- */
 .page5-main-scroll {
-  flex-grow: 1; /* Prend toute la place restante */
-  overflow-y: auto;
-}
-
-/* --- Bloc de contenu (cartes + chat) --- */
-.final-stack {
-  max-width: min(1100px, 94vw);
-  margin: 0 auto;
-  padding: clamp(24px, 5vh, 48px) clamp(16px,4vw,56px);
-  display: grid;
-  gap: clamp(18px, 3.5vw, 28px);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Empêche le double défilement */
 }
 
 /* Apparition lente globale */
@@ -123,11 +116,15 @@
 
 /* Cartes finales — GRID 3 pour ne jamais se toucher */
 .final-hero {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
+  flex-shrink: 0; /* Empêche de rétrécir */
+  padding: clamp(24px, 5vh, 48px) clamp(16px,4vw,56px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative; /* Contexte pour le rail */
 }
+
 .final-rail {
   width: 100%;
   display:grid;
@@ -176,6 +173,7 @@
 /* Les styles du chat sont maintenant dans src/chat-ux.css */
 /* La section .chat-wrap est conservée pour le layout et l'animation d'apparition */
 .chat-wrap {
+  flex-grow: 1; /* Prend tout l'espace vertical restant */
   width: 100%;
   max-width: min(900px, 92vw);
   margin: 0 auto;
@@ -183,6 +181,9 @@
   opacity: 0;
   transform: translateY(8px);
   transition: opacity .5s ease, transform .5s ease;
+  overflow-y: auto; /* Active le défilement pour le chat */
+  display: flex;
+  flex-direction: column;
 }
 .chat-wrap.show {
   opacity: 1;
