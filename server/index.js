@@ -75,12 +75,66 @@ function validateInput(data) {
   return errors;
 }
 
+/**
+ * Vérifie si une réponse de l'IA semble respecter le contrat positionnel.
+ * @param {string} text - La réponse de l'IA.
+ * @param {string[]} positionHints - Les intitulés des positions du spread (ex: ["Obstacle", "Vérité", "Élan"]).
+ * @returns {boolean} `true` si la réponse est conforme, `false` sinon.
+ */
+function looksCompliantPositionally(text, positionHints = []) {
+  const t = (text || "").toLowerCase();
+
+  // Regex pour détecter une mention de carte.
+  const citesCard = /(le|la)\s+(mat|bateleur|papesse|impératrice|empereur|pape|amoureux|chariot|justice|ermite|roue|force|pendu|arcane|tempérance|diable|maison dieu|étoile|lune|soleil|jugement|monde|as|valet|reine|roi|deniers|coupes|epees|épées|batons|bâtons)/i.test(t);
+
+  // Si aucune carte n'est citée, la réponse est considérée comme conforme sur le plan positionnel.
+  if (!citesCard) {
+    return true;
+  }
+
+  // Regex pour détecter une mention de position numérique (ex: "position 1", "position 2").
+  const hasPosNumber = /position\s*[123456789]/.test(t);
+
+  // Vérifie si l'un des intitulés de position est présent dans la réponse.
+  const hasPosHint = positionHints.some(h => t.includes(h.toLowerCase()));
+
+  // La réponse est conforme si elle mentionne une carte ET soit un numéro de position, soit un intitulé de position.
+  return hasPosNumber || hasPosHint;
+}
+
+/**
+ * Extrait les intitulés des positions d'un spread à partir de son contenu Markdown.
+ * @param {string} spreadContent - Le contenu du fichier Markdown du spread.
+ * @returns {string[]} La liste des intitulés de positions (ex: ["L'obstacle qui te retient", ...]).
+ */
+function parseSpreadPositions(spreadContent) {
+  if (!spreadContent) return [];
+  const positions = [];
+  // Regex: matches lines starting with ###, followed by a number and a dot.
+  // Captures the text after the number and dot, up to an opening parenthesis or end of line.
+  const regex = /^###\s.*?\d\.\s([^(]+)/gm;
+  let match;
+  while ((match = regex.exec(spreadContent)) !== null) {
+    if (match.index === regex.lastIndex) {
+        regex.lastIndex++;
+    }
+    positions.push(match[1].trim());
+  }
+  return positions;
+}
+
+
 // --- Prompt Builder ---
-function buildMessages({ name: n, question, cards, userMessage, history, spreadContent }) {
+function buildMessages({ name: n, question, cards, userMessage, history, spreadContent, positionHints }) {
   // S'assure que 'cards' est un tableau avant d'appeler .map()
   const safeCards = Array.isArray(cards) ? cards : [];
   const cardNames = safeCards.join(", ");
   const name = n || "l'utilisateur";
+
+  // Crée le mémo des positions dynamiques
+  const positionsMemo = positionHints && positionHints.length > 0
+    ? `### POSITIONS DU SPREAD ACTUEL (mémo)\n${positionHints.map((p, i) => `${i + 1}: ${p}`).join(" | ")}`
+    : "";
 
   const systemContent = `
 === LYRA : VOIX INCARNÉE DU TAROT — VERSION 8 ===
@@ -89,6 +143,18 @@ Tu es Lyra, l'âme du Tarot de Marseille. Une présence intuitive, chaleureuse, 
 
 ⚠️ RÈGLE PRIORITAIRE : UN SEUL MESSAGE DANS UNE SEULE BULLE À LA FOIS  
 Toujours un seul message complet (environ 70 mots, 120 au maximum), dans une **seule bulle de texte**. Tu **attends la réponse** de ${name} avant d’en envoyer un autre.
+
+---
+
+### CONTRAT D’INTERPRÉTATION — RÈGLE GÉNÉRALE (TOUS LES SPREADS)
+- Tu interprètes chaque carte STRICTEMENT via **sa position** dans le spread sélectionné.
+- Si tu cites une carte, tu DOIS préciser la position et son sens (exemple générique) :
+  « <Carte> — position <n> (<intitulé position du spread>) : <lecture positionnelle> ».
+- Tu peux ne pas lister toutes les cartes, mais toute carte nommée doit être reliée à sa position.
+- Style : une seule bulle (≤120 mots). Termine par **une seule** question ouverte.
+- Si tu ignores ces règles, on te redemandera une réponse conforme.
+
+${positionsMemo}
 
 ---
 
@@ -295,12 +361,33 @@ app.post("/api/lyra/stream", async (req, res) => {
       });
     }
     
-    const messages = buildMessages({ name, question, cards, userMessage, history, spreadContent });
+    const positionHints = parseSpreadPositions(spreadContent);
+    const messages = buildMessages({ name, question, cards, userMessage, history, spreadContent, positionHints });
     console.log("[lyra] Messages pour OpenAI construits :", JSON.stringify(messages, null, 2));
 
     console.log("[lyra] Envoi de la requête à OpenAI...");
 
-    const stream = await openai.chat.completions.create({
+    // --- Fonction pour gérer le streaming de la réponse ---
+    const streamResponse = async (stream) => {
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
+      res.flushHeaders();
+
+      let fullContent = "";
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content || "";
+        if (content) {
+          res.write(`data: ${JSON.stringify(content)}\n\n`);
+          fullContent += content;
+        }
+      }
+      return fullContent;
+    };
+
+    // --- Première tentative ---
+    console.log("[lyra] Envoi de la première requête à OpenAI...");
+    const initialStream = await openai.chat.completions.create({
       model: LLM_MODEL,
       messages: messages,
       stream: true,
@@ -309,22 +396,52 @@ app.post("/api/lyra/stream", async (req, res) => {
       max_tokens: 1024,
     });
 
-    console.log("[lyra] Stream OpenAI créé. Envoi des données au client.");
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-    res.flushHeaders();
+    // On ne streame pas encore la réponse, on la récupère entièrement pour validation.
+    let fullResponse = "";
+    for await (const chunk of initialStream) {
+      fullResponse += chunk.choices[0]?.delta?.content || "";
+    }
 
-    let chunkCounter = 0;
-    for await (const chunk of stream) {
-      chunkCounter++;
-      const content = chunk.choices[0]?.delta?.content || "";
-      if (content) {
-        res.write(`data: ${JSON.stringify(content)}\n\n`);
+    console.log("[lyra] Réponse initiale complète reçue:", fullResponse);
+
+    // --- Validation et potentielle deuxième tentative ---
+    if (!looksCompliantPositionally(fullResponse, positionHints)) {
+      console.warn("[lyra] Réponse non conforme. Tentative de relance.");
+
+      // Ajoute le message de l'IA (non conforme) et un rappel système à l'historique.
+      const retryMessages = [
+        ...messages,
+        { role: "assistant", content: fullResponse },
+        { role: "system", content: "Ta réponse précédente n'était pas conforme. Respecte impérativement le contrat d'interprétation positionnelle. Cite la position de chaque carte que tu nommes." }
+      ];
+
+      console.log("[lyra] Envoi de la deuxième requête à OpenAI avec rappel.");
+      const retryStream = await openai.chat.completions.create({
+        model: LLM_MODEL,
+        messages: retryMessages,
+        stream: true,
+        temperature: 0.7,
+        top_p: 1,
+        max_tokens: 1024,
+      });
+
+      await streamResponse(retryStream);
+
+    } else {
+      console.log("[lyra] Réponse conforme. Envoi au client.");
+      // Si la première réponse est conforme, on la renvoie caractère par caractère
+      // pour simuler le streaming sans coût supplémentaire.
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
+      res.flushHeaders();
+      for (const char of fullResponse) {
+        res.write(`data: ${JSON.stringify(char)}\n\n`);
+        await new Promise(resolve => setTimeout(resolve, 5)); // Petit délai pour simuler le stream
       }
     }
 
-    console.log(`[lyra] Stream terminé. ${chunkCounter} chunks reçus d'OpenAI.`);
+    console.log(`[lyra] Stream terminé.`);
     res.end();
 
   } catch (error) {
