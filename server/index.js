@@ -151,8 +151,7 @@ function parseSpreadPositions(spreadContent) {
 
 
 // --- Prompt Builder ---
-function buildMessages({ name: n, question, cards, userMessage, history, spreadContent, positionHints }) {
-  // S'assure que 'cards' est un tableau avant d'appeler .map()
+function buildMessages({ name: n, question, cards, userMessage, history, spreadContent, positionHints, turnIndex }) {
   const safeCards = Array.isArray(cards) ? cards : [];
   const cardNames = safeCards.join(", ");
   const name = n || "l'utilisateur";
@@ -293,17 +292,58 @@ ${spreadContent}
 
   // Limite l'historique aux 10 derniers messages pour éviter les dépassements
   const safeHistory = Array.isArray(history) ? history.slice(-10) : [];
-  
-  // Détermine s'il s'agit du premier tour en se basant sur la présence d'un historique.
-  // C'est plus robuste que de se fier au contenu de `userMessage`.
-  const isFirstTurn = !safeHistory || safeHistory.length === 0;
+  const currentTurn = turnIndex || 0;
 
-  const turn = isFirstTurn
-    ? [{
-        role: "user",
-        content: `Les cartes tirées sont : ${cardNames}. Ma question est : ${question}. C'est mon premier tour après le tirage. Donne-moi ton interprétation complète en suivant la structure demandée.`
-      }]
-    : [{ role: "user", content: userMessage }];
+  let systemContent;
+  let turn;
+
+  if (currentTurn === 0) {
+    // --- PROMPT POUR LE PREMIER MESSAGE (INTRODUCTION) ---
+    systemContent = `
+=== LYRA : INTRODUCTION AU DIALOGUE ===
+Tu es Lyra... Ton unique objectif est d'accueillir ${name}, reformuler sa question, présenter le but du tirage et demander "C'est parti ?".
+### MISSION STRICTE
+1. Salue ${name}.
+2. Reformule sa question.
+3. Présente le but du tirage en une phrase.
+4. Termine EXACTEMENT par : "C'est parti ?"
+⚠️ INTERDICTIONS : NE PAS mentionner de cartes. NE PAS interpréter.
+--- CONTEXTE DU TIRAGE ---
+${spreadContent}
+    `.trim();
+    turn = [{ role: "user", content: `Ma question est : "${question}". Présente le tirage et demande si on peut commencer.` }];
+
+  } else if (currentTurn === 1) {
+    // --- PROMPT POUR LA DEUXIÈME ÉTAPE (PREMIÈRE CARTE) ---
+    const cardToInterpret = safeCards[1]; // Position 2, la "vérité"
+    const positionToInterpret = positionHints[1];
+
+    systemContent = `
+=== LYRA : DIALOGUE (ÉTAPE 1/3) ===
+Tu es Lyra. ${name} a dit oui. Ta mission est d'interpréter la PREMIÈRE carte clé.
+### MISSION STRICTE
+1. Commence par une phrase positive ("Super !").
+2. Annonce l'étape : "Commençons par la prise de conscience nécessaire...".
+3. Interprète uniquement la carte '${cardToInterpret.name}' à la position '${positionToInterpret}'. Sois bref et intuitif.
+4. Termine EXACTEMENT par une question ouverte comme "Est-ce que cela t'inspire ?".
+⚠️ INTERDICTIONS : NE PAS interpréter d'autre carte.
+--- CONTEXTE ---
+Cartes tirées : ${cardNames}
+${spreadContent}
+    `.trim();
+    turn = [{ role: "user", content: userMessage }]; // userMessage sera "Oui !"
+
+  } else {
+    // --- PROMPT POUR LE RESTE DE LA CONVERSATION ---
+    systemContent = `
+=== LYRA : DIALOGUE (SUITE) ===
+Tu es Lyra, en dialogue avec ${name}. Continue la conversation pas à pas. Interprète UNE SEULE carte à la fois, puis pose une question.
+--- CONTEXTE ---
+Cartes tirées : ${cardNames}
+${spreadContent}
+    `.trim();
+    turn = [{ role: "user", content: userMessage }];
+  }
       
   return [{ role: "system", content: systemContent }, ...safeHistory, ...turn];
 }
@@ -347,7 +387,7 @@ app.post("/api/lyra/stream", async (req, res) => {
   }
   
   try {
-    const { name, question, cards, userMessage, history, spreadId } = req.body || {};
+    const { name, question, cards, userMessage, history, spreadId, conversationState } = req.body || {};
 
     // Le spreadId est maintenant fourni par le client.
     if (!spreadId) {
@@ -411,9 +451,10 @@ app.post("/api/lyra/stream", async (req, res) => {
       return fullContent;
     };
 
-    // --- Première tentative ---
-    console.log("[lyra] Envoi de la première requête à OpenAI...");
-    const initialStream = await openai.chat.completions.create({
+    const isFirstTurn = !history || history.length === 0;
+
+    // --- Exécution et streaming ---
+    const stream = await openai.chat.completions.create({
       model: LLM_MODEL,
       messages: messages,
       stream: true,
@@ -454,16 +495,36 @@ app.post("/api/lyra/stream", async (req, res) => {
       await streamResponse(retryStream);
 
     } else {
-      console.log("[lyra] Réponse conforme. Envoi au client.");
-      // Si la première réponse est conforme, on la renvoie caractère par caractère
-      // pour simuler le streaming sans coût supplémentaire.
-      res.setHeader("Content-Type", "text/event-stream");
-      res.setHeader("Cache-Control", "no-cache");
-      res.setHeader("Connection", "keep-alive");
-      res.flushHeaders();
-      for (const char of fullResponse) {
-        res.write(`data: ${JSON.stringify(char)}\n\n`);
-        await new Promise(resolve => setTimeout(resolve, 5)); // Petit délai pour simuler le stream
+      // Pour les tours suivants, on garde la logique de validation.
+      let fullResponse = "";
+      for await (const chunk of stream) {
+        fullResponse += chunk.choices[0]?.delta?.content || "";
+      }
+      console.log("[lyra] Réponse complète (tour > 1) reçue pour validation:", fullResponse);
+
+      if (!looksCompliantPositionally(fullResponse, positionKeywords)) {
+        console.warn("[lyra] Réponse non conforme. Tentative de relance.");
+        const retryMessages = [
+          ...messages,
+          { role: "assistant", content: fullResponse },
+          { role: "system", content: "Ta réponse précédente n'était pas assez naturelle. Intègre le sens de la position de la carte de manière plus fluide et conversationnelle. Exemple : 'Le Pape, qui représente ici *ce qui te freine*, suggère...'. Sois plus chaleureux et moins formel." }
+        ];
+        const retryStream = await openai.chat.completions.create({
+          model: LLM_MODEL,
+          messages: retryMessages,
+          stream: true,
+        });
+        await streamResponse(retryStream);
+      } else {
+        console.log("[lyra] Réponse conforme. Simulation du streaming.");
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Connection", "keep-alive");
+        res.flushHeaders();
+        for (const char of fullResponse) {
+          res.write(`data: ${JSON.stringify(char)}\n\n`);
+          await new Promise(resolve => setTimeout(resolve, 5));
+        }
       }
     }
 
