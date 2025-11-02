@@ -236,9 +236,9 @@
 
 .chosen-rail.rail-truth {
   align-items: flex-start; /* Aligne les éléments enfants au début du conteneur */
-  margin-bottom: 4rem; /* Ajoute une marge inférieure pour compenser le décalage de la carte centrale */
+  margin-bottom: 8rem; /* Augmentation de la marge pour compenser le décalage plus important */
 }
 
 .chosen-rail.rail-truth .slot-wrap:nth-child(2) {
-  transform: translateY(30%); /* Décale l'emplacement B vers le bas */
+  transform: translateY(70%); /* Décale l'emplacement B vers le bas */
 }

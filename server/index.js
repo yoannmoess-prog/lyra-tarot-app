@@ -30,10 +30,36 @@ const openai = new OpenAI({ apiKey: LLM_API_KEY });
 
 // --- Middlewares principaux ---
 // Configuration CORS robuste pour la production et le développement
-const corsOrigin = process.env.CORS_ORIGIN || 'https://lyra-frontend.onrender.com';
-app.use(cors({ 
-  origin: corsOrigin,
-  credentials: false 
+const allowedOrigins = [
+  'https://lyra-frontend.onrender.com', // Production
+  'http://localhost:5173', // Dev local
+  'http://localhost:5174', // Dev local
+  'http://localhost:5175', // Dev local
+  'http://localhost:5176', // Dev local
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Autorise les requêtes sans 'origin' (ex: Postman, scripts serveur).
+    // Pour une sécurité maximale en production, on pourrait le désactiver.
+    if (!origin) return callback(null, true);
+
+    // Autorise les origines de la liste blanche.
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // Gère dynamiquement les URL de prévisualisation de Render (`pr-123`).
+    const isRenderPreview = /https:\/\/lyra-frontend-pr-\d+\.onrender\.com/.test(origin);
+    if (isRenderPreview) {
+      console.log(`[CORS] Autorisation de l'origine de prévisualisation Render : ${origin}`);
+      return callback(null, true);
+    }
+
+    console.warn(`[CORS] Origine non autorisée bloquée : ${origin}`);
+    return callback(new Error('Origine non autorisée par la politique CORS.'));
+  },
+  credentials: false
 }));
 app.use(express.json({ limit: "1mb" }));
 
