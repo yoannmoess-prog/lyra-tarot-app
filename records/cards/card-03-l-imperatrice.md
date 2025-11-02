@@ -2,7 +2,7 @@
 type: card
 card_id: '03'
 title: L'Impératrice
-display_name: L'Impératrice
+display_name: L’Impératrice
 source_ids:
 - marteau1949
 - jodorowsky2004

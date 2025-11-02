@@ -2,7 +2,7 @@
 type: card
 card_id: '13'
 title: L’Arcane Sans Nom
-display_name: L’Arcane Sans Nom
+display_name: L’Arcane-Sans-Nom
 source_ids:
 - marteau1949
 - jodorowsky2004

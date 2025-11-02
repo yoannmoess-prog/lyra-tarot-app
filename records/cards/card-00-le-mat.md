@@ -2,7 +2,7 @@
 type: card
 card_id: '00'
 title: Le Mat
-display_name: Le Mat
+display_name: Le Mât
 source_ids:
 - marteau1949
 - jodorowsky2004
