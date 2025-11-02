@@ -217,7 +217,6 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     targetSlot,
     draggedCard,
     isDragging,
-    dropAnimationCompleted,
     DUR,
     pickCardTo,
     handleDragStart,

@@ -60,7 +60,6 @@ export default function SpreadTruthPage() {
     targetSlot,
     draggedCard,
     isDragging,
-    dropAnimationCompleted,
     DUR,
     pickCardTo,
     handleDragStart,

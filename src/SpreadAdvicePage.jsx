@@ -72,7 +72,6 @@ export default function SpreadAdvicePage() {
     targetSlot,
     draggedCard,
     isDragging,
-    dropAnimationCompleted,
     DUR,
     pickCardTo,
     handleDragStart,
