@@ -231,11 +231,13 @@
   .fly-phys { display: none; }
 }
 
-/* --- Spread-Truth Specific Layout --- */
+/* --- Spread Layouts --- */
+/* rail-advice is the default .chosen-rail style */
+
 .chosen-rail.rail-truth {
   align-items: flex-start; /* Aligne les éléments enfants au début du conteneur */
 }
 
 .chosen-rail.rail-truth .slot-wrap:nth-child(2) {
-  transform: translateY(30%);
+  transform: translateY(70%); /* Décale l'emplacement B vers le bas */
 }
