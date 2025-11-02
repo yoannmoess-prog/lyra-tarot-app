@@ -1,6 +1,7 @@
 ---
 id: spread-truth
-name: "Tirage de la vérité intérieure"
+name: "spread-truth"
+display_name: "Tirage de la Vérité intérieure"
 type: spread
 cards: 3
 default: false
@@ -9,9 +10,12 @@ tags: ["spread", "spread-truth", "tirage-3-cartes", "peur", "vérité", "blocage
 
 ## Description
 
-Un tirage introspectif pour éclairer ce qui se joue lorsqu’une peur entrave la clarté.
+Le **spread-truth** est un tirage introspectif pour éclairer ce qui se joue lorsqu’une peur entrave la clarté.
 Il aide à traverser l’ombre pour aller vers une direction plus juste.
-Ce tirage s’utilise lorsque l’utilisateur se sent perdu, bloqué ou en période de transition, et cherche à dépasser une peur ou un doute pour retrouver du sens et de la fluidité.
+Ce tirage s’utilise lorsque l’utilisateur se sent perdu, bloqué, ou en période de transition, et cherche à dépasser une peur, un doute ou une confusion existentielle.
+
+**Nom affiché à l’utilisateur :** *Tirage de la Vérité intérieure*
+(Le nom technique reste “spread-truth” pour éviter toute ambiguïté dans le code.)
 
 ---
 
@@ -96,6 +100,35 @@ Le mouvement intérieur juste. Une posture, un élan, une orientation pour avanc
 
 ## Synthèse
 
-Ce tirage est une traversée : de l’obstacle à la conscience, puis à l’action alignée.
+Le **spread-truth** est une traversée introspective — de l’obstacle à la conscience, puis à l’action alignée.
 Il aide à reconnaître ce qui bloque, à comprendre ce que cela enseigne, et à retrouver l’élan intérieur pour avancer.
-Une métamorphose en trois cartes — du poids à la clarté, de la clarté au mouvement.
+Une métamorphose en trois cartes : du poids à la clarté, de la clarté au mouvement.
+
+---
+
+## 🤖 Métadonnées de distinction IA
+
+`yaml
+intent_routing:
+  triggers:
+    - introspection
+    - compréhension de soi
+    - peur
+    - ombre
+    - vérité
+    - transition
+    - "où en suis-je"
+    - mission
+    - sens de la vie
+    - blocage intérieur
+    - évolution personnelle
+    - période de doute
+    - transformation
+    - émotion
+    - peur de changer
+  excluded_when:
+    - "que faire"
+    - "comment agir"
+    - "quelle attitude"
+    - "quelle décision"
+`
