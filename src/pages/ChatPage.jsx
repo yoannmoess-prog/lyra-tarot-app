@@ -281,71 +281,71 @@ export default function ChatPage({ spreadId }) {
         </div>
       </header>
       <main className="page5-main-scroll">
-        <div className="final-stack">
-          <section className="final-hero" ref={spreadRef}>
-            <div className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`} ref={finalRailRef}>
-              {[0, 1, 2].map((i) => (
-                <div key={`final-${i}`} className="final-card-outer">
-                  <div
-                    className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}
-                    onClick={() => finalFlip[i] && setZoomedCard(i)}
-                    onKeyDown={(e) => finalFlip[i] && (e.key === "Enter" || e.key === " ") && setZoomedCard(i)}
-                    role="button"
-                    tabIndex={finalFlip[i] ? 0 : -1}
-                    aria-label={`Agrandir la carte : ${finalNames[i] || `Carte ${i + 1}`}`}
-                    style={{ cursor: finalFlip[i] ? "pointer" : "default" }}
-                  >
-                    <div className="final-face final-back" />
-                    <div className="final-face final-front">
-                      {finalFaces[i] ? (
-                        <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
-                      ) : (
-                        <div className="final-front-placeholder">Carte {i + 1}</div>
-                      )}
+        <section className="final-hero" ref={spreadRef}>
+          <div className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`} ref={finalRailRef}>
+            {[0, 1, 2].map((i) => (
+              <div key={`final-${i}`} className="final-card-outer">
+                <div
+                  className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}
+                  onClick={() => finalFlip[i] && setZoomedCard(i)}
+                  onKeyDown={(e) => finalFlip[i] && (e.key === "Enter" || e.key === " ") && setZoomedCard(i)}
+                  role="button"
+                  tabIndex={finalFlip[i] ? 0 : -1}
+                  aria-label={`Agrandir la carte : ${finalNames[i] || `Carte ${i + 1}`}`}
+                  style={{ cursor: finalFlip[i] ? "pointer" : "default" }}
+                >
+                  <div className="final-face final-back" />
+                  <div className="final-face final-front">
+                    {finalFaces[i] ? (
+                      <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
+                    ) : (
+                      <div className="final-front-placeholder">Carte {i + 1}</div>
+                    )}
+                  </div>
+                </div>
+                <div className="final-caption">{finalFlip[i] ? finalNames[i] || `Carte ${i + 1}` : ""}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+        {zoomedCard !== null && (
+          <Modal onClose={() => setZoomedCard(null)}>
+            <div className="zoomed-card-container">
+              <img
+                src={finalFaces[zoomedCard]}
+                alt={finalNames[zoomedCard] || `Carte ${zoomedCard + 1}`}
+                className="zoomed-card-img"
+              />
+            </div>
+          </Modal>
+        )}
+        {isSpreadModalOpen && (
+          <Modal onClose={() => setIsSpreadModalOpen(false)}>
+            <div className="spread-modal-container">
+              <div className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
+                {[0, 1, 2].map((i) => (
+                  <div key={`modal-final-${i}`} className="final-card-outer">
+                    <div className="final-card-flip is-flipped">
+                      <div className="final-face final-back" />
+                      <div className="final-face final-front">
+                        {finalFaces[i] ? (
+                          <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
+                        ) : (
+                          <div className="final-front-placeholder">Carte {i + 1}</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="final-caption" style={{ opacity: 1, transform: "none" }}>
+                      {finalNames[i] || `Carte ${i + 1}`}
                     </div>
                   </div>
-                  <div className="final-caption">{finalFlip[i] ? finalNames[i] || `Carte ${i + 1}` : ""}</div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </section>
-          {zoomedCard !== null && (
-            <Modal onClose={() => setZoomedCard(null)}>
-              <div className="zoomed-card-container">
-                <img
-                  src={finalFaces[zoomedCard]}
-                  alt={finalNames[zoomedCard] || `Carte ${zoomedCard + 1}`}
-                  className="zoomed-card-img"
-                />
-              </div>
-            </Modal>
-          )}
-          {isSpreadModalOpen && (
-            <Modal onClose={() => setIsSpreadModalOpen(false)}>
-              <div className="spread-modal-container">
-                <div className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
-                  {[0, 1, 2].map((i) => (
-                    <div key={`modal-final-${i}`} className="final-card-outer">
-                      <div className="final-card-flip is-flipped">
-                        <div className="final-face final-back" />
-                        <div className="final-face final-front">
-                          {finalFaces[i] ? (
-                            <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
-                          ) : (
-                            <div className="final-front-placeholder">Carte {i + 1}</div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="final-caption" style={{ opacity: 1, transform: "none" }}>
-                        {finalNames[i] || `Carte ${i + 1}`}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Modal>
-          )}
-          <section className={`chat-wrap${chatVisible ? " show" : ""}`} aria-live="polite">
+          </Modal>
+        )}
+        {chatVisible &&
+          <section className="chat-wrap show" aria-live="polite">
             {conv.map((m) =>
               m.role === "lyra" ? (
                 <div key={m.id} className="bubble lyra lyra-fadein">
@@ -376,7 +376,7 @@ export default function ChatPage({ spreadId }) {
             )}
             <div ref={endRef} />
           </section>
-        </div>
+        }
       </main>
       <footer className={`page5-footer ${chatVisible ? " show" : ""}`}>
         <div className="you-block">
