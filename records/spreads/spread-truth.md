@@ -8,6 +8,8 @@ default: false
 tags: ["spread", "spread-truth", "tirage-3-cartes", "peur", "vérité", "blocage", "transition", "étape", "cycle", "moment de vie", "mission", "où en suis-je"]
 ---
 
+<!-- CONTRACT: interpret cards by POSITION. Any named card must include its POSITION (ex.: pos1/pos2/pos3 + label). -->
+
 ## Description
 
 Le **spread-truth** est un tirage introspectif pour éclairer ce qui se joue lorsqu’une peur entrave la clarté.
@@ -33,6 +35,8 @@ Lyra peut s’appuyer librement sur les **variantes symboliques** associées à 
 ---
 
 ## Positions
+
+<!-- mapping: card[0] -> position 1 "L’obstacle qui te retient"; card[1] -> position 2 "La vérité qui libère"; card[2] -> position 3 "L’élan qui te transforme" -->
 
 ### 🜁 1. L’obstacle qui te retient
 *(La peur – arcane majeur)*

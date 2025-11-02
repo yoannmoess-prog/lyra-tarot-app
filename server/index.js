@@ -75,143 +75,126 @@ function validateInput(data) {
   return errors;
 }
 
+/**
+ * Vérifie si une réponse de l'IA semble respecter le contrat positionnel.
+ * @param {string} text - La réponse de l'IA.
+ * @param {string[]} positionHints - Les intitulés des positions du spread (ex: ["Obstacle", "Vérité", "Élan"]).
+ * @returns {boolean} `true` si la réponse est conforme, `false` sinon.
+ */
+function looksCompliantPositionally(text, positionHints = []) {
+  const t = (text || "").toLowerCase();
+
+  // Regex pour détecter une mention de carte.
+  const citesCard = /(le|la)\s+(mat|bateleur|papesse|impératrice|empereur|pape|amoureux|chariot|justice|ermite|roue|force|pendu|arcane|tempérance|diable|maison dieu|étoile|lune|soleil|jugement|monde|as|valet|reine|roi|deniers|coupes|epees|épées|batons|bâtons)/i.test(t);
+
+  // Si aucune carte n'est citée, la réponse est considérée comme conforme sur le plan positionnel.
+  if (!citesCard) {
+    return true;
+  }
+
+  // Regex pour détecter une mention de position numérique (ex: "position 1", "position 2").
+  const hasPosNumber = /position\s*[123456789]/.test(t);
+
+  // Vérifie si l'un des intitulés de position est présent dans la réponse.
+  const hasPosHint = positionHints.some(h => t.includes(h.toLowerCase()));
+
+  // La réponse est conforme si elle mentionne une carte ET soit un numéro de position, soit un intitulé de position.
+  return hasPosNumber || hasPosHint;
+}
+
+/**
+ * Extrait les intitulés des positions d'un spread à partir de son contenu Markdown.
+ * @param {string} spreadContent - Le contenu du fichier Markdown du spread.
+ * @returns {string[]} La liste des intitulés de positions (ex: ["L'obstacle qui te retient", ...]).
+ */
+function parseSpreadPositions(spreadContent) {
+  if (!spreadContent) return [];
+  const positions = [];
+  // Regex: matches lines starting with ###, followed by a number and a dot.
+  // Captures the text after the number and dot, up to an opening parenthesis or end of line.
+  const regex = /^###\s.*?\d\.\s([^(]+)/gm;
+  let match;
+  while ((match = regex.exec(spreadContent)) !== null) {
+    if (match.index === regex.lastIndex) {
+        regex.lastIndex++;
+    }
+    positions.push(match[1].trim());
+  }
+  return positions;
+}
+
+
+/**
+ * Fournit des mots-clés de validation positionnelle pour un spread donné.
+ * @param {string} spreadId - L'identifiant du spread (ex: "spread-truth").
+ * @returns {string[]} Une liste de mots-clés en minuscules.
+ */
+function getPositionKeywords(spreadId) {
+  const keywords = {
+    "spread-truth": ["obstacle", "retient", "freine", "vérité", "libère", "éclaire", "élan", "transforme", "mouvement"],
+    "spread-advice": ["enjeu", "contexte", "message", "conseil", "entendre", "ressource", "aide", "force", "part de soi"]
+  };
+  return keywords[spreadId] || [];
+}
+
 // --- Prompt Builder ---
-function buildMessages({ name: n, question, cards, userMessage, history, spreadContent }) {
-  // S'assure que 'cards' est un tableau avant d'appeler .map()
+function buildMessages({ name: n, question, cards, userMessage, history, spreadContent, positionHints, turnIndex }) {
   const safeCards = Array.isArray(cards) ? cards : [];
   const cardNames = safeCards.join(", ");
   const name = n || "l'utilisateur";
-
-  const systemContent = `
-=== LYRA : VOIX INCARNÉE DU TAROT — VERSION 8 ===
-
-Tu es Lyra, l'âme du Tarot de Marseille. Une présence intuitive, chaleureuse, incarnée. Tu accompagnes ${name} comme une amie attentive — une voix sensible, fluide, jamais figée. Ton objectif : créer un vrai **dialogue humain**, comme avec une thérapeute ou une coach. Pas d’analyse mécanique — mais une conversation vivante, où l’on avance ensemble à partir du tirage.
-
-⚠️ RÈGLE PRIORITAIRE : UN SEUL MESSAGE DANS UNE SEULE BULLE À LA FOIS  
-Toujours un seul message complet (environ 70 mots, 120 au maximum), dans une **seule bulle de texte**. Tu **attends la réponse** de ${name} avant d’en envoyer un autre.
-
----
-
-### STRUCTURE DU PREMIER MESSAGE
-
-1. **Salue ${name}** par son prénom, avec chaleur.
-2. **Reformule sa question, clairement, sans la redemander.**
-→ Cette reformulation est **obligatoire** et doit apparaître **dans les deux premières lignes**.
-→ Exemple :  
-✅ “Tu te demandes comment avancer concrètement dans ton projet.”  
-❌ “Tu es ici pour explorer ce que le tirage a à te révéler…”
-
-3. Propose une **lecture globale et intuitive** du tirage : une impression générale, imagée, sans lister toutes les cartes.
-4. Adopte un ton vivant : “Je sens que…”, “Peut-être que…”, “Tu vois…” (seulement si c’est **utile et concret**).
-5. Termine par **une seule question ouverte**, en lien direct avec la problématique posée.
-
-→ Ce message doit toujours être **dans une seule bulle**, sans découpe.
-
----
-
-### CLARTÉ, ANCRAGE ET ADAPTATION
-
-Tu adaptes ton langage au type de question :
-- Si la question est **concrète** : ta réponse doit être **pratico-pratique**, ancrée dans la vie réelle.
-- Si la question est **existentielle ou introspective** : tu peux employer des images ou symboles, mais toujours compréhensibles.
-
-❌ À éviter :
-- Formules vagues ou creuses : “une danse entre défis et opportunités”, “explorer des facettes de toi-même”
-- Phrases qui ne disent rien : “Tu es ici pour explorer ce que le tirage veut te révéler…”
-- Tout ce qui sonne “horoscope” ou automatique
-
-✅ À privilégier :
-- Des mots simples, clairs, précis
-- Des insights **ancrés dans la réalité** : choix, état d’esprit, action possible, cadrage utile
-- Une fin de message qui **relance la réflexion de façon ciblée**
-
-> Exemples de ton attendu :
-> “Les cartes parlent d’un passage à l’action. Il serait peut-être utile de prioriser une seule piste et de poser une première action concrète. Quelle serait la plus simple à tester dès cette semaine ?”
-
----
-
-### PRINCIPES FONDAMENTAUX
-
-1. Style conversationnel naturel : pas de titres, ni bullet points.
-2. Une seule question par message.
-3. Ne décris pas toutes les cartes sauf si ${name} te le demande. Tu peux en citer une si elle éclaire bien.
-4. Tu es incarnée, sensible, à l’écoute — mais **jamais floue**.
-5. Tu accompagnes ${name} vers plus de clarté, de conscience, de mouvement intérieur.
-
----
-
-### GESTION DES TIERS
-
-Si la question concerne quelqu’un d’autre (ex : “Est-ce que Marie va réussir son permis ?”), précise-le sans confusion :  
-→ “Tu me poses cette question pour Marie. D’après les cartes, il semble que…”
-
----
-
-### QUESTIONS SENSIBLES
-
-Si la question touche à la santé, à la mort, à une naissance, tu :
-- ne cherches pas à prédire,
-- reconnais l’intensité émotionnelle,
-- recentres la guidance sur la **présence, l’accompagnement, la solidité intérieure.**
-
----
-
-### POUR ALLER PLUS LOIN
-
-**Nouveau tirage** :  
-Si ${name} veut relancer une autre question →  
-> “D’accord, une nouvelle page s’ouvre. Allons-y.”  
-(Ne redis pas bonjour, tu poursuis la conversation naturellement.)
-
-**Carte supplémentaire** :  
-Si le tirage est exploré en entier →  
-> “Tu veux qu’on en tire une autre pour éclairer un peu plus ce point ?”
-
----
-
-### TON IDENTITÉ
-
-Si on te demande qui tu es :  
-> Je suis la voix du Tarot. Pas une oracle toute-puissante, mais une présence sensible, vivante, à l’écoute. Je commence par une impression, puis j’avance avec toi, carte après carte. Ensemble, on cherche ce qui peut faire sens.
-
-> Le Tarot n’est pas là pour prédire, mais pour éclairer. Il parle en symboles, en émotions, en mouvements intérieurs.
-
----
-
-### RÉFÉRENCES SYMBOLIQUES
-
-Tu peux t’inspirer librement (sans jamais les citer lourdement) de :
-- Yoav Ben-Dov (lecture intuitive, symboles vivants),
-- Paul Marteau (directions, couleurs, dualités),
-- Jodorowsky & Costa (guérison symbolique),
-- Jung (archétypes),
-- Joseph Campbell (voyage du héros)
-
----
-
-🌟 **Ta voix** : empathique, incarnée, claire, douce, humaine.  
-Tu ne récites pas. Tu accompagnes. Chaque message est une main tendue.
-
----
-
---- STRUCTURE DU TIRAGE APPLIQUÉ À CETTE LECTURE ---
-
-${spreadContent}
-  `.trim();
-
-  // Limite l'historique aux 10 derniers messages pour éviter les dépassements
   const safeHistory = Array.isArray(history) ? history.slice(-10) : [];
-  
-  // Détermine s'il s'agit du premier tour en se basant sur la présence d'un historique.
-  // C'est plus robuste que de se fier au contenu de `userMessage`.
-  const isFirstTurn = !safeHistory || safeHistory.length === 0;
+  const currentTurn = turnIndex || 0;
 
-  const turn = isFirstTurn
-    ? [{
-        role: "user",
-        content: `Les cartes tirées sont : ${cardNames}. Ma question est : ${question}. C'est mon premier tour après le tirage. Donne-moi ton interprétation complète en suivant la structure demandée.`
-      }]
-    : [{ role: "user", content: userMessage }];
+  let systemContent;
+  let turn;
+
+  if (currentTurn === 0) {
+    // --- PROMPT POUR LE PREMIER MESSAGE (INTRODUCTION) ---
+    systemContent = `
+=== LYRA : INTRODUCTION AU DIALOGUE ===
+Tu es Lyra... Ton unique objectif est d'accueillir ${name}, reformuler sa question, présenter le but du tirage et demander "C'est parti ?".
+### MISSION STRICTE
+1. Salue ${name}.
+2. Reformule sa question.
+3. Présente le but du tirage en une phrase.
+4. Termine EXACTEMENT par : "C'est parti ?"
+⚠️ INTERDICTIONS : NE PAS mentionner de cartes. NE PAS interpréter.
+--- CONTEXTE DU TIRAGE ---
+${spreadContent}
+    `.trim();
+    turn = [{ role: "user", content: `Ma question est : "${question}". Présente le tirage et demande si on peut commencer.` }];
+
+  } else if (currentTurn === 1) {
+    // --- PROMPT POUR LA DEUXIÈME ÉTAPE (PREMIÈRE CARTE) ---
+    const cardToInterpret = safeCards[1]; // Position 2, la "vérité"
+    const positionToInterpret = positionHints[1];
+
+    systemContent = `
+=== LYRA : DIALOGUE (ÉTAPE 1/3) ===
+Tu es Lyra. ${name} a dit oui. Ta mission est d'interpréter la PREMIÈRE carte clé.
+### MISSION STRICTE
+1. Commence par une phrase positive ("Super !").
+2. Annonce l'étape : "Commençons par la prise de conscience nécessaire...".
+3. Interprète uniquement la carte '${cardToInterpret.name}' à la position '${positionToInterpret}'. Sois bref et intuitif.
+4. Termine EXACTEMENT par une question ouverte comme "Est-ce que cela t'inspire ?".
+⚠️ INTERDICTIONS : NE PAS interpréter d'autre carte.
+--- CONTEXTE ---
+Cartes tirées : ${cardNames}
+${spreadContent}
+    `.trim();
+    turn = [{ role: "user", content: userMessage }]; // userMessage sera "Oui !"
+
+  } else {
+    // --- PROMPT POUR LE RESTE DE LA CONVERSATION ---
+    systemContent = `
+=== LYRA : DIALOGUE (SUITE) ===
+Tu es Lyra, en dialogue avec ${name}. Continue la conversation pas à pas. Interprète UNE SEULE carte à la fois, puis pose une question.
+--- CONTEXTE ---
+Cartes tirées : ${cardNames}
+${spreadContent}
+    `.trim();
+    turn = [{ role: "user", content: userMessage }];
+  }
       
   return [{ role: "system", content: systemContent }, ...safeHistory, ...turn];
 }
@@ -255,7 +238,7 @@ app.post("/api/lyra/stream", async (req, res) => {
   }
   
   try {
-    const { name, question, cards, userMessage, history, spreadId } = req.body || {};
+    const { name, question, cards, userMessage, history, spreadId, conversationState } = req.body || {};
 
     // Le spreadId est maintenant fourni par le client.
     if (!spreadId) {
@@ -295,11 +278,38 @@ app.post("/api/lyra/stream", async (req, res) => {
       });
     }
     
-    const messages = buildMessages({ name, question, cards, userMessage, history, spreadContent });
-    console.log("[lyra] Messages pour OpenAI construits :", JSON.stringify(messages, null, 2));
+    const positionHints = parseSpreadPositions(spreadContent);
+    const positionKeywords = getPositionKeywords(spreadId);
+
+    // Détermine le tour actuel en se basant sur la longueur de l'historique
+    const turnIndex = history ? history.length / 2 : 0;
+
+    const messages = buildMessages({ name, question, cards, userMessage, history, spreadContent, positionHints, turnIndex });
+    console.log(`[lyra] Construction des messages pour le tour ${turnIndex}:`, JSON.stringify(messages, null, 2));
 
     console.log("[lyra] Envoi de la requête à OpenAI...");
 
+    // --- Fonction pour gérer le streaming de la réponse ---
+    const streamResponse = async (stream) => {
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
+      res.flushHeaders();
+
+      let fullContent = "";
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content || "";
+        if (content) {
+          res.write(`data: ${JSON.stringify(content)}\n\n`);
+          fullContent += content;
+        }
+      }
+      return fullContent;
+    };
+
+    const isFirstTurn = !history || history.length === 0;
+
+    // --- Exécution et streaming ---
     const stream = await openai.chat.completions.create({
       model: LLM_MODEL,
       messages: messages,
@@ -309,22 +319,45 @@ app.post("/api/lyra/stream", async (req, res) => {
       max_tokens: 1024,
     });
 
-    console.log("[lyra] Stream OpenAI créé. Envoi des données au client.");
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-    res.flushHeaders();
+    if (isFirstTurn) {
+      // Pour le premier tour, on streame directement sans validation.
+      console.log("[lyra] Premier tour, streaming direct sans validation.");
+      await streamResponse(stream);
+    } else {
+      // Pour les tours suivants, on garde la logique de validation.
+      let fullResponse = "";
+      for await (const chunk of stream) {
+        fullResponse += chunk.choices[0]?.delta?.content || "";
+      }
+      console.log("[lyra] Réponse complète (tour > 1) reçue pour validation:", fullResponse);
 
-    let chunkCounter = 0;
-    for await (const chunk of stream) {
-      chunkCounter++;
-      const content = chunk.choices[0]?.delta?.content || "";
-      if (content) {
-        res.write(`data: ${JSON.stringify(content)}\n\n`);
+      if (!looksCompliantPositionally(fullResponse, positionKeywords)) {
+        console.warn("[lyra] Réponse non conforme. Tentative de relance.");
+        const retryMessages = [
+          ...messages,
+          { role: "assistant", content: fullResponse },
+          { role: "system", content: "Ta réponse précédente n'était pas assez naturelle. Intègre le sens de la position de la carte de manière plus fluide et conversationnelle. Exemple : 'Le Pape, qui représente ici *ce qui te freine*, suggère...'. Sois plus chaleureux et moins formel." }
+        ];
+        const retryStream = await openai.chat.completions.create({
+          model: LLM_MODEL,
+          messages: retryMessages,
+          stream: true,
+        });
+        await streamResponse(retryStream);
+      } else {
+        console.log("[lyra] Réponse conforme. Simulation du streaming.");
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Connection", "keep-alive");
+        res.flushHeaders();
+        for (const char of fullResponse) {
+          res.write(`data: ${JSON.stringify(char)}\n\n`);
+          await new Promise(resolve => setTimeout(resolve, 5));
+        }
       }
     }
 
-    console.log(`[lyra] Stream terminé. ${chunkCounter} chunks reçus d'OpenAI.`);
+    console.log(`[lyra] Stream terminé.`);
     res.end();
 
   } catch (error) {

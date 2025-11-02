@@ -56,6 +56,7 @@ function getRandomThinkingTime() {
 /* ---------------- Component ---------------- */
 // Le composant accepte maintenant `spreadId` en tant que prop
 export default function ChatPage({ spreadId }) {
+  console.log("--- DIAGNOSTIC: ChatPage component is running version from last commit ---");
   const { state } = useLocation();
   const nav = useNavigate();
   const name = useMemo(() => (state?.name || "voyageur").trim(), [state?.name]);
@@ -93,6 +94,7 @@ export default function ChatPage({ spreadId }) {
   const [zoomedCard, setZoomedCard] = useState(null);
   const [isSpreadVisible, setIsSpreadVisible] = useState(true);
   const [isSpreadModalOpen, setIsSpreadModalOpen] = useState(false);
+  const [conversationState, setConversationState] = useState('introduction');
 
   const endRef = useRef(null);
   const finalRailRef = useRef(null);
@@ -191,6 +193,12 @@ export default function ChatPage({ spreadId }) {
         setLyraTyping(false);
         setConv(nextConv);
         saveConv(nextConv, spreadId);
+        // Met à jour l'état de la conversation en fonction de l'étape actuelle
+        if (conversationState === 'introduction') {
+          setConversationState('awaiting_confirmation');
+        } else if (conversationState === 'awaiting_confirmation') {
+          setConversationState('interpreting_card_1');
+        }
         requestAnimationFrame(scrollToEnd);
       } else {
         setLyraTyping(false);
@@ -212,14 +220,12 @@ export default function ChatPage({ spreadId }) {
   useEffect(() => {
     if (!chatVisible || conv.length > 0) return;
 
-    const fetchInitialLyraResponse = () => {
+    if (conversationState === 'introduction') {
       const cardNames = finalNames.filter(Boolean);
       const payload = { name: niceName, question, cards: cardNames, spreadId, userMessage: "", history: [] };
       showLyraStreamingResponse(payload, []);
-    };
-
-    fetchInitialLyraResponse();
-  }, [chatVisible, conv.length, niceName, question, finalNames, spreadId]);
+    }
+  }, [chatVisible, conv.length, niceName, question, finalNames, spreadId, conversationState]);
 
   useEffect(() => {
     if (chatVisible) requestAnimationFrame(scrollToEnd);
@@ -252,7 +258,7 @@ export default function ChatPage({ spreadId }) {
       content: m.text,
     }));
 
-    const payload = { name: niceName, question, cards: finalNames.filter(Boolean), spreadId, userMessage: msg, history };
+    const payload = { name: niceName, question, cards: finalNames.filter(Boolean), spreadId, userMessage: msg, history, conversationState };
     showLyraStreamingResponse(payload, currentConv);
   };
 
