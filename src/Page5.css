@@ -6,8 +6,6 @@
 
 /* Root layout: Flex column pour Header / Main / Footer */
 .page5-root {
-  height: 100vh; /* Fallback */
-  height: 100svh; /* Précis sur mobile */
   display: flex;
   flex-direction: column;
 }
@@ -106,9 +104,7 @@
 /* --- Contenu principal défilable --- */
 .page5-main-scroll {
   flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* Empêche le double défilement */
+  -webkit-overflow-scrolling: touch; /* Pour un scroll fluide sur iOS */
 }
 
 /* Apparition lente globale */
@@ -135,10 +131,9 @@
   opacity: 0;
 }
 .final-rail.rail-truth {
-  display: flex;
-  justify-content: center;
-  gap: clamp(10px, 3vw, 26px);
-  margin-bottom: 4rem; /* Espace pour éviter chevauchement avec le chat */
+  /* La suppression de 'display: flex' rétablit la grille par défaut,
+     ce qui corrige le problème de scroll et de mise en page. */
+  margin-bottom: 9rem; /* Espace ajusté pour la carte décalée */
 }
 
 .final-rail.rail-truth .final-card-outer:nth-child(2) {
@@ -173,17 +168,15 @@
 /* Les styles du chat sont maintenant dans src/chat-ux.css */
 /* La section .chat-wrap est conservée pour le layout et l'animation d'apparition */
 .chat-wrap {
-  flex-grow: 1; /* Prend tout l'espace vertical restant */
   width: 100%;
   max-width: min(900px, 92vw);
   margin: 0 auto;
-  padding: 12px 8px;
+  /* Ajout d'un padding généreux pour bien séparer les cartes du chat,
+     en particulier pour la mise en page rail-truth. */
+  padding: 6rem 8px 12px 8px;
   opacity: 0;
   transform: translateY(8px);
   transition: opacity .5s ease, transform .5s ease;
-  overflow-y: auto; /* Active le défilement pour le chat */
-  display: flex;
-  flex-direction: column;
 }
 .chat-wrap.show {
   opacity: 1;
