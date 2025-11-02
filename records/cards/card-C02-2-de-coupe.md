@@ -2,26 +2,28 @@
 type: card
 card_id: C02
 title: 2 de Coupe
+display_name: 2 de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:dualité'
-  - 'element:eau'
-  - coupes
-  - 'serie:coupes'
+- marseille
+- archetype:dualité
+- element:eau
+- coupes
+- serie:coupes
 ---
+
 
 ## Résumé
 → Le 2 de Coupe incarne la rencontre du cœur à cœur, la résonance affective, l’union sincère. C’est la carte du lien naissant ou renouvelé, de l’accord intime, du pacte affectif fondé sur la réciprocité.

@@ -2,25 +2,27 @@
 type: card
 card_id: B06
 title: 6 de Bâton
+display_name: 6 de Bâton
 category: arcane mineur
 subcategory: batons
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2004
-  - camoin2011
-  - bendov2013
-  - delcamp1984
-  - nadolny2020
-  - jung1935
-  - meditations_anonymes
-  - tarot_archetypal_journey
+- marteau1949
+- jodorowsky2004
+- costa2004
+- camoin2011
+- bendov2013
+- delcamp1984
+- nadolny2020
+- jung1935
+- meditations_anonymes
+- tarot_archetypal_journey
 tags:
-  - marseille
-  - 'element:feu'
-  - 'archetype:réussite'
-  - 'serie:batons'
+- marseille
+- element:feu
+- archetype:réussite
+- serie:batons
 ---
+
 
 ## Résumé
 → Une carte d’extase et de reconnaissance, marquant l’épanouissement dans la créativité et le plaisir d’être soi. Elle symbolise un moment de joie intense, d’harmonie avec ses pulsions vitales, tout en avertissant contre le piège du narcissisme.

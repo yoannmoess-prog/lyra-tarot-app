@@ -2,26 +2,28 @@
 type: card
 card_id: E01
 title: As d’Épées
+display_name: As d’Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:lucidité'
-  - 'element:air'
-  - épées
-  - 'serie:epees'
+- marseille
+- archetype:lucidité
+- element:air
+- épées
+- serie:epees
 ---
+
 
 ## Résumé
 → L’As d’Épées est la lame de la vérité tranchante, de la décision claire et de la naissance de la pensée lucide. Elle incarne l’éveil du mental supérieur, la mise en lumière, la rupture nécessaire.

@@ -2,26 +2,28 @@
 type: card
 card_id: E06
 title: 6 d’Épées
+display_name: 6 d’Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:transition'
-  - 'element:air'
-  - épées
-  - 'serie:epees'
+- marseille
+- archetype:transition
+- element:air
+- épées
+- serie:epees
 ---
+
 
 ## Résumé
 → Le 6 d’Épées est la carte du passage mental, du déplacement d’une rive à l’autre. Elle évoque le changement d’état d’esprit, le besoin de recul, le voyage intérieur pour sortir d’une tension.

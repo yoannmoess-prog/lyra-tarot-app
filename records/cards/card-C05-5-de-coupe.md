@@ -2,26 +2,28 @@
 type: card
 card_id: C05
 title: 5 de Coupe
+display_name: 5 de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:crise'
-  - 'element:eau'
-  - coupes
-  - 'serie:coupes'
+- marseille
+- archetype:crise
+- element:eau
+- coupes
+- serie:coupes
 ---
+
 
 ## Résumé
 → Le 5 de Coupe représente une crise affective, une déception ou une perte émotionnelle qui oblige à transformer son rapport au lien. C’est la carte du deuil intérieur et du passage nécessaire à une nouvelle maturité émotionnelle.

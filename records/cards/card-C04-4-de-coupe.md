@@ -2,26 +2,28 @@
 type: card
 card_id: C04
 title: 4 de Coupe
+display_name: 4 de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:stabilité'
-  - 'element:eau'
-  - coupes
-  - 'serie:coupes'
+- marseille
+- archetype:stabilité
+- element:eau
+- coupes
+- serie:coupes
 ---
+
 
 ## Résumé
 → Le 4 de Coupe symbolise la stabilisation des émotions, mais aussi le risque d’ennui ou de repli sur soi. Il invite à revisiter ce qui est déjà là avec un regard neuf, à sortir d’une lassitude affective.

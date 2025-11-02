@@ -2,26 +2,28 @@
 type: card
 card_id: D04
 title: 4 de Deniers
+display_name: 4 de Deniers
 category: arcane mineur
 subcategory: deniers
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:stabilité'
-  - 'element:terre'
-  - deniers
-  - 'serie:deniers'
+- marseille
+- archetype:stabilité
+- element:terre
+- deniers
+- serie:deniers
 ---
+
 
 ## Résumé
 → Le 4 de Deniers représente la stabilité matérielle, l’ancrage et la sécurité acquise. Mais il interroge aussi le risque de l’attachement excessif à ce qui a été construit. C’est une carte de consolidation, parfois d’enfermement.

@@ -2,26 +2,28 @@
 type: card
 card_id: C10
 title: 10 de Coupe
+display_name: 10 de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:accomplissement'
-  - 'element:eau'
-  - coupes
-  - 'serie:coupes'
+- marseille
+- archetype:accomplissement
+- element:eau
+- coupes
+- serie:coupes
 ---
+
 
 ## Résumé
 → Le 10 de Coupe représente l’accomplissement affectif ultime, la félicité relationnelle ou spirituelle, l’alignement du cœur avec le collectif. C’est une carte de paix, de gratitude, de cercle affectif comblé.

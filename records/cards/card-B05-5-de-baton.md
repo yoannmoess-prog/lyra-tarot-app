@@ -2,25 +2,27 @@
 type: card
 card_id: B05
 title: 5 de Bâton
+display_name: 5 de Bâton
 category: arcane mineur
 subcategory: batons
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2004
-  - camoin1999
-  - bendov2011
-  - delcamp2020
-  - nadolny2021
-  - jung
-  - meditations_anonymes
-  - tarot_archetypal_journey
+- marteau1949
+- jodorowsky2004
+- costa2004
+- camoin1999
+- bendov2011
+- delcamp2020
+- nadolny2021
+- jung
+- meditations_anonymes
+- tarot_archetypal_journey
 tags:
-  - marseille
-  - 'element:feu'
-  - 'number:5'
-  - 'serie:batons'
+- marseille
+- element:feu
+- number:5
+- serie:batons
 ---
+
 
 ## Résumé
 → Le 5 de Bâton évoque une poussée de désir ou un appel à un nouveau niveau d’intensité. Cette carte marque souvent une crise ou une bascule, une énergie qui déborde et demande à être canalisée. Elle peut signifier une tension entre sexualité, pouvoir, et transformation.

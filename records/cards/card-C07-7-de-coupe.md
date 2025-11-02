@@ -2,26 +2,28 @@
 type: card
 card_id: C07
 title: 7 de Coupe
+display_name: 7 de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:illusion'
-  - 'element:eau'
-  - coupes
-  - 'serie:coupes'
+- marseille
+- archetype:illusion
+- element:eau
+- coupes
+- serie:coupes
 ---
+
 
 ## Résumé
 → Le 7 de Coupe parle d’illusions, de désirs multiples et d’émotions confuses. C’est la carte des tentations affectives ou spirituelles, des rêves séduisants mais flous. Elle invite à discerner ce qui élève de ce qui égare.

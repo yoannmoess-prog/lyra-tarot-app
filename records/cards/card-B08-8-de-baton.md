@@ -2,25 +2,27 @@
 type: card
 card_id: B08
 title: 8 de Bâton
+display_name: 8 de Bâton
 category: arcane mineur
 subcategory: batons
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin1998
-  - bendov2011
-  - delcamp2012
-  - nadolny2020
-  - jung1964
-  - meditations-anonymes
-  - tarot-archetypal-journey
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin1998
+- bendov2011
+- delcamp2012
+- nadolny2020
+- jung1964
+- meditations-anonymes
+- tarot-archetypal-journey
 tags:
-  - marseille
-  - 'archetype:perfection'
-  - 'element:feu'
-  - 'serie:batons'
+- marseille
+- archetype:perfection
+- element:feu
+- serie:batons
 ---
+
 
 ## Résumé
 → Le 8 de Bâton représente la perfection dans l’action : un recentrage extrême de l’énergie créative, jusqu’à la pureté, la maîtrise, la fluidité sans effort. Il évoque la concentration ultime, l’autorité tranquille, le calme dans la puissance.

@@ -2,28 +2,30 @@
 type: card
 card_id: B07
 title: 7 de Bâton
+display_name: 7 de Bâton
 category: arcane mineur
 subcategory: batons
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2004
-  - camoin2003
-  - bendov2011
-  - delcamp2009
-  - nadolny2020
-  - jung
-  - meditations-anonymes
-  - tarot-archetypal-journey
+- marteau1949
+- jodorowsky2004
+- costa2004
+- camoin2003
+- bendov2011
+- delcamp2009
+- nadolny2020
+- jung
+- meditations-anonymes
+- tarot-archetypal-journey
 tags:
-  - marseille
-  - bâtons
-  - 'élément:feu'
-  - 'nombre:7'
-  - 'dynamique:affirmation'
-  - 'element:feu'
-  - 'serie:batons'
+- marseille
+- bâtons
+- élément:feu
+- nombre:7
+- dynamique:affirmation
+- element:feu
+- serie:batons
 ---
+
 
 ## Résumé
 → Une carte d’action et de passage à l’acte : le 7 de Bâton évoque une poussée créative tournée vers l’extérieur, mais exigeante. Elle demande de faire le tri entre ce qui mérite notre feu intérieur et ce qui nous disperse.
