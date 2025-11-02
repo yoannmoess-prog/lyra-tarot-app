@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import rateLimit from "express-rate-limit";
 import { initRag, detectSpreadFromQuestion } from "./rag.js";
 import OpenAI from "openai";
@@ -28,6 +29,26 @@ const LLM_MODEL = process.env.LLM_MODEL || "gpt-4o-mini";
 const openai = new OpenAI({ apiKey: LLM_API_KEY });
 
 // --- Middlewares principaux ---
+// Configuration CORS dynamique pour autoriser le frontend sur Render et le développement local
+const allowedOrigins = [
+  'https://lyra-frontend.onrender.com',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+  'http://localhost:5176'
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Les requêtes sans origine (ex: curl, applis mobiles) sont autorisées
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = "La politique CORS de ce site n'autorise pas l'accès depuis l'origine spécifiée.";
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
 app.use(express.json({ limit: "1mb" }));
 
 // --- Rate Limiter pour l'API ---
