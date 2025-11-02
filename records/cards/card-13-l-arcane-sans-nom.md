@@ -1,11 +1,26 @@
 ---
 type: card
-card_id: "13"
-title: "L’Arcane Sans Nom"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2005", "ybd2011", "delcamp", "nadolny", "jung", "meditations-anonymes"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:transformation", "element:eau", "concept:mort"]
+card_id: '13'
+title: L’Arcane Sans Nom
+display_name: L’Arcane-Sans-Nom
+source_ids:
+- marteau1949
+- jodorowsky2004
+- costa2004
+- camoin2005
+- ybd2011
+- delcamp
+- nadolny
+- jung
+- meditations-anonymes
+category: arcane majeur
+tags:
+- marseille
+- archetype:transformation
+- element:eau
+- concept:mort
 ---
+
 
 ## Résumé
 → Transformation radicale, fin nécessaire, passage d’un cycle à un autre. L’Arcane Sans Nom représente le nettoyage profond, la moisson intérieure, la mort symbolique qui permet la vie nouvelle. Elle libère ce qui doit être abandonné pour laisser émerger une nouvelle structure de l’être.

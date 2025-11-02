@@ -2,26 +2,28 @@
 type: card
 card_id: E05
 title: 5 d’Épées
+display_name: 5 d’Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:conflit'
-  - 'element:air'
-  - épées
-  - 'serie:epees'
+- marseille
+- archetype:conflit
+- element:air
+- épées
+- serie:epees
 ---
+
 
 ## Résumé
 → Le 5 d’Épées met en scène la lutte mentale, le conflit d’ego ou la parole qui divise. Il symbolise les batailles inutiles, les tensions intellectuelles ou verbales, et la nécessité de se positionner sans écraser.

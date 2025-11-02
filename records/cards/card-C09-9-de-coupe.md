@@ -2,26 +2,28 @@
 type: card
 card_id: C09
 title: 9 de Coupe
+display_name: 9 de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:accomplissement'
-  - 'element:eau'
-  - coupes
-  - 'serie:coupes'
+- marseille
+- archetype:accomplissement
+- element:eau
+- coupes
+- serie:coupes
 ---
+
 
 ## Résumé
 → Le 9 de Coupe représente un accomplissement émotionnel, une satisfaction intérieure, une paix du cœur qui ne dépend plus de l’extérieur. C’est une carte de gratitude, de contentement sincère et d’abondance affective.

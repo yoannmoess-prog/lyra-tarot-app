@@ -2,26 +2,28 @@
 type: card
 card_id: E07
 title: 7 d’Épées
+display_name: 7 d’Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:ruse'
-  - 'element:air'
-  - épées
-  - 'serie:epees'
+- marseille
+- archetype:ruse
+- element:air
+- épées
+- serie:epees
 ---
+
 
 ## Résumé
 → Le 7 d’Épées représente la stratégie mentale, la ruse nécessaire ou la pensée détournée. Il évoque le besoin de contourner une situation plutôt que de l’affronter de front, ou le piège d’un excès de subtilité.

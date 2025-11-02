@@ -2,26 +2,28 @@
 type: card
 card_id: C03
 title: 3 de Coupe
+display_name: 3 de Coupe
 category: arcane mineur
 subcategory: coupes
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:triade'
-  - 'element:eau'
-  - coupes
-  - 'serie:coupes'
+- marseille
+- archetype:triade
+- element:eau
+- coupes
+- serie:coupes
 ---
+
 
 ## Résumé
 → Le 3 de Coupe célèbre la joie partagée, l’ouverture du cœur à la communauté, la fécondité du lien émotionnel. Il symbolise l’amitié, la célébration, et l’abondance affective ou spirituelle.

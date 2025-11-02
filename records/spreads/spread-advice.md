@@ -1,7 +1,7 @@
 ---
 id: spread-advice
 name: "spread-advice"
-display_name: "Tirage de la clarté immédiate"
+display_name: "le tirage de la clarté immédiate"
 type: spread
 cards: 3
 default: true

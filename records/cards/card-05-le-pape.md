@@ -1,11 +1,26 @@
 ---
 type: card
-card_id: "05"
-title: "Le Pape"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2010", "bendov2017", "delcamp1965", "nadolny2022", "jung1935", "meditationsanonymes2023", "nichols1980"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:mediateur", "element:ether"]
+card_id: '05'
+title: Le Pape
+display_name: Le Pape
+source_ids:
+- marteau1949
+- jodorowsky2004
+- costa2004
+- camoin2010
+- bendov2017
+- delcamp1965
+- nadolny2022
+- jung1935
+- meditationsanonymes2023
+- nichols1980
+category: arcane majeur
+tags:
+- marseille
+- archetype:mediateur
+- element:ether
 ---
+
 
 ## Résumé
 → Le Pape est le pont entre le ciel et la terre, le spirituel et le terrestre. Il incarne le guide, l'enseignant, le passeur d'idéal. Il transmet un savoir reçu de plus haut, tout en accueillant la quête de ceux qui cherchent un sens.

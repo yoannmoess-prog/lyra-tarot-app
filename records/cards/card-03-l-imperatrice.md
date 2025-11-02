@@ -1,11 +1,26 @@
 ---
 type: card
-card_id: "03"
-title: "L'Impératrice"
-source_ids: ["marteau1949", "jodorowsky2004", "costa2004", "camoin2005", "bendov2011", "delcamp2013", "nadolny2021", "jung", "meditationsanonymes"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:créatrice", "polarité:féminin-actif", "élément:air"]
+card_id: '03'
+title: L'Impératrice
+display_name: L’Impératrice
+source_ids:
+- marteau1949
+- jodorowsky2004
+- costa2004
+- camoin2005
+- bendov2011
+- delcamp2013
+- nadolny2021
+- jung
+- meditationsanonymes
+category: arcane majeur
+tags:
+- marseille
+- archetype:créatrice
+- polarité:féminin-actif
+- élément:air
 ---
+
 
 ## Résumé
 → L’Impératrice incarne l’intelligence créatrice, l’élan vital qui veut s’exprimer. Elle est le souffle de vie qui éclôt, la pensée en action, la communication qui s’ouvre. Sa force vient de l’intérieur et se déploie dans le monde visible.

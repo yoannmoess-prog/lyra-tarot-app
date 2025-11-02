@@ -2,26 +2,28 @@
 type: card
 card_id: D02
 title: 2 de Deniers
+display_name: 2 de Deniers
 category: arcane mineur
 subcategory: deniers
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:dualité'
-  - 'element:terre'
-  - deniers
-  - 'serie:deniers'
+- marseille
+- archetype:dualité
+- element:terre
+- deniers
+- serie:deniers
 ---
+
 
 ## Résumé
 → Le 2 de Deniers évoque l’équilibre entre deux polarités matérielles ou corporelles. Il met en scène une danse d’adaptation entre ressources, contraintes, rythmes et priorités. C’est la carte de la flexibilité incarnée.

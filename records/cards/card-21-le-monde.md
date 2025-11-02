@@ -1,11 +1,27 @@
 ---
 type: card
-card_id: "21"
-title: "Le Monde"
-source_ids: ["marteau1949", "jodorowsky2004", "camoin2008", "bendov2013", "delcamp2009", "nadolny2021", "jung1954", "meditations_anonymes", "tarot_archetypal_journey"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:accomplissement", "element:ether", "axe:réalisation", "axe:intégration"]
+card_id: '21'
+title: Le Monde
+display_name: Le Monde
+source_ids:
+- marteau1949
+- jodorowsky2004
+- camoin2008
+- bendov2013
+- delcamp2009
+- nadolny2021
+- jung1954
+- meditations_anonymes
+- tarot_archetypal_journey
+category: arcane majeur
+tags:
+- marseille
+- archetype:accomplissement
+- element:ether
+- axe:réalisation
+- axe:intégration
 ---
+
 
 ## Résumé  
 → Le Monde symbolise l’accomplissement ultime, l’union harmonieuse de toutes les forces de vie. C’est une carte d’unité, d’ouverture, de jubilation intérieure et d’ancrage dans la totalité du vivant. Elle marque une fin de cycle lumineuse, mais aussi un point d’inflexion vers une nouvelle naissance.

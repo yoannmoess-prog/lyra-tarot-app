@@ -1,11 +1,25 @@
 ---
 type: card
-card_id: "02"
-title: "La Papesse"
-source_ids: ["marteau1949", "jodorowsky2004", "camoin2011", "ybd2011", "delcamp1976", "nadolny2023", "jung1950", "meditations"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:réceptivité", "element:eau", "axe:connaissance"]
+card_id: '02'
+title: La Papesse
+display_name: La Papesse
+source_ids:
+- marteau1949
+- jodorowsky2004
+- camoin2011
+- ybd2011
+- delcamp1976
+- nadolny2023
+- jung1950
+- meditations
+category: arcane majeur
+tags:
+- marseille
+- archetype:réceptivité
+- element:eau
+- axe:connaissance
 ---
+
 
 ## Résumé
 La Papesse incarne le silence fertile, la gestation intérieure. C’est la gardienne d’un savoir intime et sacré, qui couve plus qu’elle n’extériorise. Elle nous parle de patience, de maturation, et d’un lien profond avec la mémoire intérieure — une sagesse à accueillir plus qu’à forcer.

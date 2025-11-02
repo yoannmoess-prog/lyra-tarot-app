@@ -1,11 +1,23 @@
 ---
 type: card
-card_id: "01"
-title: "Le Bateleur"
-source_ids: ["marteau1949", "jodorowsky2004", "ybd2011", "camoin2010", "delcamp2020", "nadolny2018", "jung1959"]
-category: "arcane majeur"
-tags: ["marseille", "archetype:commencement", "element:air"]
+card_id: '01'
+title: Le Bateleur
+display_name: Le Bâteleur
+source_ids:
+- marteau1949
+- jodorowsky2004
+- ybd2011
+- camoin2010
+- delcamp2020
+- nadolny2018
+- jung1959
+category: arcane majeur
+tags:
+- marseille
+- archetype:commencement
+- element:air
 ---
+
 
 ## Résumé
 Le Bateleur incarne l’élan du commencement. Il symbolise le potentiel brut, l’habileté encore instable, l’initiative qui cherche sa forme. Figure de l’initié ou du jeune artisan, il est celui qui s’essaie, touche à tout, pose ses premiers actes dans le monde.

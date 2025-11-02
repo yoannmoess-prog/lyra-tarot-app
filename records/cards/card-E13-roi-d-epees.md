@@ -2,26 +2,28 @@
 type: card
 card_id: E13
 title: Roi d'Épées
+display_name: Roi d'Épées
 category: arcane mineur
 subcategory: epees
 source_ids:
-  - marteau1949
-  - jodorowsky2004
-  - costa2008
-  - camoin
-  - bendov2011
-  - delcamp
-  - nadolny2018
-  - jung
-  - meditations_anonymes
-  - nichols
+- marteau1949
+- jodorowsky2004
+- costa2008
+- camoin
+- bendov2011
+- delcamp
+- nadolny2018
+- jung
+- meditations_anonymes
+- nichols
 tags:
-  - marseille
-  - 'archetype:roi'
-  - 'element:air'
-  - épées
-  - 'serie:epees'
+- marseille
+- archetype:roi
+- element:air
+- épées
+- serie:epees
 ---
+
 
 ## Résumé
 → Le Roi d'Épées représente l’autorité du mental mûr, le discernement suprême, la justice intellectuelle. Il est celui qui tranche avec sagesse, parle avec justesse, et assume la responsabilité de ses décisions mentales.
