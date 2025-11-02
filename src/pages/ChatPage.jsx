@@ -283,7 +283,7 @@ export default function ChatPage({ spreadId }) {
       <main className="page5-main-scroll">
         <div className="final-stack">
           <section className="final-hero" ref={spreadRef}>
-            <div className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`} ref={finalRailRef}>
+            <div className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : ''}`} ref={finalRailRef}>
               {[0, 1, 2].map((i) => (
                 <div key={`final-${i}`} className="final-card-outer">
                   <div
@@ -323,7 +323,7 @@ export default function ChatPage({ spreadId }) {
           {isSpreadModalOpen && (
             <Modal onClose={() => setIsSpreadModalOpen(false)}>
               <div className="spread-modal-container">
-                <div className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
+                <div className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : ''}`}>
                   {[0, 1, 2].map((i) => (
                     <div key={`modal-final-${i}`} className="final-card-outer">
                       <div className="final-card-flip is-flipped">
