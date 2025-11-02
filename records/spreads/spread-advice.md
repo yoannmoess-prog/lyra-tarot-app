@@ -1,6 +1,7 @@
 ---
 id: spread-advice
 name: "spread-advice"
+display_name: "Tirage de la clarté immédiate"
 type: spread
 cards: 3
 default: true
@@ -26,23 +27,26 @@ tags: [
 
 ## Description
 
-Le **spread-advice** est un tirage pragmatique à trois cartes, conçu pour formuler un **conseil clair et directement applicable**.
-Il s’utilise lorsque la personne cherche à **agir, choisir ou ajuster son attitude** face à une situation concrète.
-Ce n’est pas un tirage de transformation intérieure (comme *spread-truth*), mais un tirage **d’orientation immédiate** : il éclaire ce qu’il est juste de faire, dire ou décider maintenant.
+Le **spread-advice** est un tirage pragmatique et ciblé, conçu pour formuler un **conseil clair et immédiatement applicable**.
+Il s’utilise lorsqu’une personne cherche à **agir, choisir ou ajuster son attitude** face à une situation concrète (relation, travail, décision, communication).
 
-Lyra y adopte un ton **simple, ancré, et concret**, centré sur le passage à l’action ou la clarification d’un choix.
+Lyra y adopte un ton **direct, ancré et pratique**.
+Ce tirage n’explore pas les grandes dynamiques de transformation intérieure comme *spread-truth* : il répond à **“Que faire, maintenant ?”**
+
+**Nom affiché à l’utilisateur :** *Tirage de la clarté immédiate*
+(Le nom technique “spread-advice” reste réservé à la logique interne du moteur IA.)
 
 ---
 
 ## ⚙️ Règle d’interprétation Lyra
 
-Lorsqu’elle interprète une carte du *spread-advice*, **Lyra l’interprète toujours à partir de son emplacement fonctionnel** :
-- la première carte définit **le contexte et l’enjeu réel**,
-- la deuxième délivre **le message ou la recommandation centrale**,
-- la troisième révèle **la ressource intérieure ou la posture à adopter**.
+Lorsqu’elle interprète une carte du *spread-advice*, **Lyra la lit toujours à partir de sa fonction dans le tirage** :
+- la première carte définit **le véritable enjeu**,
+- la deuxième donne **le message-conseil**,
+- la troisième révèle **la ressource intérieure à activer**.
 
 > Exemple :
-> « La carte du Chariot apparaît ici dans *le message à entendre* : elle t’invite à canaliser ton énergie et à avancer avec cohérence. Pas besoin d’aller plus vite — il s’agit d’aller droit. »
+> « La carte de la Justice apparaît ici dans *le message à entendre* : elle t’invite à remettre les choses à plat, à dire ce qui doit l’être sans détour. »
 
 ---
 
@@ -50,70 +54,77 @@ Lorsqu’elle interprète une carte du *spread-advice*, **Lyra l’interprète t
 
 ### 🜁 1. Le véritable enjeu
 *(Arcane majeur)*
-Ce qui se joue réellement dans la situation, parfois au-delà de ce qui est formulé.
-Elle révèle la nature du défi concret à résoudre.
+Ce qui se joue vraiment dans la situation.
+Elle met à jour la cause ou le besoin profond derrière la question formulée.
 
-**Champ lexical associé :** contexte, tension, besoin, cause, déséquilibre, point de blocage, intention.
-**Exemples de requêtes :**
-> “Pourquoi ça bloque ?” — “Quel est le vrai problème ici ?” — “Qu’est-ce que je défends sans m’en rendre compte ?”
+**Champ lexical :** contexte, cause, blocage, tension, motivation, besoin, clarification.
 
 ---
 
 ### 🜂 2. Le message à entendre
-*(Arcane mineur — valeur)*
-Le **conseil central** du tirage : une orientation, une phrase-clé, une ligne de conduite.
-Cette carte propose un **ajustement concret** dans la situation.
+*(Arcane mineur – valeur)*
+Le **conseil principal** : une orientation claire ou un ajustement d’attitude.
+C’est la carte qui répond directement à la question posée.
 
-**Champ lexical associé :** conseil, orientation, direction, attitude juste, décision, stratégie, action.
-**Exemples de requêtes :**
-> “Comment agir maintenant ?” — “Quelle est la meilleure attitude à adopter ?” — “Que faire concrètement ?”
+**Champ lexical :** action, orientation, attitude, ajustement, stratégie, direction.
 
 ---
 
 ### 🜃 3. La part de soi qui peut aider
-*(Arcane mineur — figure)*
-Une ressource intérieure, une qualité ou un état d’esprit à activer pour mettre le conseil en pratique.
-Elle décrit **le levier psychique ou comportemental** à mobiliser.
+*(Arcane mineur – figure)*
+Une ressource intérieure à activer : qualité, posture, état d’esprit.
+Elle soutient la mise en pratique du conseil reçu.
 
-**Champ lexical associé :** ressource, qualité, force intérieure, posture, vertu, ancrage.
-**Exemples de requêtes :**
-> “Qu’est-ce que je peux mobiliser en moi ?” — “Quelle part de moi peut m’aider à réussir ?”
+**Champ lexical :** ressource, force intérieure, qualité, énergie, ancrage.
 
 ---
 
-## Distinction claire avec *spread-truth*
+## Différence clé avec *spread-truth*
 
 | Aspect | *spread-truth* | *spread-advice* |
 |--------|----------------|----------------|
 | **But** | Comprendre, transformer, traverser | Agir, résoudre, décider |
-| **Plan** | Symbolique, psychologique, initiatique | Pratique, comportemental, situationnel |
+| **Plan** | Symbolique, psychologique | Pratique, comportemental |
 | **Type de question** | “Pourquoi je me sens bloqué ?” | “Que faire dans cette situation ?” |
-| **Temporalité** | Long terme, évolution intérieure | Court terme, décision actuelle |
+| **Temporalité** | Long terme | Présent immédiat |
 | **Langage de Lyra** | Poétique, introspectif | Direct, clair, concret |
-| **Résultat attendu** | Sens, clarté, transformation | Conseils, pistes, solutions |
-
----
-
-## Exemple d’interprétation Lyra
-
-> *“La carte de la Force apparaît ici dans **le message à entendre** : elle te conseille de canaliser ton énergie plutôt que de la retenir.
-> L’action juste n’est pas la force brute, mais la constance. Respire, stabilise-toi, et avance.”*
-
----
-
-## Structure d’interprétation
-
-| Étape | Fonction | Type de carte | Objectif |
-|-------|-----------|---------------|-----------|
-| 1. Enjeu | Identifier le vrai problème ou besoin | Majeur | Comprendre le contexte |
-| 2. Message | Donner le conseil ou la piste d’action | Mineur (valeur) | Orienter la décision |
-| 3. Ressource | Mobiliser une force intérieure | Mineur (figure) | Soutenir l’action |
+| **Résultat attendu** | Sens, clarté intérieure | Conseil, action, solution |
 
 ---
 
 ## Synthèse
 
 Le **spread-advice** est la boussole du présent.
-Il répond à des questions concrètes : *“Que faire ? Comment agir ? Quelle attitude adopter ?”*
-Chaque carte y agit comme un repère utile : **comprendre – ajuster – agir.**
-C’est le tirage de la **clarté immédiate**, de l’action juste, et du discernement pratique.
+Chaque carte y agit comme un repère concret : **comprendre – ajuster – agir.**
+C’est le tirage de la **clarté immédiate**, de l’action juste et du discernement pragmatique.
+
+---
+
+## 🤖 Métadonnées de distinction IA
+
+`yaml
+intent_routing:
+  triggers:
+    - conseil
+    - orientation
+    - décision
+    - action
+    - attitude
+    - relation
+    - travail
+    - comportement
+    - choix
+    - communication
+    - que faire
+    - comment agir
+    - prochaine étape
+    - stratégie
+    - résoudre un problème
+  excluded_when:
+    - "mission de vie"
+    - "peur"
+    - "ombre"
+    - "évolution intérieure"
+    - "quête de sens"
+    - "transition de vie"
+`
