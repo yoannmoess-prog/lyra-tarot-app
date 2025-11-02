@@ -1,6 +1,6 @@
 ---
 id: spread-truth
-name: "Tirage de la vérité intérieure"
+name: "spread-truth"
 type: spread
 cards: 3
 default: false
@@ -96,6 +96,6 @@ Le mouvement intérieur juste. Une posture, un élan, une orientation pour avanc
 
 ## Synthèse
 
-Ce tirage est une traversée : de l’obstacle à la conscience, puis à l’action alignée.
+Le **spread-truth** est une traversée introspective — de l’obstacle à la conscience, puis à l’action alignée.
 Il aide à reconnaître ce qui bloque, à comprendre ce que cela enseigne, et à retrouver l’élan intérieur pour avancer.
-Une métamorphose en trois cartes — du poids à la clarté, de la clarté au mouvement.
+Une métamorphose en trois cartes : du poids à la clarté, de la clarté au mouvement.
