@@ -1,14 +1,5 @@
 /* src/chat-ux.css - Styles pour l'interface de conversation */
 
-/* Conteneur principal du chat */
-.chat-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 16px 8px;
-  -webkit-touch-callout: none; /* Empêche les callouts sur iOS */
-}
-
 /* Style de base pour toutes les bulles */
 .bubble {
   padding: 12px 18px;

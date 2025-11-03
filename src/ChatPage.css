@@ -1,0 +1,86 @@
+/* src/ChatPage.css */
+
+:root {
+  --h: 64px; /* Hauteur du header */
+  --f: 84px; /* Hauteur du footer */
+}
+
+.page-chat {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100lvh; /* Fallback pour les navigateurs modernes */
+  background-color: #0A1B36; /* Arrière-plan de base */
+}
+
+/* --- Header & Footer Fixes --- */
+.chat-header, .chat-footer {
+  flex-shrink: 0;
+  z-index: 20;
+}
+
+.chat-header {
+  position: sticky;
+  top: 0;
+  /* Styles existants de .page5-header à conserver */
+  padding: clamp(12px, 2vh, 16px) clamp(16px, 4vw, 56px);
+  color: #F8F5E1;
+  text-align: center;
+  background: transparent;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(248, 245, 225, 0.1);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  height: var(--h);
+}
+
+.chat-footer {
+  position: sticky;
+  bottom: 0;
+  background: transparent;
+  padding-top: 4px;
+  padding-bottom: max(env(safe-area-inset-bottom), 8px); /* Safe area pour mobile */
+}
+
+/* --- Conteneur principal scrollable --- */
+.chat-main {
+  flex-grow: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  min-height: calc(100vh - var(--h) - var(--f));
+  padding: 12px 0;
+}
+
+@supports (height: 100lvh) {
+  .chat-main {
+    min-height: calc(100lvh - var(--h) - var(--f));
+  }
+}
+
+/* --- Rail & Body Layout --- */
+.chat-rail {
+  margin: 0 16px 24px;
+  padding: clamp(12px, 2.5vh, 24px) 0;
+}
+
+.chat-body {
+  margin: 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: min(900px, 92vw);
+  margin: 0 auto;
+  padding: 0 8px;
+}
+
+/* Animation d'apparition du footer */
+.chat-footer.show {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 400ms ease-in-out, transform 400ms ease-in-out;
+}
+.chat-footer:not(.show) {
+  opacity: 0;
+  transform: translateY(100%);
+  pointer-events: none;
+}
