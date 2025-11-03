@@ -1,5 +1,5 @@
 // src/ChatAdvicePage.jsx — Page de conversation pour "spread-advice"
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, useLayoutEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import "../components/Modal.css";
