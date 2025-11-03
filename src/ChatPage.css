@@ -95,14 +95,15 @@
 }
 
 /* --- Rail de cartes – configuration et comportement --- */
-.rail-truth, .rail-advice {
+/* On préfixe avec .page-chat pour éviter les fuites de style sur /spread-truth */
+.page-chat .rail-truth, .page-chat .rail-advice {
   display: grid;
   grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
   justify-items: center;
   align-items: start;
   gap: var(--gap, clamp(50px, 8vw, var(--card-w, var(--card-deck-w))));
 }
-.final-card-outer {
+.page-chat .final-card-outer {
   width: min(100%, var(--card-w, var(--card-deck-w)));
   aspect-ratio: 9.27 / 18;
 }
