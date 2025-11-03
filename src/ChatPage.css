@@ -10,7 +10,7 @@
   flex-direction: column;
   height: 100vh;
   height: 100lvh; /* Fallback pour les navigateurs modernes */
-  background-color: #0A1B36; /* Arrière-plan de base */
+  background-color: transparent; /* Permet au fond du body de s'afficher */
 }
 
 /* --- Header & Footer Fixes --- */
@@ -49,6 +49,7 @@
   overscroll-behavior: contain;
   min-height: calc(100vh - var(--h) - var(--f));
   padding: 12px 0;
+  padding-bottom: calc(12px + var(--f)); /* Empêche le contenu de passer sous le footer */
 }
 
 @supports (height: 100lvh) {
@@ -58,18 +59,28 @@
 }
 
 /* --- Rail & Body Layout --- */
+.chat-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centre les enfants (rail et body) horizontalement */
+}
+
+.chat-rail, .chat-body {
+  position: static; /* Assure que les éléments restent dans le flux normal */
+  max-width: min(900px, 92vw);
+  width: 100%;
+}
+
 .chat-rail {
-  margin: 0 16px 24px;
+  margin: 0 auto clamp(32px, 6vh, 72px); /* Marge basse pour séparer du chat */
   padding: clamp(12px, 2.5vh, 24px) 0;
 }
 
 .chat-body {
-  margin: 0 8px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: min(900px, 92vw);
-  margin: 0 auto;
   padding: 0 8px;
 }
 
