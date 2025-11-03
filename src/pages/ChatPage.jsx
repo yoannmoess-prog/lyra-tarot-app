@@ -54,6 +54,23 @@ function getRandomThinkingTime() {
   return Math.floor(Math.random() * 1501) + 1500; // 1.5–3 sec
 }
 
+export function fitRail(container, { cols = 3, minCard = 120 } = {}) {
+  if (!container) return;
+  const ro = new ResizeObserver(() => {
+    const cs = getComputedStyle(container);
+    const gap = parseFloat(cs.getPropertyValue("--gap")) || 16;
+    const deck = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--card-deck-w"));
+    let c = cols;
+    let perCol = (container.clientWidth - gap * (c - 1)) / c;
+    while (c > 1 && perCol < minCard) { c--; perCol = (container.clientWidth - gap * (c - 1)) / c; }
+    const cardW = Math.min(perCol, deck);
+    container.style.setProperty("--cols", c);
+    container.style.setProperty("--card-w", `${Math.floor(cardW)}px`);
+  });
+  ro.observe(container);
+  return ro; // Retourne l'observateur pour pouvoir le déconnecter
+}
+
 /* ---------------- Component ---------------- */
 // Le composant accepte maintenant `spreadId` en tant que prop
 export default function ChatPage({ spreadId }) {
@@ -97,25 +114,35 @@ export default function ChatPage({ spreadId }) {
 
   const mainRef = useRef(null);
   const inputRef = useRef(null);
+  const bodyRef = useRef(null);
+  const typingRef = useRef(null);
+  const footerRef = useRef(null);
+  const railRef = useRef(null);
+
+  // Rail de cartes responsive
+  useEffect(() => {
+    const ro = fitRail(railRef.current);
+    return () => ro?.disconnect();
+  }, []);
+
+  // Mesure dynamique du footer
+  useLayoutEffect(() => {
+    const apply = () => {
+      const h = footerRef.current?.offsetHeight || 84;
+      document.documentElement.style.setProperty("--f", `${h}px`);
+    };
+    apply();
+    const ro = new ResizeObserver(apply);
+    if (footerRef.current) ro.observe(footerRef.current);
+    window.addEventListener("resize", apply);
+    return () => { ro.disconnect(); window.removeEventListener("resize", apply); };
+  }, []);
 
   // Auto-scroll logic
   useEffect(() => {
-    const mainEl = mainRef.current;
-    if (!mainEl) return;
-
-    const typingBubble = mainEl.querySelector('.bubble.lyra.typing');
-
-    if (typingBubble) {
-      // Priorité : scroller pour voir la bulle "typing"
-      typingBubble.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    } else {
-      // Sinon, scroller en bas pour voir le dernier message
-      mainEl.scrollTo({
-        top: mainEl.scrollHeight,
-        behavior: "smooth"
-      });
-    }
-  }, [conv, lyraTyping]); // Se déclenche quand la conversation ou l'état de "typing" change
+    const target = typingRef.current || bodyRef.current?.lastElementChild || bodyRef.current;
+    target?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }, [conv.length, lyraTyping]);
 
   useEffect(() => {
     const isNewSession = state?.isNew;
@@ -138,9 +165,28 @@ export default function ChatPage({ spreadId }) {
     setYouInputShown(false);
     setLyraTyping(false);
 
-    const t1 = setTimeout(() => setFinalFlip([true, false, false]), DUR.finalPauseBefore);
-    const t2 = setTimeout(() => setFinalFlip([true, true, false]), DUR.finalPauseBefore + DUR.finalGap);
-    const t3 = setTimeout(() => setFinalFlip([true, true, true]), DUR.finalPauseBefore + DUR.finalGap * 2);
+    // Déterminer l'ordre de retournement
+    const flipOrder = spreadId === 'spread-truth'
+      ? ['A', 'C', 'B']
+      : ['A', 'B', 'C'];
+
+    const cardPositions = cards.map(c => c.pos);
+    const timeouts = [];
+
+    flipOrder.forEach((pos, index) => {
+      const cardIndex = cardPositions.indexOf(pos);
+      if (cardIndex !== -1) {
+        const timeout = setTimeout(() => {
+          setFinalFlip(prev => {
+            const newState = [...prev];
+            newState[cardIndex] = true;
+            return newState;
+          });
+        }, DUR.finalPauseBefore + DUR.finalGap * index);
+        timeouts.push(timeout);
+      }
+    });
+
     const t4 = setTimeout(() => setSealed(true), DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 120);
     const tChat = setTimeout(
       () => setChatVisible(true),
@@ -148,13 +194,11 @@ export default function ChatPage({ spreadId }) {
     );
 
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
+      timeouts.forEach(clearTimeout);
       clearTimeout(t4);
       clearTimeout(tChat);
     };
-  }, [DUR, state?.isNew]);
+  }, [DUR, state?.isNew, cards, spreadId]);
 
   const showLyraStreamingResponse = async (payload, baseConv) => {
     setYouInputShown(false);
@@ -255,9 +299,9 @@ export default function ChatPage({ spreadId }) {
       </header>
       <main className="chat-main" ref={mainRef}>
         <section className="chat-rail" id="chat-rail">
-          <div className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
-            {[0, 1, 2].map((i) => (
-              <div key={`final-${i}`} className="final-card-outer">
+          <div ref={railRef} className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
+            {cards.map((card, i) => (
+              <div key={`final-${i}`} className="final-card-outer" data-pos={card.pos}>
                 <div
                   className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}
                   onClick={() => finalFlip[i] && setZoomedCard(i)}
@@ -320,7 +364,7 @@ export default function ChatPage({ spreadId }) {
         )}
 
         {chatVisible && (
-          <section className="chat-body" id="chat-body" aria-live="polite">
+          <section className="chat-body" id="chat-body" ref={bodyRef} aria-live="polite">
             {conv.map((m) =>
               m.role === "lyra" ? (
                 <div key={m.id} className="bubble lyra lyra-fadein">
@@ -343,7 +387,7 @@ export default function ChatPage({ spreadId }) {
               )
             )}
             {lyraTyping && (
-              <div className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire">
+              <div ref={typingRef} className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire">
                 <div className="dots" role="status" aria-hidden="true">
                   <span></span>
                   <span></span>
@@ -354,7 +398,7 @@ export default function ChatPage({ spreadId }) {
           </section>
         )}
       </main>
-      <footer className={`chat-footer ${chatVisible ? " show" : ""}`}>
+      <footer ref={footerRef} className={`chat-footer ${chatVisible ? " show" : ""}`}>
         <div className="you-block">
           <form onSubmit={onYouSubmit} className="you-form">
             <input

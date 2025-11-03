@@ -1,90 +1,88 @@
-/* src/ChatPage.css */
+/* src/ChatPage.css - Refonte layout 2024 */
 
 :root {
-  --h: 64px; /* Hauteur du header */
-  --f: 84px; /* Hauteur du footer */
+  --h: 64px; /* Hauteur header */
+  --f: 84px; /* Hauteur footer (valeur par défaut, sera mesurée en JS) */
+  --content-w: min(900px, 92vw); /* Largeur max du contenu */
+  --rail-gap: clamp(96px, 14vh, 160px); /* Espace vertical entre le rail de cartes et le chat */
+  --card-deck-w: min(18vw, 150px); /* Largeur de référence des cartes, vient de Page4.css */
 }
 
+/* --- Layout principal --- */
 .page-chat {
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  height: 100lvh; /* Fallback pour les navigateurs modernes */
-  background-color: transparent; /* Permet au fond du body de s'afficher */
+  /* Le background est défini au niveau du body ou de l'app root, on reste transparent */
+  background-color: transparent;
 }
 
-/* --- Header & Footer Fixes --- */
-.chat-header, .chat-footer {
+/* --- Header & Footer (fixes) --- */
+.chat-header,
+.chat-footer {
   flex-shrink: 0;
-  z-index: 20;
+  position: sticky;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .chat-header {
-  position: sticky;
   top: 0;
-  /* Styles existants de .page5-header à conserver */
-  padding: clamp(12px, 2vh, 16px) clamp(16px, 4vw, 56px);
-  color: #F8F5E1;
-  text-align: center;
-  background: transparent;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(248, 245, 225, 0.1);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
   height: var(--h);
+  padding: clamp(12px, 2vh, 16px) clamp(16px, 4vw, 56px); /* Conserve padding existant */
+  color: #F8F5E1; /* Conserve couleur existante */
+  text-align: center; /* Conserve alignement existant */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .chat-footer {
-  position: sticky;
   bottom: 0;
-  background: transparent;
-  padding-top: 4px;
-  padding-bottom: max(env(safe-area-inset-bottom), 8px); /* Safe area pour mobile */
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 4px; /* Conserve padding existant */
+  padding-bottom: max(env(safe-area-inset-bottom), 8px); /* Conserve safe area */
 }
 
-/* --- Conteneur principal scrollable --- */
+/* --- Zone de contenu principale (avec scroll unique) --- */
 .chat-main {
-  flex-grow: 1;
+  flex: 1 1 auto; /* Prend toute la hauteur restante */
   overflow-y: auto;
   overscroll-behavior: contain;
-  min-height: calc(100vh - var(--h) - var(--f));
-  padding: 12px 0;
-  padding-bottom: calc(12px + var(--f)); /* Empêche le contenu de passer sous le footer */
-}
-
-@supports (height: 100lvh) {
-  .chat-main {
-    min-height: calc(100lvh - var(--h) - var(--f));
-  }
-}
-
-/* --- Rail & Body Layout --- */
-.chat-main {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centre les enfants (rail et body) horizontalement */
+  align-items: center; /* Centre le contenu horizontalement */
+  /* Le padding bas est crucial pour que le dernier message ne soit pas caché par le footer */
+  padding-bottom: calc(12px + var(--f, 84px));
 }
 
-.chat-rail, .chat-body {
-  position: static; /* Assure que les éléments restent dans le flux normal */
-  max-width: min(900px, 92vw);
+/* --- Sections Rail (tirage) & Body (chat) --- */
+.chat-rail,
+.chat-body {
+  max-width: var(--content-w);
   width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  position: static; /* Important: pas de position:absolute */
 }
 
 .chat-rail {
-  margin: 0 auto 50px; /* Marge basse pour séparer du chat */
-  padding: clamp(12px, 2.5vh, 24px) 0;
+  /* La marge basse est maintenant gérée par une variable pour la cohérence */
+  margin-top: 0;
+  margin-bottom: var(--rail-gap);
+  padding: clamp(12px, 2.5vh, 24px) 0; /* Conserve padding vertical existant */
 }
 
 .chat-body {
-  margin: 0 auto;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0 8px; /* Conserve padding horizontal existant */
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 0 8px;
+  gap: 16px; /* Conserve le gap entre les bulles */
 }
 
-/* Animation d'apparition du footer */
+/* --- Animation d'apparition du footer --- */
 .chat-footer.show {
   opacity: 1;
   transform: translateY(0);
@@ -94,4 +92,17 @@
   opacity: 0;
   transform: translateY(100%);
   pointer-events: none;
+}
+
+/* --- Rail de cartes – configuration et comportement --- */
+.rail-truth, .rail-advice {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  justify-items: center;
+  align-items: start;
+  gap: var(--gap, clamp(50px, 8vw, var(--card-w, var(--card-deck-w))));
+}
+.final-card-outer {
+  width: min(100%, var(--card-w, var(--card-deck-w)));
+  aspect-ratio: 9.27 / 18;
 }

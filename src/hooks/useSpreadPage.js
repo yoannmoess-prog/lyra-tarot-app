@@ -81,7 +81,11 @@ export function useSpreadPage(spreadType, pickCardLogic) {
         isDuplicate = chosenCards.some(card => card.name === newChosenCard.name);
       } while (isDuplicate);
 
-      const updatedChosenCards = [...chosenCards, newChosenCard];
+      // Associer la carte à sa position (A, B, C)
+      const positionMap = ['A', 'B', 'C'];
+      const cardWithPosition = { ...newChosenCard, pos: positionMap[targetIndex] };
+
+      const updatedChosenCards = [...chosenCards, cardWithPosition];
       setChosenCards(updatedChosenCards);
 
       setChosenSlots((prevSlots) => {
