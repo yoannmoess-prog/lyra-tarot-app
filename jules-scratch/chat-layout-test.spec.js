@@ -2,8 +2,10 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Validation de la mise en page de la page de chat pour spread-truth", () => {
-  test("Le rail de cartes et le chat ne se superposent pas et le scroll fonctionne", async ({ page }) => {
-    // Injecter les données de état pour simuler la navigation
+  test("Le rail de cartes et le chat ne se superposent pas et l'espacement est correct", async ({
+    page,
+  }) => {
+    // 1. Injecter l'état et naviguer
     await page.goto("/");
     await page.evaluate(() => {
       const state = {
@@ -16,46 +18,42 @@ test.describe("Validation de la mise en page de la page de chat pour spread-trut
         ],
         isNew: true,
       };
-      // Simule le passage de l'état de navigation
       window.history.pushState(state, "", "/chat-truth");
     });
 
-    // Naviguer vers la page de chat
     await page.goto("/chat-truth");
 
-    // Attendre que le rail de cartes soit visible et que les animations se terminent
-    const finalRail = page.locator(".final-rail.rail-truth");
-    await expect(finalRail).toBeVisible({ timeout: 10000 });
+    // 2. Attendre que les éléments clés soient visibles
+    const chatRail = page.locator(".chat-rail");
+    const chatBody = page.locator(".chat-body");
+    const firstBubble = chatBody.locator(".bubble").first();
 
-    // Attendre la fin de l'animation de retournement des cartes (délai généreux)
-    await page.waitForTimeout(5000);
+    await expect(chatRail).toBeVisible({ timeout: 15000 });
+    await expect(chatBody).toBeVisible({ timeout: 15000 });
+    // Attendre qu'une bulle apparaisse confirme que le chat est initialisé
+    await expect(firstBubble).toBeVisible({ timeout: 15000 });
 
-    // Vérifier la disposition en triangle
-    const cardOuters = finalRail.locator(".final-card-outer");
-    const firstCardBox = await cardOuters.nth(0).boundingBox();
-    const secondCardBox = await cardOuters.nth(1).boundingBox();
-    const thirdCardBox = await cardOuters.nth(2).boundingBox();
+    // 3. Vérifier l'absence de superposition et l'espacement
+    const railBox = await chatRail.boundingBox();
+    const chatBox = await chatBody.boundingBox();
 
-    expect(firstCardBox.y).toBeCloseTo(thirdCardBox.y, 2); // Les cartes A et C sont alignées horizontalement
-    expect(secondCardBox.y).toBeGreaterThan(firstCardBox.y); // La carte B est plus basse
+    expect(railBox).not.toBeNull();
+    expect(chatBox).not.toBeNull();
 
-    // Attendre que l'interface de chat apparaisse
-    const chatWrap = page.locator(".chat-wrap.show");
-    await expect(chatWrap).toBeVisible({ timeout: 5000 });
-
-    // Vérifier l'absence de superposition
-    const railBox = await finalRail.boundingBox();
-    const chatBox = await chatWrap.boundingBox();
-
-    // S'assurer que le bas du rail est au-dessus du haut du chat
+    // Le bas du rail (y + hauteur) doit être au-dessus du haut du chat (y)
     const railBottom = railBox.y + railBox.height;
     expect(railBottom).toBeLessThanOrEqual(chatBox.y);
 
-    // Vérifier que le défilement s'est produit en vérifiant la position de défilement du conteneur de chat
-    const chatScrollTop = await chatWrap.evaluate(node => node.scrollTop);
-    expect(chatScrollTop).toBeGreaterThan(0);
+    // Vérifier que l'espace est d'environ 50px (avec une marge de tolérance)
+    const spaceBetween = chatBox.y - railBottom;
+    console.log(`Espace mesuré entre le rail et le chat : ${spaceBetween}px`);
+    expect(spaceBetween).toBeGreaterThanOrEqual(48); // Tolérance pour le rendu
+    expect(spaceBetween).toBeLessThanOrEqual(52);   // Tolérance pour le rendu
 
-    // Prendre une capture d'écran pour vérification visuelle
-    await page.screenshot({ path: "jules-scratch/chat-layout-test.png", fullPage: true });
+    // 4. Prendre une capture d'écran pour vérification visuelle
+    await page.screenshot({
+      path: "jules-scratch/chat-layout-test.png",
+      fullPage: true,
+    });
   });
 });

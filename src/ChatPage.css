@@ -72,7 +72,7 @@
 }
 
 .chat-rail {
-  margin: 0 auto clamp(32px, 6vh, 72px); /* Marge basse pour séparer du chat */
+  margin: 0 auto 50px; /* Marge basse pour séparer du chat */
   padding: clamp(12px, 2.5vh, 24px) 0;
 }
 
