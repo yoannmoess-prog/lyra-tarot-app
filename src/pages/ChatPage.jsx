@@ -3,7 +3,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import "../components/Modal.css";
-import "../Page5.css";
+import "../ChatPage.css";
+import "../Page5.css"; // Ré-ajouté pour les styles des cartes
 import { toast } from "../utils/net";
 import "../toast.css";
 import "../chat-ux.css";
@@ -91,48 +92,30 @@ export default function ChatPage({ spreadId }) {
   const [youMessage, setYouMessage] = useState("");
   const [lyraTyping, setLyraTyping] = useState(false);
   const [zoomedCard, setZoomedCard] = useState(null);
-  const [isSpreadVisible, setIsSpreadVisible] = useState(true);
   const [isSpreadModalOpen, setIsSpreadModalOpen] = useState(false);
   const [conversationState, setConversationState] = useState('introduction');
 
-  const endRef = useRef(null);
-  const finalRailRef = useRef(null);
-  const spreadRef = useRef(null);
+  const mainRef = useRef(null);
   const inputRef = useRef(null);
 
+  // Auto-scroll logic
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsSpreadVisible(entry.isIntersecting);
-      },
-      { threshold: 0.1 }
-    );
+    const mainEl = mainRef.current;
+    if (!mainEl) return;
 
-    const currentRef = spreadRef.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
+    const typingBubble = mainEl.querySelector('.bubble.lyra.typing');
 
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, []);
-
-  const handleTitleClick = () => {
-    if (finalRailRef.current) {
-      finalRailRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
-  const scrollToEnd = () => {
-    if (endRef.current) {
-      endRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    if (typingBubble) {
+      // Priorité : scroller pour voir la bulle "typing"
+      typingBubble.scrollIntoView({ behavior: "smooth", block: "nearest" });
     } else {
-      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+      // Sinon, scroller en bas pour voir le dernier message
+      mainEl.scrollTo({
+        top: mainEl.scrollHeight,
+        behavior: "smooth"
+      });
     }
-  };
+  }, [conv, lyraTyping]); // Se déclenche quand la conversation ou l'état de "typing" change
 
   useEffect(() => {
     const isNewSession = state?.isNew;
@@ -198,7 +181,7 @@ export default function ChatPage({ spreadId }) {
         } else if (conversationState === 'awaiting_confirmation') {
           setConversationState('interpreting_card_1');
         }
-        requestAnimationFrame(scrollToEnd);
+        // L'auto-scroll sera géré par un useEffect dédié.
       } else {
         setLyraTyping(false);
       }
@@ -226,14 +209,6 @@ export default function ChatPage({ spreadId }) {
     }
   }, [chatVisible, conv.length, niceName, question, finalNames, spreadId, conversationState]);
 
-  useEffect(() => {
-    if (chatVisible) requestAnimationFrame(scrollToEnd);
-  }, [chatVisible]);
-
-  useEffect(() => {
-    requestAnimationFrame(scrollToEnd);
-  }, [conv.length, lyraTyping, youInputShown]);
-
   const onYouSubmit = (e) => {
     if (e) e.preventDefault();
     const msg = youMessage.trim();
@@ -248,7 +223,7 @@ export default function ChatPage({ spreadId }) {
     saveConv(currentConv, spreadId);
 
     setTimeout(() => {
-      requestAnimationFrame(scrollToEnd);
+      // L'auto-scroll est géré par ailleurs
       inputRef.current?.focus();
     }, 100);
 
@@ -262,19 +237,12 @@ export default function ChatPage({ spreadId }) {
   };
 
   return (
-    <div className={`page5-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
-      <header className="page5-header">
-        <div
-          className="p5-fixed-title"
-          onClick={handleTitleClick}
-          role="button"
-          tabIndex="0"
-          onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleTitleClick()}
-          style={{ cursor: "pointer" }}
-        >
+    <div className={`page-chat ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
+      <header className="chat-header">
+        <div className="p5-fixed-title" role="button" tabIndex="0">
           {question}
         </div>
-        <div className={`header-icon-container ${!isSpreadVisible ? "show" : ""}`}>
+        <div className="header-icon-container show">
           <button
             className="header-icon-btn"
             onClick={() => setIsSpreadModalOpen(true)}
@@ -285,9 +253,9 @@ export default function ChatPage({ spreadId }) {
           </button>
         </div>
       </header>
-      <main className="page5-main-scroll">
-        <section className="final-hero" ref={spreadRef}>
-          <div className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`} ref={finalRailRef}>
+      <main className="chat-main" ref={mainRef}>
+        <section className="chat-rail" id="chat-rail">
+          <div className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
             {[0, 1, 2].map((i) => (
               <div key={`final-${i}`} className="final-card-outer">
                 <div
@@ -313,6 +281,7 @@ export default function ChatPage({ spreadId }) {
             ))}
           </div>
         </section>
+
         {zoomedCard !== null && (
           <Modal onClose={() => setZoomedCard(null)}>
             <div className="zoomed-card-container">
@@ -349,8 +318,9 @@ export default function ChatPage({ spreadId }) {
             </div>
           </Modal>
         )}
-        {chatVisible &&
-          <section className="chat-wrap show" aria-live="polite">
+
+        {chatVisible && (
+          <section className="chat-body" id="chat-body" aria-live="polite">
             {conv.map((m) =>
               m.role === "lyra" ? (
                 <div key={m.id} className="bubble lyra lyra-fadein">
@@ -375,15 +345,16 @@ export default function ChatPage({ spreadId }) {
             {lyraTyping && (
               <div className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire">
                 <div className="dots" role="status" aria-hidden="true">
-                  <span></span><span></span><span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
                 </div>
               </div>
             )}
-            <div ref={endRef} />
           </section>
-        }
+        )}
       </main>
-      <footer className={`page5-footer ${chatVisible ? " show" : ""}`}>
+      <footer className={`chat-footer ${chatVisible ? " show" : ""}`}>
         <div className="you-block">
           <form onSubmit={onYouSubmit} className="you-form">
             <input
