@@ -28,21 +28,20 @@ const LLM_MODEL = process.env.LLM_MODEL || "gpt-4o-mini";
 
 const openai = new OpenAI({ apiKey: LLM_API_KEY });
 
-// --- CORS (doit être AVANT toute autre middleware/API) ---
+// --- CORS (AVANT tout autre middleware/route) ---
 const allowedOrigins = [
   "https://lyra-frontend.onrender.com",
-  "https://lyra-frontend.render.com", // selon Render, parfois utilisé
+  "https://lyra-frontend.render.com", // selon Render
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5175",
   "http://localhost:5176",
 ];
 
-// 1) Middleware CORS principal
 app.use(
   cors({
     origin(origin, callback) {
-      // Autoriser outils/health-check sans Origin
+      // Autorise requêtes sans Origin (health checks, curl…)
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
       console.warn("[CORS] Origine refusée :", origin);
@@ -50,18 +49,21 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
     optionsSuccessStatus: 204,
   })
 );
 
-// 2) Réponse explicite aux préflights (OPTIONS) — avant rate-limit
-app.options("*", (req, res) => {
+// Middleware universel pour OPTIONS (Express 5 safe ; pas de pattern "*")
+app.use((req, res, next) => {
   const origin = req.headers.origin;
+  // Déclare les en-têtes CORS en amont (utile même hors OPTIONS)
   if (!origin || allowedOrigins.includes(origin)) {
     res.header("Access-Control-Allow-Origin", origin || "*");
     res.header("Vary", "Origin");
     res.header("Access-Control-Allow-Credentials", "true");
+  }
+  if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.header(
       "Access-Control-Allow-Headers",
@@ -69,13 +71,13 @@ app.options("*", (req, res) => {
     );
     return res.sendStatus(204);
   }
-  return res.sendStatus(403);
+  next();
 });
 
-// 3) JSON parser
+// --- Parsers ---
 app.use(express.json({ limit: "1mb" }));
 
-// --- Rate Limiter pour l'API (ne pas rate-limiter les OPTIONS) ---
+// --- Rate Limiter API (ne pas bloquer les préflights) ---
 const apiLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 50,
@@ -92,23 +94,18 @@ function validateInput(data) {
   if (data.name && typeof data.name !== "string") {
     errors.push("name doit être une chaîne de caractères");
   }
-
   if (data.question && typeof data.question !== "string") {
     errors.push("question doit être une chaîne de caractères");
   }
-
   if (data.cards && !Array.isArray(data.cards)) {
     errors.push("cards doit être un tableau");
   }
-
   if (data.userMessage && typeof data.userMessage !== "string") {
     errors.push("userMessage doit être une chaîne de caractères");
   }
-
   if (data.history && !Array.isArray(data.history)) {
     errors.push("history doit être un tableau");
   }
-
   return errors;
 }
 
@@ -136,15 +133,13 @@ function parseSpreadPositions(spreadContent) {
   const regex = /^###\s.*?\d\.\s([^(]+)/gm;
   let match;
   while ((match = regex.exec(spreadContent)) !== null) {
-    if (match.index === regex.lastIndex) {
-      regex.lastIndex++;
-    }
+    if (match.index === regex.lastIndex) regex.lastIndex++;
     positions.push(match[1].trim());
   }
   return positions;
 }
 
-// --- Prompt Builder ---
+// --- Prompt Builder (contenu système tronqué pour clarté) ---
 function buildMessages({
   name: n,
   question,
@@ -168,8 +163,7 @@ function buildMessages({
 
   let systemContent = `
 === LYRA : VOIX INCARNÉE DU TAROT — VERSION 8 ===
-
-[... contenu système inchangé pour la brièveté ...]
+[contenu système conservé]
 `.trim();
 
   const safeHistory = Array.isArray(history) ? history.slice(-10) : [];
@@ -195,7 +189,7 @@ app.get("/", (_, res) => {
 
 app.get("/api/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
 
-// --- /api/spread : accepter GET ET POST + timeout/fallback
+// --- /api/spread : accepte GET et POST + timeout/fallback
 async function resolveSpreadId(question) {
   try {
     const id = await detectSpreadFromQuestion(question || "");
@@ -206,9 +200,7 @@ async function resolveSpreadId(question) {
   }
 }
 
-// GET (optionnel) pour compatibilité
 app.get("/api/spread", async (req, res) => {
-  // autoriser appel simple sans corps
   const spreadId = await Promise.race([
     resolveSpreadId(""),
     new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000)),
@@ -216,7 +208,6 @@ app.get("/api/spread", async (req, res) => {
   res.json({ spreadId });
 });
 
-// POST (principal)
 app.post("/api/spread", async (req, res) => {
   const { question } = req.body || {};
   try {
@@ -227,7 +218,7 @@ app.post("/api/spread", async (req, res) => {
     res.json({ spreadId });
   } catch (error) {
     console.error("[api/spread] Erreur:", error);
-    res.status(200).json({ spreadId: "spread-truth" }); // répond quand même (évite blocage front)
+    res.status(200).json({ spreadId: "spread-truth" });
   }
 });
 
@@ -240,40 +231,22 @@ app.post("/api/lyra/stream", async (req, res) => {
   if (!LLM_API_KEY) {
     console.error("[lyra] Erreur: LLM_API_KEY est manquante.");
     return res.status(500).json({
-      error: {
-        code: "missing_api_key",
-        message: "La clé API LLM est absente.",
-      },
+      error: { code: "missing_api_key", message: "La clé API LLM est absente." },
     });
   }
 
   try {
-    const {
-      name,
-      question,
-      cards,
-      userMessage,
-      history,
-      spreadId,
-      conversationState,
-    } = req.body || {};
+    const { name, question, cards, userMessage, history, spreadId } = req.body || {};
 
     if (!spreadId) {
       console.error("[lyra] Erreur: spreadId est manquant dans la requête.");
       return res.status(400).json({
-        error: {
-          code: "missing_spread_id",
-          message: "Le spreadId est requis.",
-        },
+        error: { code: "missing_spread_id", message: "Le spreadId est requis." },
       });
     }
     console.log(`[lyra] Utilisation du spreadId fourni par le client: ${spreadId}`);
 
-    const spreadPath = path.join(
-      process.cwd(),
-      "records/spreads",
-      `${spreadId}.md`
-    );
+    const spreadPath = path.join(process.cwd(), "records/spreads", `${spreadId}.md`);
     console.log(`[lyra] Chargement du contenu du tirage depuis : ${spreadPath}`);
     let spreadContent = "";
     try {
@@ -285,21 +258,11 @@ app.post("/api/lyra/stream", async (req, res) => {
       );
     }
 
-    const validationErrors = validateInput({
-      name,
-      question,
-      cards,
-      userMessage,
-      history,
-    });
+    const validationErrors = validateInput({ name, question, cards, userMessage, history });
     if (validationErrors.length > 0) {
       console.error("[lyra] Erreurs de validation:", validationErrors);
       return res.status(400).json({
-        error: {
-          code: "validation_error",
-          message: "Données invalides",
-          details: validationErrors,
-        },
+        error: { code: "validation_error", message: "Données invalides", details: validationErrors },
       });
     }
 
@@ -313,10 +276,7 @@ app.post("/api/lyra/stream", async (req, res) => {
       spreadContent,
       positionHints,
     });
-    console.log(
-      "[lyra] Messages pour OpenAI construits :",
-      JSON.stringify(messages, null, 2)
-    );
+    console.log("[lyra] Messages pour OpenAI construits :", JSON.stringify(messages, null, 2));
 
     console.log("[lyra] Envoi de la requête à OpenAI...");
 
@@ -354,12 +314,7 @@ app.post("/api/lyra/stream", async (req, res) => {
     if (!res.headersSent) {
       const errorMessage = error.message || "Erreur inconnue";
       const errorCode = error.code || "stream_error";
-      res.status(500).json({
-        error: {
-          code: errorCode,
-          message: errorMessage,
-        },
-      });
+      res.status(500).json({ error: { code: errorCode, message: errorMessage } });
     } else {
       res.end();
     }
@@ -367,7 +322,6 @@ app.post("/api/lyra/stream", async (req, res) => {
 });
 
 // --- Gestion des erreurs globales ---
-// (Veiller à ne pas perdre les headers CORS lors des erreurs)
 app.use((err, req, res, next) => {
   console.error("[server] Erreur non gérée:", err?.message || err);
   if (!res.headersSent) {
@@ -376,9 +330,7 @@ app.use((err, req, res, next) => {
       res.header("Access-Control-Allow-Origin", origin || "*");
       res.header("Access-Control-Allow-Credentials", "true");
     }
-    res.status(500).json({
-      error: { code: "internal_error", message: "Une erreur interne est survenue" },
-    });
+    res.status(500).json({ error: { code: "internal_error", message: "Une erreur interne est survenue" } });
   } else {
     res.end();
   }
