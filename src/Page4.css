@@ -240,5 +240,5 @@
 }
 
 .chosen-rail.rail-truth .slot-wrap:nth-child(2) {
-  transform: translateY(70%); /* Décale l'emplacement B vers le bas */
+  transform: translateY(50%); /* Décale l'emplacement B vers le bas */
 }

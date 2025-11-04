@@ -55,18 +55,46 @@ function getRandomThinkingTime() {
   return Math.floor(Math.random() * 1501) + 1500; // 1.5–3 sec
 }
 
-export function fitRail(container, { cols = 3, minCard = 120 } = {}) {
+export function fitRail(container, { spreadId, cols = 3, minCard = 120 } = {}) {
   if (!container) return;
+
+  const CARD_ASPECT_RATIO = 18 / 9.27; // Hauteur / Largeur
+
   const ro = new ResizeObserver(() => {
     const cs = getComputedStyle(container);
+    const docEl = document.documentElement;
     const gap = parseFloat(cs.getPropertyValue("--gap")) || 16;
-    const deck = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--card-deck-w"));
+    const deck = parseFloat(docEl.getPropertyValue("--card-deck-w"));
+
+    // --- Calcul basé sur la LARGEUR (existant) ---
     let c = cols;
-    let perCol = (container.clientWidth - gap * (c - 1)) / c;
-    while (c > 1 && perCol < minCard) { c--; perCol = (container.clientWidth - gap * (c - 1)) / c; }
-    const cardW = Math.min(perCol, deck);
+    let widthBasedCardW = (container.clientWidth - gap * (c - 1)) / c;
+    while (c > 1 && widthBasedCardW < minCard) {
+      c--;
+      widthBasedCardW = (container.clientWidth - gap * (c - 1)) / c;
+    }
+
+    // --- Calcul basé sur la HAUTEUR (nouveau) ---
+    let heightBasedCardW = Infinity; // Pas de limite par défaut
+    if (spreadId === 'spread-truth') {
+      const headerH = parseFloat(docEl.getPropertyValue("--h")) || 64;
+      const footerH = parseFloat(docEl.getPropertyValue("--f")) || 84;
+      const railGap = parseFloat(docEl.getPropertyValue("--rail-gap")) || 160;
+      const availableH = window.innerHeight - headerH - footerH - railGap;
+
+      // La hauteur totale du rail-truth est de 1.5x la hauteur d'une carte + padding.
+      // On calcule la hauteur max de la carte, puis on en déduit la largeur.
+      const verticalPadding = 24; // Padding haut/bas du .chat-rail
+      const maxCardH = (availableH - verticalPadding) / 1.5;
+      heightBasedCardW = maxCardH / CARD_ASPECT_RATIO;
+    }
+
+    // --- Décision finale ---
+    // On prend la plus petite des deux largeurs calculées.
+    const finalCardW = Math.min(widthBasedCardW, heightBasedCardW, deck);
+
     container.style.setProperty("--cols", c);
-    container.style.setProperty("--card-w", `${Math.floor(cardW)}px`);
+    container.style.setProperty("--card-w", `${Math.floor(finalCardW)}px`);
   });
   ro.observe(container);
   return ro; // Retourne l'observateur pour pouvoir le déconnecter
@@ -122,9 +150,10 @@ export default function ChatPage({ spreadId }) {
 
   // Rail de cartes responsive
   useEffect(() => {
-    const ro = fitRail(railRef.current);
+    // On passe le spreadId pour que la fonction puisse appliquer la logique de hauteur si nécessaire
+    const ro = fitRail(railRef.current, { spreadId });
     return () => ro?.disconnect();
-  }, []);
+  }, [spreadId]);
 
   // Mesure dynamique du footer
   useLayoutEffect(() => {

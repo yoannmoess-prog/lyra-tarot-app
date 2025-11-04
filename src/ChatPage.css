@@ -118,7 +118,7 @@
 
 /* On décale la deuxième carte (B) vers le bas pour répliquer le layout de /spread-truth */
 .page-chat .rail-truth .final-card-outer:nth-child(2) {
-  transform: translateY(70%);
+  transform: translateY(50%);
 }
 
 /*
