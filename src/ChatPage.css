@@ -4,7 +4,7 @@
   --h: 64px; /* Hauteur header */
   --f: 84px; /* Hauteur footer (valeur par défaut, sera mesurée en JS) */
   --content-w: min(900px, 92vw); /* Largeur max du contenu */
-  --rail-gap: clamp(96px, 14vh, 160px); /* Espace vertical entre le rail de cartes et le chat */
+  --rail-gap: clamp(48px, 7vh, 80px); /* Espace vertical réduit de moitié */
   --card-deck-w: min(18vw, 150px); /* Largeur de référence des cartes, vient de Page4.css */
 }
 
