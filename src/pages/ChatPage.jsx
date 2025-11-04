@@ -167,35 +167,13 @@ export default function ChatPage({ spreadId }) {
     setLyraTyping(false);
 
     // --- Nouvelle logique de retournement ---
+    // Pour tous les tirages, on déclenche le retournement après un délai initial.
+    // L'ordre visuel (pour spread-truth notamment) est maintenant géré en CSS via transition-delay.
     const timeouts = [];
-    if (spreadId === 'spread-truth') {
-      // Pour spread-truth, on utilise l'ordre A -> C -> B défini dans TRUTH_ORDER
-      TRUTH_ORDER.forEach((pos, index) => {
-        const cardIndex = cards.findIndex(c => c.pos === pos);
-        if (cardIndex !== -1) {
-          const timeout = setTimeout(() => {
-            setFinalFlip(prev => {
-              const newState = [...prev];
-              newState[cardIndex] = true;
-              return newState;
-            });
-          }, DUR.finalPauseBefore + DUR.finalGap * index);
-          timeouts.push(timeout);
-        }
-      });
-    } else {
-      // Logique existante pour les autres tirages
-      cards.forEach((card, index) => {
-        const timeout = setTimeout(() => {
-          setFinalFlip(prev => {
-            const newState = [...prev];
-            newState[index] = true;
-            return newState;
-          });
-        }, DUR.finalPauseBefore + DUR.finalGap * index);
-        timeouts.push(timeout);
-      });
-    }
+    const flipTimeout = setTimeout(() => {
+      setFinalFlip([true, true, true]);
+    }, DUR.finalPauseBefore);
+    timeouts.push(flipTimeout);
 
     const t4 = setTimeout(() => setSealed(true), DUR.finalPauseBefore + DUR.finalGap * (cards.length -1) + DUR.flipAnim + 120);
     const tChat = setTimeout(
@@ -310,29 +288,59 @@ export default function ChatPage({ spreadId }) {
       <main className="chat-main" ref={mainRef}>
         <section className="chat-rail" id="chat-rail">
           <div ref={railRef} className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
-            {cards.map((card, i) => (
-              <div key={`final-${i}`} className="final-card-outer" data-pos={card.pos}>
-                <div
-                  className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}
-                  onClick={() => finalFlip[i] && setZoomedCard(i)}
-                  onKeyDown={(e) => finalFlip[i] && (e.key === "Enter" || e.key === " ") && setZoomedCard(i)}
-                  role="button"
-                  tabIndex={finalFlip[i] ? 0 : -1}
-                  aria-label={`Agrandir la carte : ${finalNames[i] || `Carte ${i + 1}`}`}
-                  style={{ cursor: finalFlip[i] ? "pointer" : "default" }}
-                >
-                  <div className="final-face final-back" />
-                  <div className="final-face final-front">
-                    {finalFaces[i] ? (
-                      <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
-                    ) : (
-                      <div className="final-front-placeholder">Carte {i + 1}</div>
-                    )}
-                  </div>
-                </div>
-                <div className="final-caption">{finalFlip[i] ? finalNames[i] || `Carte ${i + 1}` : ""}</div>
-              </div>
-            ))}
+            {
+              (() => {
+                const renderCard = (card, i) => {
+                  if (!card) return null;
+                  return (
+                    <div key={`final-${i}`} className="final-card-outer" data-pos={card.pos}>
+                      <div
+                        className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}
+                        onClick={() => finalFlip[i] && setZoomedCard(i)}
+                        onKeyDown={(e) => finalFlip[i] && (e.key === "Enter" || e.key === " ") && setZoomedCard(i)}
+                        role="button"
+                        tabIndex={finalFlip[i] ? 0 : -1}
+                        aria-label={`Agrandir la carte : ${finalNames[i] || `Carte ${i + 1}`}`}
+                        style={{ cursor: finalFlip[i] ? "pointer" : "default" }}
+                      >
+                        <div className="final-face final-back" />
+                        <div className="final-face final-front">
+                          {finalFaces[i] ? (
+                            <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
+                          ) : (
+                            <div className="final-front-placeholder">Carte {i + 1}</div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="final-caption">{finalFlip[i] ? finalNames[i] || `Carte ${i + 1}` : ""}</div>
+                    </div>
+                  );
+                };
+
+                if (spreadId === 'spread-truth') {
+                  const cardA = cards.find(c => c.pos === 'A');
+                  const cardB = cards.find(c => c.pos === 'B');
+                  const cardC = cards.find(c => c.pos === 'C');
+                  const indexA = cards.findIndex(c => c.pos === 'A');
+                  const indexB = cards.findIndex(c => c.pos === 'B');
+                  const indexC = cards.findIndex(c => c.pos === 'C');
+
+                  return (
+                    <>
+                      <div className="truth-rail-row-top">
+                        {renderCard(cardA, indexA)}
+                        {renderCard(cardC, indexC)}
+                      </div>
+                      <div className="truth-rail-row-bottom">
+                        {renderCard(cardB, indexB)}
+                      </div>
+                    </>
+                  );
+                } else {
+                  return cards.map((card, i) => renderCard(card, i));
+                }
+              })()
+            }
           </div>
         </section>
 
