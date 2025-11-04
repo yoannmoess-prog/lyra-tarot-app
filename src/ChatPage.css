@@ -127,12 +127,9 @@
 
 .truth-rail-row-top {
   gap: var(--gap, clamp(24px, 4vw, 48px));
-  /* La carte B (dans la rangée du bas) a une hauteur X.
-     On translate la rangée du haut de Y pour qu'elle s'aligne,
-     puis on ajoute une marge négative pour compenser l'espace vide. */
-  transform: translateY(calc(var(--card-h, 193px) * -0.15));
-  margin-bottom: calc(var(--card-h, 193px) * -0.5);
-
+  /* On ajuste la marge négative pour réduire le chevauchement
+     tout en conservant la forme triangulaire. */
+  margin-bottom: -60px;
 }
 
 /*
