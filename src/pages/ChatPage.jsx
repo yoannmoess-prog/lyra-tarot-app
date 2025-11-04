@@ -171,7 +171,8 @@ export default function ChatPage({ spreadId }) {
   // Auto-scroll logic
   useEffect(() => {
     const target = typingRef.current || bodyRef.current?.lastElementChild || bodyRef.current;
-    target?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    // Utiliser "end" pour s'assurer que la vue se cale en bas, au-dessus du footer (grâce au scroll-padding)
+    target?.scrollIntoView({ block: "end", behavior: "smooth" });
     }, [conv.length, lyraTyping]);
 
   useEffect(() => {

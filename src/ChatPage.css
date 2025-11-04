@@ -54,8 +54,6 @@
   display: flex;
   flex-direction: column;
   align-items: center; /* Centre le contenu horizontalement */
-  /* Le padding bas est crucial pour que le dernier message ne soit pas caché par le footer */
-  padding-bottom: calc(12px + var(--f, 84px));
 }
 
 /* --- Sections Rail (tirage) & Body (chat) --- */
