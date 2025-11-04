@@ -281,10 +281,7 @@ export default function ChatPage({ spreadId }) {
   };
 
   return (
-    <div
-      id={spreadId === 'spread-truth' ? 'chat-truth' : ''}
-      className={`page-chat ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}
-    >
+    <div className={`page-chat ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
       <header className="chat-header">
         <div className="p5-fixed-title" role="button" tabIndex="0">
           {question}
