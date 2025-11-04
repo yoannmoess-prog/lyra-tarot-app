@@ -150,4 +150,6 @@
 .page-chat .final-card-outer {
   width: min(100%, var(--card-w, var(--card-deck-w)));
   aspect-ratio: 9.27 / 18;
+  padding: 25px;
+  box-sizing: border-box; /* Assure que le padding est inclus dans la taille totale */
 }
