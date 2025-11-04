@@ -99,20 +99,22 @@
 /* Styles de base communs aux deux types de tirages */
 .page-chat .rail-truth, .page-chat .rail-advice {
   display: grid;
-  justify-items: center;
+  /* Centrer les colonnes de la grille elles-mêmes, et non seulement leur contenu */
+  justify-content: center;
   align-items: start;
-  gap: var(--gap, clamp(24px, 4vw, 48px));
+  gap: var(--gap, clamp(24px, 4vw, 100px));
   width: 100%;
+  /* Définir la taille des colonnes sur la taille des cartes, pas sur des fractions de l'espace */
+  grid-template-columns: repeat(var(--cols, 3), var(--card-w, var(--card-deck-w)));
 }
 
 /* Style spécifique pour rail-advice (garde la disposition en ligne) */
 .page-chat .rail-advice {
-  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  /* La disposition est maintenant gérée par la règle commune */
 }
 
 /* Style spécifique pour rail-truth (disposition 1-up 1-down) */
 .page-chat .rail-truth {
-  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
   margin-bottom: 8rem; /* Ajoute de l'espace pour la carte décalée */
 }
 
