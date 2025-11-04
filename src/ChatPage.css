@@ -96,14 +96,39 @@
 
 /* --- Rail de cartes – configuration et comportement --- */
 /* On préfixe avec .page-chat pour éviter les fuites de style sur /spread-truth */
+/* Styles de base communs aux deux types de tirages */
 .page-chat .rail-truth, .page-chat .rail-advice {
   display: grid;
-  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
   justify-items: center;
   align-items: start;
-  gap: var(--gap, clamp(50px, 8vw, var(--card-w, var(--card-deck-w))));
+  gap: var(--gap, clamp(24px, 4vw, 48px));
+  width: 100%;
 }
+
+/* Style spécifique pour rail-advice (garde la disposition en ligne) */
+.page-chat .rail-advice {
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+}
+
+/* Style spécifique pour rail-truth (disposition triangulaire) */
+.page-chat .rail-truth {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas: 
+    "A C"
+    ". B .";
+  padding: 0 var(--gap);
+}
+
+/* Styles communs pour la taille des cartes */
 .page-chat .final-card-outer {
   width: min(100%, var(--card-w, var(--card-deck-w)));
   aspect-ratio: 9.27 / 18;
 }
+
+/* Positionnement spécifique pour les cartes du rail-truth */
+.page-chat .rail-truth .final-card-outer[data-pos="A"] { grid-area: A; }
+.page-chat .rail-truth .final-card-outer[data-pos="B"] { 
+  grid-area: B;
+  margin-top: 70%;
+}
+.page-chat .rail-truth .final-card-outer[data-pos="C"] { grid-area: C; }
