@@ -107,3 +107,22 @@
   width: min(100%, var(--card-w, var(--card-deck-w)));
   aspect-ratio: 9.27 / 18;
 }
+
+/* Ajustements spécifiques pour l'animation de retournement sur /chat-truth */
+#chat-truth .final-card-flip {
+  /* Assure une base de transition pour tous les enfants */
+  transition: transform 0.62s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Timing de l'animation pour chaque carte, en suivant l'ordre A -> C -> B */
+#chat-truth .final-card-outer[data-pos='A'] .final-card-flip.is-flipped {
+  transition-delay: 0.2s; /* Se retourne en premier */
+}
+
+#chat-truth .final-card-outer[data-pos='C'] .final-card-flip.is-flipped {
+  transition-delay: 0.7s; /* Se retourne en deuxième */
+}
+
+#chat-truth .final-card-outer[data-pos='B'] .final-card-flip.is-flipped {
+  transition-delay: 1.2s; /* Se retourne en dernier */
+}
