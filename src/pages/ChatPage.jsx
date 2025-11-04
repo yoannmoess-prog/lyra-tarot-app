@@ -10,6 +10,7 @@ import "../toast.css";
 import "../chat-ux.css";
 
 import { streamLyra } from "../utils/streamLyra";
+import { TRUTH_ORDER } from "../utils/constants";
 
 /* ---------------- Persistance conversation ---------------- */
 // La clé de stockage est maintenant dynamique et dépend du spreadId
@@ -165,29 +166,39 @@ export default function ChatPage({ spreadId }) {
     setYouInputShown(false);
     setLyraTyping(false);
 
-    // Déterminer l'ordre de retournement
-    const flipOrder = spreadId === 'spread-truth'
-      ? ['A', 'C', 'B']
-      : ['A', 'B', 'C'];
-
-    const cardPositions = cards.map(c => c.pos);
+    // --- Nouvelle logique de retournement ---
     const timeouts = [];
+    if (spreadId === 'spread-truth') {
+      const STEP = 400; // ms entre chaque flip
 
-    flipOrder.forEach((pos, index) => {
-      const cardIndex = cardPositions.indexOf(pos);
-      if (cardIndex !== -1) {
+      TRUTH_ORDER.forEach((pos, i) => {
+        const cardIndex = cards.findIndex(c => c.pos === pos);
+        if (cardIndex !== -1) {
+          const timeout = setTimeout(() => {
+            setFinalFlip(prev => {
+              const newState = [...prev];
+              newState[cardIndex] = true;
+              return newState;
+            });
+          }, i * STEP);
+          timeouts.push(timeout);
+        }
+      });
+    } else {
+      // Logique existante pour les autres tirages
+      cards.forEach((card, index) => {
         const timeout = setTimeout(() => {
           setFinalFlip(prev => {
             const newState = [...prev];
-            newState[cardIndex] = true;
+            newState[index] = true;
             return newState;
           });
         }, DUR.finalPauseBefore + DUR.finalGap * index);
         timeouts.push(timeout);
-      }
-    });
+      });
+    }
 
-    const t4 = setTimeout(() => setSealed(true), DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 120);
+    const t4 = setTimeout(() => setSealed(true), DUR.finalPauseBefore + DUR.finalGap * (cards.length -1) + DUR.flipAnim + 120);
     const tChat = setTimeout(
       () => setChatVisible(true),
       DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 1000
