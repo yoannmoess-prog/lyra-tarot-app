@@ -317,28 +317,20 @@ export default function ChatPage({ spreadId }) {
                   );
                 };
 
-                if (spreadId === 'spread-truth') {
-                  const cardA = cards.find(c => c.pos === 'A');
-                  const cardB = cards.find(c => c.pos === 'B');
-                  const cardC = cards.find(c => c.pos === 'C');
-                  const indexA = cards.findIndex(c => c.pos === 'A');
-                  const indexB = cards.findIndex(c => c.pos === 'B');
-                  const indexC = cards.findIndex(c => c.pos === 'C');
+                // Logique de rendu unifiée pour tous les types de tirages.
+                // Pour le "spread-truth", on trie les cartes pour garantir un ordre A, B, C dans le DOM.
+                // Cela permet au CSS de cibler de manière fiable la carte du milieu (B) avec `:nth-child(2)`.
+                const cardsToRender = spreadId === 'spread-truth'
+                  ? [...cards].sort((a, b) => (a.pos || '').localeCompare(b.pos || ''))
+                  : cards;
 
-                  return (
-                    <>
-                      <div className="truth-rail-row-top">
-                        {renderCard(cardA, indexA)}
-                        {renderCard(cardC, indexC)}
-                      </div>
-                      <div className="truth-rail-row-bottom">
-                        {renderCard(cardB, indexB)}
-                      </div>
-                    </>
-                  );
-                } else {
-                  return cards.map((card, i) => renderCard(card, i));
-                }
+                return cardsToRender.map((card) => {
+                  // Puisque `cardsToRender` peut être trié, on doit retrouver l'index original
+                  // de la carte pour accéder aux données dans les autres tableaux (finalFlip, finalNames, etc.)
+                  // qui, eux, conservent l'ordre initial.
+                  const originalIndex = cards.findIndex(c => c.src === card.src && c.pos === card.pos);
+                  return renderCard(card, originalIndex);
+                });
               })()
             }
           </div>
