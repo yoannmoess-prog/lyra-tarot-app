@@ -167,26 +167,23 @@ export default function ChatPage({ spreadId }) {
     setLyraTyping(false);
 
     // --- Nouvelle logique de retournement ---
-const timeouts = [];
-if (spreadId === 'spread-truth') {
-  const STEP = 600; // ms entre chaque flip
-  
-  // On réorganise les cartes dans l'ordre A→C→B défini par TRUTH_ORDER
-  TRUTH_ORDER.forEach(pos => {
-    const cardIndex = cards.findIndex(c => c.pos === pos);
-    if (cardIndex !== -1) {
-      const timeout = setTimeout(() => {
-        setFinalFlip(prev => {
-          const newState = [...prev];
-          newState[cardIndex] = true;
-          return newState;
-        });
-      }, i * STEP);
-      timeouts.push(timeout);
-    }
-  });
-}
-    
+    const timeouts = [];
+    if (spreadId === 'spread-truth') {
+      // Pour spread-truth, on utilise l'ordre A -> C -> B défini dans TRUTH_ORDER
+      TRUTH_ORDER.forEach((pos, index) => {
+        const cardIndex = cards.findIndex(c => c.pos === pos);
+        if (cardIndex !== -1) {
+          const timeout = setTimeout(() => {
+            setFinalFlip(prev => {
+              const newState = [...prev];
+              newState[cardIndex] = true;
+              return newState;
+            });
+          }, DUR.finalPauseBefore + DUR.finalGap * index);
+          timeouts.push(timeout);
+        }
+      });
+    } else {
       // Logique existante pour les autres tirages
       cards.forEach((card, index) => {
         const timeout = setTimeout(() => {
