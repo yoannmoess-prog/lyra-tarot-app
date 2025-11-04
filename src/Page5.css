@@ -87,9 +87,6 @@
   gap: clamp(12px, 2.2vw, 28px);
   opacity: 0;
 }
-.final-rail.rail-truth .final-card-outer:nth-child(2) {
-  transform: translateY(30%); /* Réduction du décalage pour un look plus subtil */
-}
 .appear-slow { animation: finalAppear 1.2s ease .2s forwards; }
 
 .final-rail.sealed .final-card-flip .final-front { animation: cardGlowHero 1s ease-out forwards; }

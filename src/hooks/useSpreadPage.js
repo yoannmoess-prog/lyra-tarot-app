@@ -1,6 +1,7 @@
 // src/hooks/useSpreadPage.js
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { TRUTH_ORDER } from "../utils/constants";
 
 export function useSpreadPage(spreadType, pickCardLogic) {
   const { state } = useLocation();
@@ -81,9 +82,9 @@ export function useSpreadPage(spreadType, pickCardLogic) {
         isDuplicate = chosenCards.some(card => card.name === newChosenCard.name);
       } while (isDuplicate);
 
-      // Associer la carte à sa position (A, B, C)
-      const positionMap = ['A', 'B', 'C'];
-      const cardWithPosition = { ...newChosenCard, pos: positionMap[targetIndex] };
+      // Associer la carte à sa position (A, B, C) en se basant sur l'ordre de tirage
+      const position = spreadType === 'spread-truth' ? TRUTH_ORDER[chosenSlots.length] : ['A', 'B', 'C'][chosenSlots.length];
+      const cardWithPosition = { ...newChosenCard, pos: position };
 
       const updatedChosenCards = [...chosenCards, cardWithPosition];
       setChosenCards(updatedChosenCards);
@@ -109,11 +110,12 @@ export function useSpreadPage(spreadType, pickCardLogic) {
   const getNextSlot = () => {
     const chosenCount = chosenSlots.length;
     if (spreadType === 'spread-truth') {
-      if (chosenCount === 0) return 0; // A
-      if (chosenCount === 1) return 2; // C
-      if (chosenCount === 2) return 1; // B
+      // Les slots sont 0 (A), 2 (C), 1 (B)
+      const slotOrder = { 'A': 0, 'B': 1, 'C': 2 };
+      const nextPos = TRUTH_ORDER[chosenCount];
+      return slotOrder[nextPos];
     }
-    // Default order for spread-advice
+    // Ordre par défaut pour spread-advice
     const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
     return availableSlots[0];
   };
