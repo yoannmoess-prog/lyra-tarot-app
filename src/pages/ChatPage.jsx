@@ -266,7 +266,8 @@ export default function ChatPage({ spreadId }) {
 
     if (conversationState === 'introduction') {
       const cardNames = finalNames.filter(Boolean);
-      const payload = { name: niceName, question, cards: cardNames, spreadId, userMessage: "", history: [] };
+      // Correctif : Ajout du turnIndex: 0 pour le tout premier appel.
+      const payload = { name: niceName, question, cards: cardNames, spreadId, userMessage: "", history: [], turnIndex: 0 };
       showLyraStreamingResponse(payload, []);
     }
   }, [chatVisible, conv.length, niceName, question, finalNames, spreadId, conversationState]);
@@ -292,7 +293,8 @@ export default function ChatPage({ spreadId }) {
       content: m.text,
     }));
 
-    const payload = { name: niceName, question, cards: finalNames.filter(Boolean), spreadId, userMessage: msg, history, conversationState };
+    const turnIndex = Math.floor(history.length / 2);
+    const payload = { name: niceName, question, cards: finalNames.filter(Boolean), spreadId, userMessage: msg, history, conversationState, turnIndex };
     showLyraStreamingResponse(payload, currentConv);
   };
 

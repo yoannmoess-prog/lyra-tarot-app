@@ -106,6 +106,12 @@
   gap: 8px;
   padding: 8px;
   background-color: transparent;
+  /* Ajout du flou demandé */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  /* Assurer que le fond reste subtil */
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 28px; /* Correspond au border-radius du you-input + padding */
 }
 
 .you-input {
