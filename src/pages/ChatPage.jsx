@@ -48,7 +48,7 @@ function firstNameNice(s) {
 }
 
 function getRandomInitialThinkingTime() {
-  return Math.floor(Math.random() * 2001) + 3000; // 3–5 sec
+  return Math.floor(Math.random() * 2001) + 1000; // 1–3 sec
 }
 
 function getRandomThinkingTime() {
