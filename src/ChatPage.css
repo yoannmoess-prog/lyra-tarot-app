@@ -2,7 +2,7 @@
 
 :root {
   --h: 64px; /* Hauteur header */
-  --f: 84px; /* Hauteur footer (valeur par défaut, sera mesurée en JS) */
+  --f: var(--h); /* Le footer a maintenant la même hauteur que le header */
   --content-w: min(900px, 92vw); /* Largeur max du contenu */
   --rail-gap: clamp(48px, 7vh, 80px); /* Espace vertical réduit de moitié */
   --card-deck-w: min(18vw, 150px); /* Largeur de référence des cartes, vient de Page4.css */
@@ -40,8 +40,13 @@
 .chat-footer {
   bottom: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding-top: 4px; /* Conserve padding existant */
-  padding-bottom: max(env(safe-area-inset-bottom), 8px); /* Conserve safe area */
+  /* Hauteur fixe, identique au header pour l'harmonie */
+  height: var(--h);
+  /* Centrage vertical du formulaire */
+  display: flex;
+  align-items: center;
+  /* Le padding est maintenant géré par le formulaire interne */
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* --- Zone de contenu principale (avec scroll unique) --- */
@@ -50,7 +55,7 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   /* Ajoute une marge de sécurité en bas pour que le contenu ne soit pas masqué par le footer lors du défilement */
-  scroll-padding-bottom: var(--f, 84px);
+  scroll-padding-bottom: var(--f);
   display: flex;
   flex-direction: column;
   align-items: center; /* Centre le contenu horizontalement */

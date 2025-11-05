@@ -155,19 +155,6 @@ export default function ChatPage({ spreadId }) {
     return () => ro?.disconnect();
   }, [spreadId]);
 
-  // Mesure dynamique du footer
-  useLayoutEffect(() => {
-    const apply = () => {
-      const h = footerRef.current?.offsetHeight || 84;
-      document.documentElement.style.setProperty("--f", `${h}px`);
-    };
-    apply();
-    const ro = new ResizeObserver(apply);
-    if (footerRef.current) ro.observe(footerRef.current);
-    window.addEventListener("resize", apply);
-    return () => { ro.disconnect(); window.removeEventListener("resize", apply); };
-  }, []);
-
   // Auto-scroll logic
   useEffect(() => {
     const target = typingRef.current || bodyRef.current?.lastElementChild || bodyRef.current;
