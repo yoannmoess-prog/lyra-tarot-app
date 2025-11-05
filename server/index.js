@@ -339,8 +339,10 @@ app.use((err, req, res, next) => {
 // --- Lancement du serveur ---
 initRag().catch((e) => console.warn("[rag] init error:", e));
 
-app.listen(PORT, () => {
-  console.log(`Lyra backend on http://localhost:${PORT}`);
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+
+app.listen(PORT, HOST, () => {
+  console.log(`Lyra backend on http://${HOST}:${PORT}`);
   console.log(`[lyra] LLM key: ${LLM_API_KEY ? "présente" : "absente"}`);
   console.log(`[lyra] Model: ${LLM_MODEL}`);
   console.log("---");
