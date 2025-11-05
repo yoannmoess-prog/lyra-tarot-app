@@ -24,8 +24,7 @@
   flex-shrink: 0;
   position: sticky;
   z-index: 10;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: transparent;
 }
 
 .chat-header {
@@ -34,12 +33,12 @@
   padding: clamp(12px, 2vh, 16px) clamp(16px, 4vw, 56px); /* Conserve padding existant */
   color: #F8F5E1; /* Conserve couleur existante */
   text-align: center; /* Conserve alignement existant */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: none;
 }
 
 .chat-footer {
   bottom: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: none;
   /* Hauteur fixe, identique au header pour l'harmonie */
   height: var(--h);
   /* Centrage vertical du formulaire */
@@ -81,7 +80,7 @@
 .chat-body {
   margin-top: 0;
   margin-bottom: 0;
-  padding: 0 8px; /* Conserve padding horizontal existant */
+  padding: 0 8px 16px; /* Ajout d'un padding en bas pour l'espace final */
   display: flex;
   flex-direction: column;
   gap: 16px; /* Conserve le gap entre les bulles */
