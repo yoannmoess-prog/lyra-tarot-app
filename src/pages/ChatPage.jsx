@@ -48,7 +48,7 @@ function firstNameNice(s) {
 }
 
 function getRandomInitialThinkingTime() {
-  return Math.floor(Math.random() * 1001) + 1000; // 1–2 sec
+  return Math.floor(Math.random() * 2001) + 3000; // 3–5 sec
 }
 
 function getRandomThinkingTime() {
@@ -116,17 +116,6 @@ export default function ChatPage({ spreadId }) {
     return () => cancelAnimationFrame(timer);
   }, []);
 
-  const prefersReduced =
-    typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  const DUR = useMemo(
-    () => ({
-      finalPauseBefore: prefersReduced ? 200 : 1000,
-      finalGap: prefersReduced ? 300 : 1500,
-      flipAnim: prefersReduced ? 200 : 620,
-    }),
-    [prefersReduced]
-  );
-
   const [finalFlip, setFinalFlip] = useState([false, false, false]);
   const finalFaces = useMemo(() => cards.map((c) => c.src), [cards]);
   const finalNames = useMemo(() => cards.map((c) => c.name), [cards]);
@@ -183,27 +172,51 @@ export default function ChatPage({ spreadId }) {
     setYouInputShown(false);
     setLyraTyping(false);
 
-    // --- Nouvelle logique de retournement ---
-    // Pour tous les tirages, on déclenche le retournement après un délai initial.
-    // L'ordre visuel (pour spread-truth notamment) est maintenant géré en CSS via transition-delay.
+    // --- Séquence d'animation contrôlée en JS ---
     const timeouts = [];
-    const flipTimeout = setTimeout(() => {
-      setFinalFlip([true, true, true]);
-    }, DUR.finalPauseBefore);
-    timeouts.push(flipTimeout);
+    const cleanup = () => timeouts.forEach(clearTimeout);
 
-    const t4 = setTimeout(() => setSealed(true), DUR.finalPauseBefore + DUR.finalGap * (cards.length -1) + DUR.flipAnim + 120);
-    const tChat = setTimeout(
-      () => setChatVisible(true),
-      DUR.finalPauseBefore + DUR.finalGap * 2 + DUR.flipAnim + 1000
-    );
+    // 1. Délai initial avant le premier retournement
+    timeouts.push(setTimeout(() => {
+      // Trouver les index des cartes A, B, C dans le tableau `cards` original
+      const indexA = cards.findIndex(c => c.pos === 'A');
+      const indexB = cards.findIndex(c => c.pos === 'B');
+      const indexC = cards.findIndex(c => c.pos === 'C');
 
-    return () => {
-      timeouts.forEach(clearTimeout);
-      clearTimeout(t4);
-      clearTimeout(tChat);
-    };
-  }, [DUR, state?.isNew, cards, spreadId]);
+      // 2. Retourner la carte A
+      setFinalFlip(flips => {
+        const newFlips = [...flips];
+        if (indexA !== -1) newFlips[indexA] = true;
+        return newFlips;
+      });
+
+      // 3. Délai avant de retourner C
+      timeouts.push(setTimeout(() => {
+        setFinalFlip(flips => {
+          const newFlips = [...flips];
+          if (indexC !== -1) newFlips[indexC] = true;
+          return newFlips;
+        });
+
+        // 4. Délai avant de retourner B
+        timeouts.push(setTimeout(() => {
+          setFinalFlip(flips => {
+            const newFlips = [...flips];
+            if (indexB !== -1) newFlips[indexB] = true;
+            return newFlips;
+          });
+          setSealed(true); // Verrouille le clic après la dernière carte
+
+          // 5. Délai avant d'afficher la bulle de Lyra
+          timeouts.push(setTimeout(() => {
+            setChatVisible(true); // Affiche la section chat, ce qui déclenchera la bulle
+          }, 500));
+        }, 500));
+      }, 500));
+    }, 1000));
+
+    return cleanup;
+  }, [state?.isNew, cards, spreadId]);
 
   const showLyraStreamingResponse = async (payload, baseConv) => {
     setYouInputShown(false);
@@ -271,10 +284,8 @@ export default function ChatPage({ spreadId }) {
     setConv(currentConv);
     saveConv(currentConv, spreadId);
 
-    setTimeout(() => {
-      // L'auto-scroll est géré par ailleurs
-      inputRef.current?.focus();
-    }, 100);
+    // Note: l'appel à .focus() a été supprimé car il entrait en conflit
+    // avec le défilement automatique vers la nouvelle bulle de chat.
 
     const history = conv.map((m) => ({
       role: m.role === "user" ? "user" : "assistant",

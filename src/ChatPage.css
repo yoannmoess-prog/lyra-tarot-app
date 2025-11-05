@@ -129,19 +129,9 @@
 }
 
 /*
-  Forcer l'ordre de retournement A -> C -> B.
-  Maintenant que l'ordre DOM est A, B, C, on peut utiliser nth-child.
-  A = 1er enfant, C = 3ème enfant, B = 2ème enfant.
+  L'ordre de retournement est maintenant géré entièrement en JavaScript via des timeouts
+  pour un contrôle plus précis de la séquence.
 */
-.page-chat .rail-truth .final-card-outer:nth-child(1) .final-card-flip.is-flipped {
-  transition-delay: 0s; /* A */
-}
-.page-chat .rail-truth .final-card-outer:nth-child(3) .final-card-flip.is-flipped {
-  transition-delay: 0.2s; /* C */
-}
-.page-chat .rail-truth .final-card-outer:nth-child(2) .final-card-flip.is-flipped {
-  transition-delay: 0.4s; /* B */
-}
 
 /* Styles communs pour la taille des cartes */
 .page-chat .final-card-outer {
