@@ -110,7 +110,7 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   /* Assurer que le fond reste subtil */
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(10, 27, 54, 0.5); /* #0A1B36 avec 50% opacité */
   border-radius: 28px; /* Correspond au border-radius du you-input + padding */
 }
 

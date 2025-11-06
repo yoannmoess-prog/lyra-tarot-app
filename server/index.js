@@ -33,6 +33,7 @@ const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 const allowedOrigins = [
   "https://lyra-frontend.onrender.com",
   "https://lyra-frontend.render.com", // selon Render
+  "http://localhost:5100",
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5175",
@@ -41,39 +42,10 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin(origin, callback) {
-      // Autorise requêtes sans Origin (health checks, curl…)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      console.warn("[CORS] Origine refusée :", origin);
-      return callback(new Error("Not allowed by CORS"));
-    },
+    origin: allowedOrigins,
     credentials: true,
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
-    optionsSuccessStatus: 204,
   })
 );
-
-// Middleware universel pour OPTIONS (Express 5 safe ; pas de pattern "*")
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  // Déclare les en-têtes CORS en amont (utile même hors OPTIONS)
-  if (!origin || allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin || "*");
-    res.header("Vary", "Origin");
-    res.header("Access-Control-Allow-Credentials", "true");
-  }
-  if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
-    return res.sendStatus(204);
-  }
-  next();
-});
 
 // --- Parsers ---
 app.use(express.json({ limit: "1mb" }));
@@ -206,8 +178,8 @@ app.post("/api/lyra/stream", async (req, res) => {
     JSON.stringify(req.body, null, 2)
   );
 
-  if (!LLM_API_KEY) {
-    console.error("[lyra] Erreur: LLM_API_KEY est manquante.");
+  if (!OPENAI_API_KEY) {
+    console.error("[lyra] Erreur: OPENAI_API_KEY est manquante.");
     return res.status(500).json({
       error: { code: "missing_api_key", message: "La clé API LLM est absente." },
     });
@@ -337,7 +309,7 @@ const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
 app.listen(PORT, HOST, () => {
   console.log(`Lyra backend on http://${HOST}:${PORT}`);
-  console.log(`[lyra] LLM key: ${LLM_API_KEY ? "présente" : "absente"}`);
+  console.log(`[lyra] LLM key: ${OPENAI_API_KEY ? "présente" : "absente"}`);
   console.log(`[lyra] Model: ${LLM_MODEL}`);
   console.log("---");
   console.log("[lyra-backend] Version du code : 2.0 - CORRECTIF ACTIF");
