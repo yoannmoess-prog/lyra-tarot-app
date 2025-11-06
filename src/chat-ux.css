@@ -104,8 +104,10 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px;
-  background-color: transparent;
+  padding: 0; /* Supprime le padding pour éliminer l'espace du "liseré" */
+  background-color: transparent !important; /* Force la transparence */
+  border: none !important; /* Assure qu'aucune bordure n'est appliquée */
+  box-shadow: none !important; /* Assure qu'aucune ombre n'est appliquée */
 }
 
 .you-input {
