@@ -23,15 +23,17 @@ app.set("trust proxy", 1);
 
 // --- Constantes et Variables d'environnement ---
 const PORT = process.env.PORT || 8787;
-const LLM_API_KEY = process.env.LLM_API_KEY || "";
+// Correctif : Utilisation de la variable standard OPENAI_API_KEY
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
 const LLM_MODEL = process.env.LLM_MODEL || "gpt-4o-mini";
 
-const openai = new OpenAI({ apiKey: LLM_API_KEY });
+const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 // --- CORS (AVANT tout autre middleware/route) ---
 const allowedOrigins = [
   "https://lyra-frontend.onrender.com",
   "https://lyra-frontend.render.com", // selon Render
+  "http://localhost:5100",
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5175",
@@ -40,39 +42,10 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin(origin, callback) {
-      // Autorise requêtes sans Origin (health checks, curl…)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      console.warn("[CORS] Origine refusée :", origin);
-      return callback(new Error("Not allowed by CORS"));
-    },
+    origin: allowedOrigins,
     credentials: true,
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
-    optionsSuccessStatus: 204,
   })
 );
-
-// Middleware universel pour OPTIONS (Express 5 safe ; pas de pattern "*")
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  // Déclare les en-têtes CORS en amont (utile même hors OPTIONS)
-  if (!origin || allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin || "*");
-    res.header("Vary", "Origin");
-    res.header("Access-Control-Allow-Credentials", "true");
-  }
-  if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
-    return res.sendStatus(204);
-  }
-  next();
-});
 
 // --- Parsers ---
 app.use(express.json({ limit: "1mb" }));
@@ -139,42 +112,30 @@ function parseSpreadPositions(spreadContent) {
   return positions;
 }
 
-// --- Prompt Builder (contenu système tronqué pour clarté) ---
-function buildMessages({
-  name: n,
-  question,
-  cards,
-  userMessage,
-  history,
-  spreadContent,
-  positionHints,
-  turnIndex,
-}) {
-  const safeCards = Array.isArray(cards) ? cards : [];
-  const cardNames = safeCards.join(", ");
-  const name = n || "l'utilisateur";
+import { systemPrompt, buildInitialUser, buildReplyUser } from "./prompts/lyra.js";
 
-  const positionsMemo =
-    positionHints && positionHints.length > 0
-      ? `### POSITIONS DU SPREAD ACTUEL (mémo)\n${positionHints
-          .map((p, i) => `${i + 1}: ${p}`)
-          .join(" | ")}`
-      : "";
+// --- Prompt Builder ---
+function buildMessages({ name, question, cards, userMessage, history, turnIndex }) {
+  const who = name || "l'utilisateur";
+  const system = systemPrompt();
 
-  let systemContent = `
-=== LYRA : VOIX INCARNÉE DU TAROT — VERSION 8 ===
-[contenu système conservé]
-`.trim();
+  // Pour le premier tour (introduction), on utilise un prompt utilisateur structuré.
+  if (turnIndex === 0) {
+    const user = buildInitialUser({ who, question, cards });
+    return [
+      { role: "system", content: system },
+      { role: "user", content: user },
+    ];
+  }
 
+  // Pour les tours suivants, on utilise un prompt plus simple et l'historique.
+  const user = buildReplyUser({ who, userMessage, cards, question });
   const safeHistory = Array.isArray(history) ? history.slice(-10) : [];
-  const userContent = userMessage
-    ? userMessage
-    : `Ma question est : "${question}". Les cartes tirées sont : ${cardNames}.`;
 
   return [
-    { role: "system", content: systemContent },
+    { role: "system", content: system },
     ...safeHistory,
-    { role: "user", content: userContent },
+    { role: "user", content: user },
   ];
 }
 
@@ -189,36 +150,25 @@ app.get("/", (_, res) => {
 
 app.get("/api/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
 
-// --- /api/spread : accepte GET et POST + timeout/fallback
-async function resolveSpreadId(question) {
-  try {
-    const id = await detectSpreadFromQuestion(question || "");
-    return id || "spread-truth";
-  } catch (e) {
-    console.warn("[api/spread] detectSpreadFromQuestion KO -> fallback", e.message);
-    return "spread-truth";
-  }
-}
-
-app.get("/api/spread", async (req, res) => {
-  const spreadId = await Promise.race([
-    resolveSpreadId(""),
-    new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000)),
-  ]).catch(() => "spread-truth");
-  res.json({ spreadId });
-});
-
+// --- /api/spread : Point de terminaison unique et robuste pour la détection
 app.post("/api/spread", async (req, res) => {
   const { question } = req.body || {};
+
+  // La logique est maintenant directe, pas besoin de timeout ou de fallback complexe.
   try {
-    const spreadId = await Promise.race([
-      resolveSpreadId(question),
-      new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000)),
-    ]).catch(() => "spread-truth");
+    // On appelle directement la fonction de détection qui est maintenant déterministe.
+    const spreadId = await detectSpreadFromQuestion(question || "");
+
+    // Log pour le débogage
+    console.log(`[api/spread] Question: "${question}" -> Tirage détecté: "${spreadId}"`);
+
+    // On renvoie le résultat. La fonction de détection gère le cas par défaut ("spread-advice").
     res.json({ spreadId });
   } catch (error) {
-    console.error("[api/spread] Erreur:", error);
-    res.status(200).json({ spreadId: "spread-truth" });
+    // En cas d'erreur inattendue dans la logique de détection
+    console.error("[api/spread] Erreur critique lors de la détection du tirage:", error);
+    // On renvoie le tirage par défaut pour ne pas bloquer l'utilisateur.
+    res.status(500).json({ spreadId: "spread-advice" });
   }
 });
 
@@ -228,8 +178,8 @@ app.post("/api/lyra/stream", async (req, res) => {
     JSON.stringify(req.body, null, 2)
   );
 
-  if (!LLM_API_KEY) {
-    console.error("[lyra] Erreur: LLM_API_KEY est manquante.");
+  if (!OPENAI_API_KEY) {
+    console.error("[lyra] Erreur: OPENAI_API_KEY est manquante.");
     return res.status(500).json({
       error: { code: "missing_api_key", message: "La clé API LLM est absente." },
     });
@@ -297,16 +247,32 @@ app.post("/api/lyra/stream", async (req, res) => {
       return fullContent;
     };
 
-    const stream = await openai.chat.completions.create({
-      model: LLM_MODEL,
-      messages,
-      stream: true,
-      temperature: 0.7,
-      top_p: 1,
-      max_tokens: 1024,
-    });
+    // Bloc try...catch pour intercepter les erreurs de clé API invalide
+    try {
+      const streamPromise = openai.chat.completions.create({
+        model: LLM_MODEL,
+        messages,
+        stream: true,
+        temperature: 0.7,
+        top_p: 1,
+        max_tokens: 1024,
+      });
 
-    await streamResponse(stream);
+      // Ajout du timeout de 10 secondes.
+      const stream = await Promise.race([
+        streamPromise,
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout: L'API OpenAI n'a pas répondu à temps.")), 10000)
+        ),
+      ]);
+
+      await streamResponse(stream);
+    } catch (e) {
+      // Si l'erreur vient d'OpenAI (clé invalide, etc.), on la logue
+      // et on laisse le bloc catch principal gérer la réponse au client.
+      console.error("[lyra] Erreur DANS la création du stream OpenAI:", e.message);
+      throw e; // Fait remonter l'erreur pour qu'elle soit gérée ci-dessous
+    }
     console.log(`[lyra] Stream terminé.`);
     res.end();
   } catch (error) {
@@ -343,7 +309,7 @@ const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
 app.listen(PORT, HOST, () => {
   console.log(`Lyra backend on http://${HOST}:${PORT}`);
-  console.log(`[lyra] LLM key: ${LLM_API_KEY ? "présente" : "absente"}`);
+  console.log(`[lyra] LLM key: ${OPENAI_API_KEY ? "présente" : "absente"}`);
   console.log(`[lyra] Model: ${LLM_MODEL}`);
   console.log("---");
   console.log("[lyra-backend] Version du code : 2.0 - CORRECTIF ACTIF");
