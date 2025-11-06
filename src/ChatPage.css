@@ -123,7 +123,8 @@
 }
 
 /* On décale la deuxième carte (B) vers le bas pour répliquer le layout de /spread-truth */
-.page-chat .rail-truth .final-card-outer:nth-child(2) {
+/* S'applique au rail principal ET au rail dans la modale */
+.rail-truth .final-card-outer:nth-child(2) {
   transform: translateY(50%);
 }
 
@@ -136,32 +137,4 @@
 .page-chat .final-card-outer {
   width: min(100%, var(--card-w, var(--card-deck-w)));
   aspect-ratio: 9.27 / 18;
-}
-
-/* --- Styles pour le rail dans la modale --- */
-.spread-modal-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-.spread-modal-container .final-rail {
-  max-width: 90vw;
-  max-height: 85vh;
-  /* La magie est ici: on laisse la grille et l'aspect-ratio faire le travail */
-  /* Le container va grandir jusqu'à toucher un des bords (width ou height) */
-  /* et l'autre dimension s'ajustera automatiquement. */
-  aspect-ratio: 3 / 1; /* Ratio par défaut pour 3 cartes en ligne */
-}
-
-.spread-modal-container .final-rail.rail-truth {
-  /* On surcharge le ratio pour le tirage en triangle, qui est plus haut */
-  aspect-ratio: 3 / 2;
-}
-
-/* On ajuste la taille de la police pour les légendes des cartes */
-.spread-modal-container .final-caption {
-  font-size: clamp(10px, 1.5vmin, 16px);
 }
