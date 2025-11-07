@@ -19,26 +19,31 @@
 }
 
 /* --- Header & Footer (fixes) --- */
-.chat-header,
+.chat-header {
+  flex-shrink: 0;
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  height: var(--h);
+  padding: clamp(12px, 2vh, 16px) clamp(16px, 4vw, 56px);
+  color: #F8F5E1;
+  text-align: center;
+  background-color: rgba(10, 27, 54, 0.5); /* Arrière-plan semi-transparent pour l'effet de flou */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
 .chat-footer {
   flex-shrink: 0;
   position: sticky;
   z-index: 10;
-  background: transparent;
-}
-
-.chat-header {
-  top: 0;
-  height: var(--h);
-  padding: clamp(12px, 2vh, 16px) clamp(16px, 4vw, 56px); /* Conserve padding existant */
-  color: #F8F5E1; /* Conserve couleur existante */
-  text-align: center; /* Conserve alignement existant */
-  border-bottom: none;
-}
-
-.chat-footer {
   bottom: 0;
-  border-top: none;
+  /* Le conteneur du footer est totalement invisible */
+  border: none;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   /* Hauteur fixe, identique au header pour l'harmonie */
   height: var(--h);
   /* Centrage vertical du formulaire */
@@ -80,7 +85,9 @@
 .chat-body {
   margin-top: 0;
   margin-bottom: 0;
-  padding: 0 8px 16px; /* Ajout d'un padding en bas pour l'espace final */
+  padding: 0 8px; /* Conserve padding horizontal existant */
+  /* Espace en bas pour que la dernière bulle soit bien au-dessus du footer */
+  padding-bottom: calc(var(--f) + 24px); /* Hauteur du footer + marge augmentée */
   display: flex;
   flex-direction: column;
   gap: 16px; /* Conserve le gap entre les bulles */

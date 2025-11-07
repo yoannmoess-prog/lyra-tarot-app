@@ -1,53 +1,71 @@
 // src/utils/streamLyra.js
-export async function* streamLyra(payload, onError) {
-  // Correction : Utilise import.meta.env pour les variables d'environnement Vite.
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+import { toast } from "./net";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+
+export async function* streamLyra(payload) {
+  let response;
   try {
-    const res = await fetch(`${API_BASE_URL}/api/lyra/stream`, {
+    response = await fetch(`${API_BASE_URL}/api/lyra/stream`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+  } catch (error) {
+    console.error("[streamLyra] Erreur réseau:", error);
+    toast("Erreur réseau. Impossible de contacter le serveur.");
+    return; // Termine le générateur
+  }
 
-    if (!res.ok || !res.body) {
-      const errorPayload = await res.json().catch(() => ({ message: `Erreur HTTP ${res.status}` }));
-      onError?.(new Error(errorPayload.message));
-      return;
-    }
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    console.error(
+      `[streamLyra] Erreur de l'API: ${response.status} ${response.statusText}`,
+      errorBody
+    );
+    toast(
+      `Une erreur est survenue côté serveur (${response.status}). Veuillez réessayer.`
+    );
+    return; // Termine le générateur en cas de réponse non-OK
+  }
 
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
+  if (!response.body) {
+    console.error("[streamLyra] La réponse ne contient pas de corps de flux.");
+    toast("La réponse du serveur est invalide.");
+    return;
+  }
 
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let buffer = "";
+
+  try {
     while (true) {
-      const { value, done } = await reader.read();
+      const { done, value } = await reader.read();
       if (done) break;
 
       buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n\n");
+      buffer = lines.pop(); // Garde la dernière ligne potentiellement incomplète
 
-      // Traiter les messages complets dans le buffer
-      let boundary = buffer.indexOf('\n\n');
-      while (boundary !== -1) {
-        const message = buffer.substring(0, boundary);
-        buffer = buffer.substring(boundary + 2);
-
-        if (message.startsWith("data: ")) {
-          const data = message.substring(6);
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
           try {
-            // Le backend envoie directement la chaîne de caractères JSON-stringifiée
-            const content = JSON.parse(data);
-            if (typeof content === 'string') {
-              yield content;
+            const jsonString = line.substring(6);
+            if (jsonString) {
+              const chunk = JSON.parse(jsonString);
+              yield chunk;
             }
           } catch (e) {
-            console.warn("Erreur de parsing JSON dans le stream:", data, e);
+            console.error("[streamLyra] Erreur de parsing du chunk SSE:", e, "Chunk:", line);
           }
         }
-        boundary = buffer.indexOf('\n\n');
       }
     }
-  } catch (e) {
-    console.error("Erreur inattendue dans streamLyra:", e);
-    onError?.(e);
+  } catch (error) {
+    console.error("[streamLyra] Erreur pendant la lecture du flux:", error);
+    toast("Une erreur est survenue lors de la réception de la réponse.");
+  } finally {
+    reader.releaseLock();
   }
 }
