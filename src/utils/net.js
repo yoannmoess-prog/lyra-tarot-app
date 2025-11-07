@@ -1,26 +1,44 @@
-
 // src/utils/net.js
 
-/**
- * Affiche une notification "toast" en bas de l'écran.
- * @param {string} message Le message à afficher.
- * @param {number} duration La durée d'affichage en millisecondes.
- */
-export function toast(message, duration = 4000) {
-  // Crée l'élément de toast
-  const toastElement = document.createElement("div");
-  toastElement.className = "toast-notification show"; // La classe 'show' déclenche l'animation d'entrée
-  toastElement.textContent = message;
-
-  // Ajoute l'élément au corps du document
-  document.body.appendChild(toastElement);
-
-  // Supprime le toast après la durée spécifiée
-  setTimeout(() => {
-    toastElement.classList.remove("show");
-    // Attend la fin de l'animation de sortie avant de supprimer l'élément du DOM
+/** Affiche un toast simple en haut de l'écran */
+export function toast(msg, dur = 3500) {
+  try {
+    const el = document.createElement("div");
+    el.className = "toast";
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.classList.add("show"), 50);
     setTimeout(() => {
-      document.body.removeChild(toastElement);
-    }, 500); // Doit correspondre à la durée de la transition dans toast.css
-  }, duration);
+      el.classList.remove("show");
+      setTimeout(() => el.remove(), 500);
+    }, dur);
+  } catch {
+    // ignore
+  }
+}
+
+/** POST JSON avec retries et timeout */
+export async function postJson(url, body, opts = {}) {
+  const { tries = 1, base = 200, signal, timeout = 8000 } = opts;
+  for (let i = 0; i < tries; i++) {
+    try {
+      const ac = new AbortController();
+      const id = setTimeout(() => ac.abort(), timeout);
+      const r = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: signal || ac.signal,
+      });
+      clearTimeout(id);
+      if (!r.ok) {
+        const errText = await r.text().catch(() => "");
+        throw new Error(`http_${r.status}` + (errText ? `_${errText}` : ""));
+      }
+      return await r.json();
+    } catch (err) {
+      if (i === tries - 1) throw err;
+      await new Promise((res) => setTimeout(res, base * (i + 1)));
+    }
+  }
 }

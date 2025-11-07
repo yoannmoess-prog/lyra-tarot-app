@@ -109,17 +109,13 @@ export function useSpreadPage(spreadType, pickCardLogic) {
 
   const getNextSlot = () => {
     const chosenCount = chosenSlots.length;
-    // La logique doit toujours renvoyer le prochain *slot disponible*.
-
-    // Pour "spread-truth", on suit un ordre de position A->C->B,
-    // qui correspond aux slots 0->2->1.
     if (spreadType === 'spread-truth') {
-      const truthSlotOrder = [0, 2, 1]; // Ordre des slots à remplir
-      const availableTruthSlots = truthSlotOrder.filter(slot => !chosenSlots.includes(slot));
-      return availableTruthSlots[0]; // Renvoie le premier slot disponible de la séquence
+      // Les slots sont 0 (A), 2 (C), 1 (B)
+      const slotOrder = { 'A': 0, 'B': 1, 'C': 2 };
+      const nextPos = TRUTH_ORDER[chosenCount];
+      return slotOrder[nextPos];
     }
-
-    // Pour "spread-advice" (et comme fallback), on prend simplement le premier slot vide.
+    // Ordre par défaut pour spread-advice
     const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
     return availableSlots[0];
   };
