@@ -200,27 +200,23 @@ async function resolveSpreadId(question) {
   }
 }
 
-app.get("/api/spread", async (req, res) => {
-  const spreadId = await Promise.race([
-    resolveSpreadId(""),
-    new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000)),
-  ]).catch(() => "spread-truth");
-  res.json({ spreadId });
-});
-
-app.post("/api/spread", async (req, res) => {
-  const { question } = req.body || {};
+// --- /api/spread : logique simplifiée et fiabilisée ---
+async function handleSpreadRequest(req, res) {
+  // POST a la priorité pour la question, sinon on utilise une chaîne vide pour GET.
+  const question = req.body?.question || req.query?.question || "";
   try {
-    const spreadId = await Promise.race([
-      resolveSpreadId(question),
-      new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000)),
-    ]).catch(() => "spread-truth");
+    // Appel direct, sans Promise.race. La fonction a son propre fallback interne.
+    const spreadId = await resolveSpreadId(question);
     res.json({ spreadId });
   } catch (error) {
-    console.error("[api/spread] Erreur:", error);
-    res.status(200).json({ spreadId: "spread-truth" });
+    // Si resolveSpreadId plante VRAIMENT, on logue et on fallback.
+    console.error("[api/spread] Erreur critique inattendue:", error);
+    res.status(500).json({ spreadId: "spread-advice" }); // Fallback plus sûr
   }
-});
+}
+
+app.get("/api/spread", handleSpreadRequest);
+app.post("/api/spread", handleSpreadRequest);
 
 app.post("/api/lyra/stream", async (req, res) => {
   console.log(
