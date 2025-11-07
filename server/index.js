@@ -170,7 +170,10 @@ app.post("/api/spread", async (req, res) => {
     // On renvoie le tirage par défaut pour ne pas bloquer l'utilisateur.
     res.status(500).json({ spreadId: "spread-advice" });
   }
-});
+}
+
+app.get("/api/spread", handleSpreadRequest);
+app.post("/api/spread", handleSpreadRequest);
 
 app.post("/api/lyra/stream", async (req, res) => {
   console.log(

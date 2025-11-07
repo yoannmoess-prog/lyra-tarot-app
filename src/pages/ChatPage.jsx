@@ -298,57 +298,47 @@ export default function ChatPage({ spreadId }) {
     showLyraStreamingResponse(payload, currentConv);
   };
 
-  const renderCard = (card, i, isModal = false) => {
-    if (!card) return null;
-    const isFlipped = isModal || finalFlip[i];
-    const cardName = finalNames[i] || `Carte ${i + 1}`;
-
-    return (
-      <div key={`final-${i}-${isModal ? 'modal' : 'page'}`} className="final-card-outer" data-pos={card.pos}>
-        <div
-          className={`final-card-flip${isFlipped ? " is-flipped" : ""}`}
-          onClick={() => isFlipped && !isModal && setZoomedCard(i)}
-          onKeyDown={(e) => isFlipped && !isModal && (e.key === "Enter" || e.key === " ") && setZoomedCard(i)}
-          role="button"
-          tabIndex={isFlipped && !isModal ? 0 : -1}
-          aria-label={`Agrandir la carte : ${cardName}`}
-          style={{ cursor: isFlipped && !isModal ? "pointer" : "default" }}
-        >
-          <div className="final-face final-back" />
-          <div className="final-face final-front">
-            {finalFaces[i] ? (
-              <img src={finalFaces[i]} alt={cardName} />
-            ) : (
-              <div className="final-front-placeholder">{cardName}</div>
-            )}
+  const renderSpreadRail = (isModal = false) => {
+    const renderCard = (card, i) => {
+      if (!card) return null;
+      const isFlipped = isModal || finalFlip[i];
+      const cardName = finalNames[i] || `Carte ${i + 1}`;
+      return (
+        <div key={`final-${i}-${isModal ? 'modal' : 'page'}`} className="final-card-outer" data-pos={card.pos}>
+          <div
+            className={`final-card-flip${isFlipped ? " is-flipped" : ""}`}
+            onClick={() => !isModal && isFlipped && setZoomedCard(i)}
+            onKeyDown={(e) => !isModal && isFlipped && (e.key === "Enter" || e.key === " ") && setZoomedCard(i)}
+            role="button"
+            tabIndex={!isModal && isFlipped ? 0 : -1}
+            aria-label={`Agrandir la carte : ${cardName}`}
+            style={{ cursor: !isModal && isFlipped ? "pointer" : "default" }}
+          >
+            <div className="final-face final-back" />
+            <div className="final-face final-front">
+              {finalFaces[i] ? (
+                <img src={finalFaces[i]} alt={cardName} />
+              ) : (
+                <div className="final-front-placeholder">{cardName}</div>
+              )}
+            </div>
+          </div>
+          <div className="final-caption" style={isModal ? { opacity: 1, transform: "none" } : {}}>
+            {isFlipped ? cardName : ""}
           </div>
         </div>
-        <div className="final-caption" style={isModal ? { opacity: 1, transform: "none" } : {}}>
-          {isFlipped ? cardName : ""}
-        </div>
-      </div>
-    );
-  };
+      );
+    };
 
-  const cardsToRender = useMemo(() => (
-    spreadId === 'spread-truth'
+    const cardsToRender = spreadId === 'spread-truth'
       ? [...cards].sort((a, b) => (a.pos || '').localeCompare(b.pos || ''))
-      : cards
-  ), [cards, spreadId]);
+      : cards;
 
-  const railContent = useMemo(() => (
-    cardsToRender.map((card) => {
+    return cardsToRender.map((card) => {
       const originalIndex = cards.findIndex(c => c.src === card.src && c.pos === card.pos);
-      return renderCard(card, originalIndex, false);
-    })
-  ), [cardsToRender, cards, finalFlip, finalNames, finalFaces, setZoomedCard]);
-
-  const modalRailContent = useMemo(() => (
-    cardsToRender.map((card) => {
-      const originalIndex = cards.findIndex(c => c.src === card.src && c.pos === card.pos);
-      return renderCard(card, originalIndex, true);
-    })
-  ), [cardsToRender, cards, finalNames, finalFaces]);
+      return renderCard(card, originalIndex);
+    });
+  };
 
   return (
     <div className={`page-chat ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
@@ -370,7 +360,7 @@ export default function ChatPage({ spreadId }) {
       <main className="chat-main" ref={mainRef}>
         <section className="chat-rail" id="chat-rail">
           <div ref={railRef} className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
-            {railContent}
+            {renderSpreadRail(false)}
           </div>
         </section>
 
@@ -389,7 +379,7 @@ export default function ChatPage({ spreadId }) {
           <Modal onClose={() => setIsSpreadModalOpen(false)}>
             <div className="spread-modal-container">
               <div className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
-                {modalRailContent}
+                {renderSpreadRail(true)}
               </div>
             </div>
           </Modal>
