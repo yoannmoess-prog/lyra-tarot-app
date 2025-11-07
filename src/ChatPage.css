@@ -80,7 +80,8 @@
 .chat-body {
   margin-top: 0;
   margin-bottom: 0;
-  padding: 0 8px 16px; /* Ajout d'un padding en bas pour l'espace final */
+  /* Le padding en bas est calculé pour laisser de l'espace pour le footer fixe + une marge */
+  padding: 0 8px calc(var(--f) + 24px) 8px;
   display: flex;
   flex-direction: column;
   gap: 16px; /* Conserve le gap entre les bulles */
