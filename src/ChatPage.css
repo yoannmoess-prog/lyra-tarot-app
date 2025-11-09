@@ -53,9 +53,8 @@
   flex: 1 1 auto; /* Prend toute la hauteur restante */
   overflow-y: auto;
   overscroll-behavior: contain;
-  /* Ajoute une marge de sécurité en bas pour que le contenu ne soit pas masqué par le footer lors du défilement */
-  /* Utilise la variable JS --footer-h, avec --f comme fallback */
-  scroll-padding-bottom: calc(var(--footer-h, var(--f)) + 16px);
+  /* La marge de sécurité est maintenant dynamique et contrôlée par --footer-h */
+  scroll-padding-bottom: var(--footer-h, var(--f));
   display: flex;
   flex-direction: column;
   align-items: center; /* Centre le contenu horizontalement */
@@ -81,9 +80,7 @@
 .chat-body {
   margin-top: 0;
   margin-bottom: 0;
-  /* Le padding en bas est calculé pour laisser de l'espace pour le footer fixe + une marge */
-  /* Utilise la variable JS --footer-h, avec --f comme fallback */
-  padding: 0 8px calc(var(--footer-h, var(--f)) + 24px) 8px;
+  padding: 0 8px 16px; /* Ajout d'un padding en bas pour l'espace final */
   display: flex;
   flex-direction: column;
   gap: 16px; /* Conserve le gap entre les bulles */
@@ -126,8 +123,7 @@
 }
 
 /* On décale la deuxième carte (B) vers le bas pour répliquer le layout de /spread-truth */
-/* S'applique au rail principal ET au rail dans la modale */
-.rail-truth .final-card-outer:nth-child(2) {
+.page-chat .rail-truth .final-card-outer:nth-child(2) {
   transform: translateY(50%);
 }
 
