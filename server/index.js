@@ -219,6 +219,18 @@ app.get("/api/spread", handleSpreadRequest);
 app.post("/api/spread", handleSpreadRequest);
 
 app.post("/api/lyra/stream", async (req, res) => {
+  // --- NOUVEAU LOG DE DIAGNOSTIC ---
+  if (LLM_API_KEY) {
+    console.log(
+      `[lyra-diag] Clé API présente. Début: ${LLM_API_KEY.substring(
+        0,
+        5
+      )}... Fin: ${LLM_API_KEY.substring(LLM_API_KEY.length - 4)}`
+    );
+  } else {
+    console.log("[lyra-diag] Clé API ABSENTE.");
+  }
+
   console.log(
     "[lyra] /api/lyra/stream: Requête reçue avec le corps:",
     JSON.stringify(req.body, null, 2)
@@ -306,6 +318,9 @@ app.post("/api/lyra/stream", async (req, res) => {
     console.log(`[lyra] Stream terminé.`);
     res.end();
   } catch (error) {
+    // --- NOUVEAU LOG DE DIAGNOSTIC ---
+    console.error("[lyra-diag] Erreur détaillée de l'API OpenAI:", JSON.stringify(error, null, 2));
+
     console.error("[lyra] /api/lyra/stream - Erreur:", error);
     if (!res.headersSent) {
       const errorMessage = error.message || "Erreur inconnue";
