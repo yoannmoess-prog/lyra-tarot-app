@@ -63,8 +63,9 @@ export function fitRail(container, { spreadId, cols = 3, minCard = 120 } = {}) {
   const ro = new ResizeObserver(() => {
     const cs = getComputedStyle(container);
     const docEl = document.documentElement;
+    const docStyle = getComputedStyle(docEl); // Obtenir le style calculé de :root
     const gap = parseFloat(cs.getPropertyValue("--gap")) || 16;
-    const deck = parseFloat(docEl.getPropertyValue("--card-deck-w"));
+    const deck = parseFloat(docStyle.getPropertyValue("--card-deck-w"));
 
     // --- Calcul basé sur la LARGEUR (existant) ---
     let c = cols;
@@ -77,9 +78,9 @@ export function fitRail(container, { spreadId, cols = 3, minCard = 120 } = {}) {
     // --- Calcul basé sur la HAUTEUR (nouveau) ---
     let heightBasedCardW = Infinity; // Pas de limite par défaut
     if (spreadId === 'spread-truth') {
-      const headerH = parseFloat(docEl.getPropertyValue("--h")) || 64;
-      const footerH = parseFloat(docEl.getPropertyValue("--f")) || 84;
-      const railGap = parseFloat(docEl.getPropertyValue("--rail-gap")) || 160;
+      const headerH = parseFloat(docStyle.getPropertyValue("--h")) || 64;
+      const footerH = parseFloat(docStyle.getPropertyValue("--f")) || 84;
+      const railGap = parseFloat(docStyle.getPropertyValue("--rail-gap")) || 160;
       const availableH = window.innerHeight - headerH - footerH - railGap;
 
       // La hauteur totale du rail-truth est de 1.5x la hauteur d'une carte + padding.
@@ -137,26 +138,28 @@ export default function ChatPage({ spreadId }) {
   const footerRef = useRef(null);
   const railRef = useRef(null);
 
-  // --- Footer height for padding ---
-  useLayoutEffect(() => {
-    const main = mainRef.current;
-    const footer = footerRef.current;
-    if (!main || !footer) return;
-
-    const ro = new ResizeObserver(() => {
-      main.style.setProperty("--footer-h", `${footer.offsetHeight}px`);
-    });
-
-    ro.observe(footer);
-    return () => ro.disconnect();
-  }, []);
-
   // Rail de cartes responsive
   useEffect(() => {
     // On passe le spreadId pour que la fonction puisse appliquer la logique de hauteur si nécessaire
     const ro = fitRail(railRef.current, { spreadId });
     return () => ro?.disconnect();
   }, [spreadId]);
+
+  // Synchronise la hauteur du footer avec une variable CSS --footer-h
+  // pour que le scroll-padding du conteneur de chat puisse s'ajuster.
+  useLayoutEffect(() => {
+    const footer = footerRef.current;
+    if (!footer) return;
+
+    const ro = new ResizeObserver(() => {
+      // On ajoute 24px de marge au padding pour une meilleure lisibilité.
+      const h = footer.offsetHeight + 24;
+      mainRef.current?.style.setProperty("--footer-h", `${h}px`);
+    });
+
+    ro.observe(footer);
+    return () => ro.disconnect();
+  }, []);
 
   // Auto-scroll logic
   useEffect(() => {
