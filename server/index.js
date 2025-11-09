@@ -200,37 +200,29 @@ async function resolveSpreadId(question) {
   }
 }
 
-// --- /api/spread : logique simplifiée et fiabilisée ---
-async function handleSpreadRequest(req, res) {
-  // POST a la priorité pour la question, sinon on utilise une chaîne vide pour GET.
-  const question = req.body?.question || req.query?.question || "";
+app.get("/api/spread", async (req, res) => {
+  const spreadId = await Promise.race([
+    resolveSpreadId(""),
+    new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000)),
+  ]).catch(() => "spread-truth");
+  res.json({ spreadId });
+});
+
+app.post("/api/spread", async (req, res) => {
+  const { question } = req.body || {};
   try {
-    // Appel direct, sans Promise.race. La fonction a son propre fallback interne.
-    const spreadId = await resolveSpreadId(question);
+    const spreadId = await Promise.race([
+      resolveSpreadId(question),
+      new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000)),
+    ]).catch(() => "spread-truth");
     res.json({ spreadId });
   } catch (error) {
-    // Si resolveSpreadId plante VRAIMENT, on logue et on fallback.
-    console.error("[api/spread] Erreur critique inattendue:", error);
-    res.status(500).json({ spreadId: "spread-advice" }); // Fallback plus sûr
+    console.error("[api/spread] Erreur:", error);
+    res.status(200).json({ spreadId: "spread-truth" });
   }
-}
-
-app.get("/api/spread", handleSpreadRequest);
-app.post("/api/spread", handleSpreadRequest);
+});
 
 app.post("/api/lyra/stream", async (req, res) => {
-  // --- NOUVEAU LOG DE DIAGNOSTIC ---
-  if (LLM_API_KEY) {
-    console.log(
-      `[lyra-diag] Clé API présente. Début: ${LLM_API_KEY.substring(
-        0,
-        5
-      )}... Fin: ${LLM_API_KEY.substring(LLM_API_KEY.length - 4)}`
-    );
-  } else {
-    console.log("[lyra-diag] Clé API ABSENTE.");
-  }
-
   console.log(
     "[lyra] /api/lyra/stream: Requête reçue avec le corps:",
     JSON.stringify(req.body, null, 2)
@@ -318,9 +310,6 @@ app.post("/api/lyra/stream", async (req, res) => {
     console.log(`[lyra] Stream terminé.`);
     res.end();
   } catch (error) {
-    // --- NOUVEAU LOG DE DIAGNOSTIC ---
-    console.error("[lyra-diag] Erreur détaillée de l'API OpenAI:", JSON.stringify(error, null, 2));
-
     console.error("[lyra] /api/lyra/stream - Erreur:", error);
     if (!res.headersSent) {
       const errorMessage = error.message || "Erreur inconnue";

@@ -137,6 +137,20 @@ export default function ChatPage({ spreadId }) {
   const footerRef = useRef(null);
   const railRef = useRef(null);
 
+  // --- Footer height for padding ---
+  useLayoutEffect(() => {
+    const main = mainRef.current;
+    const footer = footerRef.current;
+    if (!main || !footer) return;
+
+    const ro = new ResizeObserver(() => {
+      main.style.setProperty("--footer-h", `${footer.offsetHeight}px`);
+    });
+
+    ro.observe(footer);
+    return () => ro.disconnect();
+  }, []);
+
   // Rail de cartes responsive
   useEffect(() => {
     // On passe le spreadId pour que la fonction puisse appliquer la logique de hauteur si nécessaire
@@ -296,48 +310,6 @@ export default function ChatPage({ spreadId }) {
     showLyraStreamingResponse(payload, currentConv);
   };
 
-  const renderSpreadRail = (isModal = false) => {
-    const renderCard = (card, i) => {
-      if (!card) return null;
-      const isFlipped = isModal || finalFlip[i];
-      const cardName = finalNames[i] || `Carte ${i + 1}`;
-      return (
-        <div key={`final-${i}-${isModal ? 'modal' : 'page'}`} className="final-card-outer" data-pos={card.pos}>
-          <div
-            className={`final-card-flip${isFlipped ? " is-flipped" : ""}`}
-            onClick={() => !isModal && isFlipped && setZoomedCard(i)}
-            onKeyDown={(e) => !isModal && isFlipped && (e.key === "Enter" || e.key === " ") && setZoomedCard(i)}
-            role="button"
-            tabIndex={!isModal && isFlipped ? 0 : -1}
-            aria-label={`Agrandir la carte : ${cardName}`}
-            style={{ cursor: !isModal && isFlipped ? "pointer" : "default" }}
-          >
-            <div className="final-face final-back" />
-            <div className="final-face final-front">
-              {finalFaces[i] ? (
-                <img src={finalFaces[i]} alt={cardName} />
-              ) : (
-                <div className="final-front-placeholder">{cardName}</div>
-              )}
-            </div>
-          </div>
-          <div className="final-caption" style={isModal ? { opacity: 1, transform: "none" } : {}}>
-            {isFlipped ? cardName : ""}
-          </div>
-        </div>
-      );
-    };
-
-    const cardsToRender = spreadId === 'spread-truth'
-      ? [...cards].sort((a, b) => (a.pos || '').localeCompare(b.pos || ''))
-      : cards;
-
-    return cardsToRender.map((card) => {
-      const originalIndex = cards.findIndex(c => c.src === card.src && c.pos === card.pos);
-      return renderCard(card, originalIndex);
-    });
-  };
-
   return (
     <div className={`page-chat ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
       <header className="chat-header">
@@ -358,7 +330,51 @@ export default function ChatPage({ spreadId }) {
       <main className="chat-main" ref={mainRef}>
         <section className="chat-rail" id="chat-rail">
           <div ref={railRef} className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
-            {renderSpreadRail(false)}
+            {
+              (() => {
+                const renderCard = (card, i) => {
+                  if (!card) return null;
+                  return (
+                    <div key={`final-${i}`} className="final-card-outer" data-pos={card.pos}>
+                      <div
+                        className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}
+                        onClick={() => finalFlip[i] && setZoomedCard(i)}
+                        onKeyDown={(e) => finalFlip[i] && (e.key === "Enter" || e.key === " ") && setZoomedCard(i)}
+                        role="button"
+                        tabIndex={finalFlip[i] ? 0 : -1}
+                        aria-label={`Agrandir la carte : ${finalNames[i] || `Carte ${i + 1}`}`}
+                        style={{ cursor: finalFlip[i] ? "pointer" : "default" }}
+                      >
+                        <div className="final-face final-back" />
+                        <div className="final-face final-front">
+                          {finalFaces[i] ? (
+                            <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
+                          ) : (
+                            <div className="final-front-placeholder">Carte {i + 1}</div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="final-caption">{finalFlip[i] ? finalNames[i] || `Carte ${i + 1}` : ""}</div>
+                    </div>
+                  );
+                };
+
+                // Logique de rendu unifiée pour tous les types de tirages.
+                // Pour le "spread-truth", on trie les cartes pour garantir un ordre A, B, C dans le DOM.
+                // Cela permet au CSS de cibler de manière fiable la carte du milieu (B) avec `:nth-child(2)`.
+                const cardsToRender = spreadId === 'spread-truth'
+                  ? [...cards].sort((a, b) => (a.pos || '').localeCompare(b.pos || ''))
+                  : cards;
+
+                return cardsToRender.map((card) => {
+                  // Puisque `cardsToRender` peut être trié, on doit retrouver l'index original
+                  // de la carte pour accéder aux données dans les autres tableaux (finalFlip, finalNames, etc.)
+                  // qui, eux, conservent l'ordre initial.
+                  const originalIndex = cards.findIndex(c => c.src === card.src && c.pos === card.pos);
+                  return renderCard(card, originalIndex);
+                });
+              })()
+            }
           </div>
         </section>
 
@@ -377,7 +393,23 @@ export default function ChatPage({ spreadId }) {
           <Modal onClose={() => setIsSpreadModalOpen(false)}>
             <div className="spread-modal-container">
               <div className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
-                {renderSpreadRail(true)}
+                {[0, 1, 2].map((i) => (
+                  <div key={`modal-final-${i}`} className="final-card-outer">
+                    <div className="final-card-flip is-flipped">
+                      <div className="final-face final-back" />
+                      <div className="final-face final-front">
+                        {finalFaces[i] ? (
+                          <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
+                        ) : (
+                          <div className="final-front-placeholder">Carte {i + 1}</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="final-caption" style={{ opacity: 1, transform: "none" }}>
+                      {finalNames[i] || `Carte ${i + 1}`}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </Modal>
