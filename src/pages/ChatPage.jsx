@@ -63,8 +63,9 @@ export function fitRail(container, { spreadId, cols = 3, minCard = 120 } = {}) {
   const ro = new ResizeObserver(() => {
     const cs = getComputedStyle(container);
     const docEl = document.documentElement;
+    const docElStyles = getComputedStyle(docEl);
     const gap = parseFloat(cs.getPropertyValue("--gap")) || 16;
-    const deck = parseFloat(docEl.getPropertyValue("--card-deck-w"));
+    const deck = parseFloat(docElStyles.getPropertyValue("--card-deck-w"));
 
     // --- Calcul basé sur la LARGEUR (existant) ---
     let c = cols;
@@ -136,6 +137,25 @@ export default function ChatPage({ spreadId }) {
   const typingRef = useRef(null);
   const footerRef = useRef(null);
   const railRef = useRef(null);
+
+  // Synchronise la hauteur du footer avec une variable CSS
+  useLayoutEffect(() => {
+    const footer = footerRef.current;
+    const main = mainRef.current;
+    if (!footer || !main) return;
+
+    const ro = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const height = entry.borderBoxSize?.[0]?.blockSize ?? entry.target.getBoundingClientRect().height;
+        // On stocke la hauteur dans une variable CSS pour que le CSS puisse s'y adapter
+        main.style.setProperty('--footer-h', `${height}px`);
+      }
+    });
+
+    ro.observe(footer);
+
+    return () => ro.disconnect();
+  }, []);
 
   // Rail de cartes responsive
   useEffect(() => {

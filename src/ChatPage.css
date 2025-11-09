@@ -54,7 +54,8 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   /* Ajoute une marge de sécurité en bas pour que le contenu ne soit pas masqué par le footer lors du défilement */
-  scroll-padding-bottom: var(--f);
+  /* Utilise la variable JS --footer-h, avec --f comme fallback */
+  scroll-padding-bottom: calc(var(--footer-h, var(--f)) + 16px);
   display: flex;
   flex-direction: column;
   align-items: center; /* Centre le contenu horizontalement */
@@ -81,7 +82,8 @@
   margin-top: 0;
   margin-bottom: 0;
   /* Le padding en bas est calculé pour laisser de l'espace pour le footer fixe + une marge */
-  padding: 0 8px calc(var(--f) + 24px) 8px;
+  /* Utilise la variable JS --footer-h, avec --f comme fallback */
+  padding: 0 8px calc(var(--footer-h, var(--f)) + 24px) 8px;
   display: flex;
   flex-direction: column;
   gap: 16px; /* Conserve le gap entre les bulles */
