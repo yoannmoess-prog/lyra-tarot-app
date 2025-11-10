@@ -102,6 +102,42 @@ export function fitRail(container, { spreadId, cols = 3, minCard = 120 } = {}) {
 
 /* ---------------- Component ---------------- */
 // Le composant accepte maintenant `spreadId` en tant que prop
+function SpreadModalContent({ railRef, spreadId, isSpreadModalOpen }) {
+  const modalRailContainerRef = useRef(null);
+
+  useEffect(() => {
+    let ro;
+    if (isSpreadModalOpen && railRef.current && modalRailContainerRef.current) {
+      const originalRail = railRef.current;
+      const modalContainer = modalRailContainerRef.current;
+
+      // 1. Cloner le rail original
+      const clonedRail = originalRail.cloneNode(true);
+
+      // 2. Nettoyer le conteneur et y ajouter le clone
+      modalContainer.innerHTML = '';
+      modalContainer.appendChild(clonedRail);
+
+      // 3. Appliquer la logique de redimensionnement sur le clone
+      // On utilise un délai pour s'assurer que le DOM est bien mis à jour.
+      const timer = setTimeout(() => {
+        ro = fitRail(clonedRail, { spreadId });
+      }, 50); // Un petit délai suffit
+
+      return () => {
+        clearTimeout(timer);
+        ro?.disconnect();
+      };
+    }
+  }, [isSpreadModalOpen, railRef, spreadId]);
+
+  return (
+    <div className="spread-modal-container" ref={modalRailContainerRef}>
+      {/* Le contenu sera injecté par l'effet ci-dessus */}
+    </div>
+  );
+}
+
 export default function ChatPage({ spreadId }) {
   const { state } = useLocation();
   const nav = useNavigate();
@@ -306,7 +342,7 @@ export default function ChatPage({ spreadId }) {
           <button
             className="header-icon-btn"
             onClick={() => setIsSpreadModalOpen(true)}
-            aria-label="Afficher le tirage de cartes"
+            aria-label="Afficher la synthèse du tirage"
             title="Afficher le tirage"
           >
             <span className="ms-icon material-symbols-outlined">playing_cards</span>
@@ -377,27 +413,11 @@ export default function ChatPage({ spreadId }) {
         )}
         {isSpreadModalOpen && (
           <Modal onClose={() => setIsSpreadModalOpen(false)}>
-            <div className="spread-modal-container">
-              <div className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
-                {[0, 1, 2].map((i) => (
-                  <div key={`modal-final-${i}`} className="final-card-outer">
-                    <div className="final-card-flip is-flipped">
-                      <div className="final-face final-back" />
-                      <div className="final-face final-front">
-                        {finalFaces[i] ? (
-                          <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
-                        ) : (
-                          <div className="final-front-placeholder">Carte {i + 1}</div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="final-caption" style={{ opacity: 1, transform: "none" }}>
-                      {finalNames[i] || `Carte ${i + 1}`}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <SpreadModalContent
+              railRef={railRef}
+              spreadId={spreadId}
+              isSpreadModalOpen={isSpreadModalOpen}
+            />
           </Modal>
         )}
 
