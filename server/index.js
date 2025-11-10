@@ -36,6 +36,9 @@ const allowedOrigins = [
   "http://localhost:5174",
   "http://localhost:5175",
   "http://localhost:5176",
+  "http://localhost:5183",
+  "http://localhost:5184",
+  "http://localhost:5185",
 ];
 
 app.use(
