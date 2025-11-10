@@ -53,10 +53,8 @@
   flex: 1 1 auto; /* Prend toute la hauteur restante */
   overflow-y: auto;
   overscroll-behavior: contain;
-  /* Utilise la variable dynamique --footer-h pour ajuster le padding.
-     La variable est calculée en JS via ResizeObserver sur le footer.
-     La valeur par défaut --f est conservée en fallback. */
-  scroll-padding-bottom: var(--footer-h, var(--f));
+  /* Ajoute une marge de sécurité en bas pour que le contenu ne soit pas masqué par le footer lors du défilement */
+  scroll-padding-bottom: var(--f);
   display: flex;
   flex-direction: column;
   align-items: center; /* Centre le contenu horizontalement */
