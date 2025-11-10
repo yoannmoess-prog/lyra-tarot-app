@@ -53,7 +53,9 @@
   flex: 1 1 auto; /* Prend toute la hauteur restante */
   overflow-y: auto;
   overscroll-behavior: contain;
-  /* La marge de sécurité est maintenant dynamique et contrôlée par --footer-h */
+  /* Utilise la variable dynamique --footer-h pour ajuster le padding.
+     La variable est calculée en JS via ResizeObserver sur le footer.
+     La valeur par défaut --f est conservée en fallback. */
   scroll-padding-bottom: var(--footer-h, var(--f));
   display: flex;
   flex-direction: column;
