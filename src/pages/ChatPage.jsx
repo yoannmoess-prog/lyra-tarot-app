@@ -220,8 +220,17 @@ export default function ChatPage({ spreadId }) {
 
   const showLyraStreamingResponse = async (payload, baseConv) => {
     setYouInputShown(false);
+
+    // Pour la toute première réponse, on attend un "tick" de rendu pour
+    // s'assurer que le conteneur de chat est bien dessiné avant d'ajouter
+    // la bulle de frappe. Cela évite un bug de positionnement initial.
+    const isFirstLyraResponse = baseConv.length === 0;
+    if (isFirstLyraResponse) {
+      await new Promise(resolve => requestAnimationFrame(resolve));
+    }
+
     setLyraTyping(true);
-    const thinkingTime = baseConv.length > 0 ? getRandomThinkingTime() : getRandomInitialThinkingTime();
+    const thinkingTime = isFirstLyraResponse ? getRandomInitialThinkingTime() : getRandomThinkingTime();
     await new Promise(resolve => setTimeout(resolve, thinkingTime));
 
     let fullText = "";
