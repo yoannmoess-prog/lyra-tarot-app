@@ -6,6 +6,8 @@
   border-radius: 24px;
   max-width: 90%;
   width: fit-content;
+  min-height: 44px; /* Hauteur approx d'une bulle vide ou typing */
+  box-sizing: border-box; /* S'assure que le padding est inclus dans la hauteur */
 }
 
 /* Alignement des bulles */
@@ -91,8 +93,8 @@
 
 /* Animation de fondu pour les nouvelles bulles */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .lyra-fadein,
