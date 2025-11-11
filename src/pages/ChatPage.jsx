@@ -155,29 +155,12 @@ export default function ChatPage({ spreadId }) {
 
   // Auto-scroll logic
   useEffect(() => {
-    const target = typingRef.current || bodyRef.current?.lastElementChild || bodyRef.current;
-    // Utiliser "end" pour s'assurer que la vue se cale en bas, au-dessus du footer (grâce au scroll-padding)
-    target?.scrollIntoView({ block: "end", behavior: "smooth" });
-    }, [conv.length, lyraTyping]);
-
-  // Mesure dynamique du footer pour un scroll-padding précis
-  useLayoutEffect(() => {
-    const mainEl = mainRef.current;
-    const footerEl = footerRef.current;
-    if (!mainEl || !footerEl) return;
-
-    const ro = new ResizeObserver(entries => {
-      for (let entry of entries) {
-        const height = entry.contentRect.height;
-        // Applique la hauteur mesurée comme une variable CSS sur le controuteur scrollable
-        mainEl.style.setProperty('--footer-h', `${height}px`);
-      }
-    });
-
-    ro.observe(footerEl);
-
-    return () => ro.disconnect();
-  }, []);
+    // On cible systématiquement l'ancre, qui se trouve après le dernier message ou la bulle de frappe.
+    const scrollAnchor = bodyRef.current?.querySelector('#scroll-anchor');
+    if (scrollAnchor) {
+      scrollAnchor.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [conv.length, lyraTyping]);
 
   useEffect(() => {
     const isNewSession = state?.isNew;
@@ -377,68 +360,51 @@ export default function ChatPage({ spreadId }) {
         </div>
       </header>
       <main className="chat-main" ref={mainRef}>
-        <section className="chat-rail" id="chat-rail">
-          <div ref={railRef} className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
-            {renderRailContent()}
+        <section id="chat-body" className="chat-body" ref={bodyRef} aria-live="polite">
+          {/* Le rail et les bulles sont maintenant dans le même conteneur scrollable */}
+          <div className="chat-rail" id="chat-rail">
+            <div ref={railRef} className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
+              {renderRailContent()}
+            </div>
           </div>
+
+          {chatVisible && (
+            <div className="messages">
+              {conv.map((m) =>
+                m.role === "lyra" ? (
+                  <div key={m.id} className="bubble lyra lyra-fadein">
+                    <div className="who">LYRA</div>
+                    <div className="msg">
+                      {m.text.split("\n").map((line, i) => (
+                        <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div key={m.id} className="bubble you you-fadein">
+                    <div className="who">VOUS</div>
+                    <div className="msg">
+                      {m.text.split("\n").map((line, i) => (
+                        <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
+                      ))}
+                    </div>
+                  </div>
+                )
+              )}
+              {lyraTyping && (
+                <div ref={typingRef} className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire">
+                  <div className="dots" role="status" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              )}
+              {/* L'ancre pour le défilement est placée à la fin des messages */}
+              <div id="scroll-anchor" />
+            </div>
+          )}
         </section>
-
-        {zoomedCard !== null && (
-          <Modal onClose={() => setZoomedCard(null)}>
-            <div className="zoomed-card-container">
-              <img
-                src={finalFaces[zoomedCard]}
-                alt={finalNames[zoomedCard] || `Carte ${zoomedCard + 1}`}
-                className="zoomed-card-img"
-              />
-            </div>
-          </Modal>
-        )}
-        {isSpreadModalOpen && (
-          <Modal onClose={() => setIsSpreadModalOpen(false)}>
-            <div className="spread-modal-container">
-              {/* Le rail dans la modale réutilise la même logique de rendu pour garantir la cohérence */}
-              <div ref={modalRailRef} className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
-                {renderRailContent({ isModal: true })}
-              </div>
-            </div>
-          </Modal>
-        )}
-
-        {chatVisible && (
-          <section className="chat-body" id="chat-body" ref={bodyRef} aria-live="polite">
-            {conv.map((m) =>
-              m.role === "lyra" ? (
-                <div key={m.id} className="bubble lyra lyra-fadein">
-                  <div className="who">LYRA</div>
-                  <div className="msg">
-                    {m.text.split("\n").map((line, i) => (
-                      <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div key={m.id} className="bubble you you-fadein">
-                  <div className="who">VOUS</div>
-                  <div className="msg">
-                    {m.text.split("\n").map((line, i) => (
-                      <p key={i} style={{ margin: "6px 0" }}>{line || "\u00A0"}</p>
-                    ))}
-                  </div>
-                </div>
-              )
-            )}
-            {lyraTyping && (
-              <div ref={typingRef} className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire">
-                <div className="dots" role="status" aria-hidden="true">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-            )}
-          </section>
-        )}
       </main>
       <footer ref={footerRef} className={`chat-footer ${chatVisible ? " show" : ""}`}>
         <div className="you-block">
@@ -465,6 +431,29 @@ export default function ChatPage({ spreadId }) {
           </form>
         </div>
       </footer>
+
+      {/* Modals are moved here, outside of the main layout flow, which is cleaner. */}
+      {zoomedCard !== null && (
+        <Modal onClose={() => setZoomedCard(null)}>
+          <div className="zoomed-card-container">
+            <img
+              src={finalFaces[zoomedCard]}
+              alt={finalNames[zoomedCard] || `Carte ${zoomedCard + 1}`}
+              className="zoomed-card-img"
+            />
+          </div>
+        </Modal>
+      )}
+      {isSpreadModalOpen && (
+        <Modal onClose={() => setIsSpreadModalOpen(false)}>
+          <div className="spread-modal-container">
+            {/* Le rail dans la modale réutilise la même logique de rendu pour garantir la cohérence */}
+            <div ref={modalRailRef} className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
+              {renderRailContent({ isModal: true })}
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
