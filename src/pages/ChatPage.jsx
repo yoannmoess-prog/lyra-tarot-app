@@ -10,7 +10,10 @@ import "../toast.css";
 import "../chat-ux.css";
 
 import { streamLyra } from "../utils/streamLyra";
-import { TRUTH_ORDER } from "../utils/constants";
+// import { TRUTH_ORDER, ADVICE_ORDER } from "../utils/constants";
+const TRUTH_ORDER = ['A', 'C', 'B'];
+const ADVICE_ORDER = ['A', 'B', 'C'];
+
 
 /* ---------------- Persistance conversation ---------------- */
 // La clé de stockage est maintenant dynamique et dépend du spreadId
@@ -176,43 +179,32 @@ export default function ChatPage({ spreadId }) {
     const timeouts = [];
     const cleanup = () => timeouts.forEach(clearTimeout);
 
+    // Sélectionne le bon ordre de retournement en fonction du spreadId
+    const flipOrder = spreadId === 'spread-truth' ? TRUTH_ORDER : ADVICE_ORDER;
+
     // 1. Délai initial avant le premier retournement
     timeouts.push(setTimeout(() => {
-      // Trouver les index des cartes A, B, C dans le tableau `cards` original
-      const indexA = cards.findIndex(c => c.pos === 'A');
-      const indexB = cards.findIndex(c => c.pos === 'B');
-      const indexC = cards.findIndex(c => c.pos === 'C');
-
-      // 2. Retourner la carte A
-      setFinalFlip(flips => {
-        const newFlips = [...flips];
-        if (indexA !== -1) newFlips[indexA] = true;
-        return newFlips;
-      });
-
-      // 3. Délai avant de retourner C
-      timeouts.push(setTimeout(() => {
-        setFinalFlip(flips => {
-          const newFlips = [...flips];
-          if (indexC !== -1) newFlips[indexC] = true;
-          return newFlips;
-        });
-
-        // 4. Délai avant de retourner B
+      // Utilise une boucle pour retourner les cartes dans l'ordre défini
+      flipOrder.forEach((pos, index) => {
         timeouts.push(setTimeout(() => {
-          setFinalFlip(flips => {
-            const newFlips = [...flips];
-            if (indexB !== -1) newFlips[indexB] = true;
-            return newFlips;
-          });
-          setSealed(true); // Verrouille le clic après la dernière carte
+          const cardIndex = cards.findIndex(c => c.pos === pos);
+          if (cardIndex !== -1) {
+            setFinalFlip(flips => {
+              const newFlips = [...flips];
+              newFlips[cardIndex] = true;
+              return newFlips;
+            });
+          }
 
-          // 5. Délai avant d'afficher la bulle de Lyra
-          timeouts.push(setTimeout(() => {
-            setChatVisible(true); // Affiche la section chat, ce qui déclenchera la bulle
-          }, 500));
-        }, 500));
-      }, 500));
+          // Si c'est la dernière carte, sceller le rail et afficher le chat
+          if (index === flipOrder.length - 1) {
+            setSealed(true);
+            timeouts.push(setTimeout(() => {
+              setChatVisible(true);
+            }, 500));
+          }
+        }, index * 500)); // Délai de 500ms entre chaque carte
+      });
     }, 1000));
 
     return cleanup;
@@ -296,6 +288,52 @@ export default function ChatPage({ spreadId }) {
     showLyraStreamingResponse(payload, currentConv);
   };
 
+  // --- Helpers de rendu pour le rail de cartes ---
+  const renderCard = (card, i, { isModal = false } = {}) => {
+    if (!card) return null;
+    const isFlipped = isModal || finalFlip[i];
+    return (
+      <div key={`final-${i}-${isModal ? 'modal' : 'main'}`} className="final-card-outer" data-pos={card.pos}>
+        <div
+          className={`final-card-flip${isFlipped ? " is-flipped" : ""}`}
+          onClick={() => !isModal && isFlipped && setZoomedCard(i)}
+          onKeyDown={(e) => !isModal && isFlipped && (e.key === "Enter" || e.key === " ") && setZoomedCard(i)}
+          role="button"
+          tabIndex={!isModal && isFlipped ? 0 : -1}
+          aria-label={`Agrandir la carte : ${finalNames[i] || `Carte ${i + 1}`}`}
+          style={{ cursor: !isModal && isFlipped ? "pointer" : "default" }}
+        >
+          <div className="final-face final-back" />
+          <div className="final-face final-front">
+            {finalFaces[i] ? (
+              <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
+            ) : (
+              <div className="final-front-placeholder">Carte {i + 1}</div>
+            )}
+          </div>
+        </div>
+        <div className="final-caption" style={isModal ? { opacity: 1, transform: "none" } : {}}>
+          {isFlipped ? finalNames[i] || `Carte ${i + 1}` : ""}
+        </div>
+      </div>
+    );
+  };
+
+  const renderRailContent = ({ isModal = false } = {}) => {
+    // Pour "spread-truth", on trie les cartes pour garantir un ordre A, B, C dans le DOM.
+    // Cela permet au CSS de cibler de manière fiable la carte du milieu (B) avec `:nth-child(2)`.
+    const cardsToRender = spreadId === 'spread-truth'
+      ? [...cards].sort((a, b) => (a.pos || '').localeCompare(b.pos || ''))
+      : cards;
+
+    return cardsToRender.map((card) => {
+      // On doit retrouver l'index original de la carte pour accéder aux données
+      // qui conservent l'ordre initial (finalFlip, finalNames, etc.).
+      const originalIndex = cards.findIndex(c => c.src === card.src && c.pos === card.pos);
+      return renderCard(card, originalIndex, { isModal });
+    });
+  };
+
   return (
     <div className={`page-chat ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
       <header className="chat-header">
@@ -316,51 +354,7 @@ export default function ChatPage({ spreadId }) {
       <main className="chat-main" ref={mainRef}>
         <section className="chat-rail" id="chat-rail">
           <div ref={railRef} className={`final-rail appear-slow${sealed ? " sealed" : ""} ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
-            {
-              (() => {
-                const renderCard = (card, i) => {
-                  if (!card) return null;
-                  return (
-                    <div key={`final-${i}`} className="final-card-outer" data-pos={card.pos}>
-                      <div
-                        className={`final-card-flip${finalFlip[i] ? " is-flipped" : ""}`}
-                        onClick={() => finalFlip[i] && setZoomedCard(i)}
-                        onKeyDown={(e) => finalFlip[i] && (e.key === "Enter" || e.key === " ") && setZoomedCard(i)}
-                        role="button"
-                        tabIndex={finalFlip[i] ? 0 : -1}
-                        aria-label={`Agrandir la carte : ${finalNames[i] || `Carte ${i + 1}`}`}
-                        style={{ cursor: finalFlip[i] ? "pointer" : "default" }}
-                      >
-                        <div className="final-face final-back" />
-                        <div className="final-face final-front">
-                          {finalFaces[i] ? (
-                            <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
-                          ) : (
-                            <div className="final-front-placeholder">Carte {i + 1}</div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="final-caption">{finalFlip[i] ? finalNames[i] || `Carte ${i + 1}` : ""}</div>
-                    </div>
-                  );
-                };
-
-                // Logique de rendu unifiée pour tous les types de tirages.
-                // Pour le "spread-truth", on trie les cartes pour garantir un ordre A, B, C dans le DOM.
-                // Cela permet au CSS de cibler de manière fiable la carte du milieu (B) avec `:nth-child(2)`.
-                const cardsToRender = spreadId === 'spread-truth'
-                  ? [...cards].sort((a, b) => (a.pos || '').localeCompare(b.pos || ''))
-                  : cards;
-
-                return cardsToRender.map((card) => {
-                  // Puisque `cardsToRender` peut être trié, on doit retrouver l'index original
-                  // de la carte pour accéder aux données dans les autres tableaux (finalFlip, finalNames, etc.)
-                  // qui, eux, conservent l'ordre initial.
-                  const originalIndex = cards.findIndex(c => c.src === card.src && c.pos === card.pos);
-                  return renderCard(card, originalIndex);
-                });
-              })()
-            }
+            {renderRailContent()}
           </div>
         </section>
 
@@ -378,24 +372,9 @@ export default function ChatPage({ spreadId }) {
         {isSpreadModalOpen && (
           <Modal onClose={() => setIsSpreadModalOpen(false)}>
             <div className="spread-modal-container">
+              {/* Le rail dans la modale réutilise la même logique de rendu pour garantir la cohérence */}
               <div className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
-                {[0, 1, 2].map((i) => (
-                  <div key={`modal-final-${i}`} className="final-card-outer">
-                    <div className="final-card-flip is-flipped">
-                      <div className="final-face final-back" />
-                      <div className="final-face final-front">
-                        {finalFaces[i] ? (
-                          <img src={finalFaces[i]} alt={finalNames[i] || `Carte ${i + 1}`} />
-                        ) : (
-                          <div className="final-front-placeholder">Carte {i + 1}</div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="final-caption" style={{ opacity: 1, transform: "none" }}>
-                      {finalNames[i] || `Carte ${i + 1}`}
-                    </div>
-                  </div>
-                ))}
+                {renderRailContent({ isModal: true })}
               </div>
             </div>
           </Modal>
