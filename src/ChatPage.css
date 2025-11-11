@@ -59,6 +59,11 @@
   padding: 0 8px; /* Padding horizontal pour les bulles */
   display: flex;
   flex-direction: column;
+  scrollbar-width: none; /* Pour Firefox */
+}
+
+.chat-body::-webkit-scrollbar {
+  display: none; /* Pour Chrome, Safari, and Opera */
 }
 
 /* --- Sections Rail (tirage) & Messages --- */
