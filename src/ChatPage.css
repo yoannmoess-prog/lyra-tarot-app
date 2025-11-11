@@ -10,84 +10,70 @@
 
 /* --- Layout principal --- */
 .page-chat {
-  min-height: 100vh;
-  min-height: 100svh;
+  height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
-  /* Le background est défini au niveau du body ou de l'app root, on reste transparent */
   background-color: transparent;
 }
 
-/* --- Header & Footer (fixes) --- */
+/* --- Header & Footer (fixes, en dehors du main) --- */
 .chat-header,
 .chat-footer {
-  flex-shrink: 0;
-  position: sticky;
+  flex-shrink: 0; /* Empêche le header/footer de se réduire */
   z-index: 10;
-  background: transparent;
+  position: relative; /* ou static, mais pas sticky dans ce contexte */
 }
 
 .chat-header {
-  top: 0;
   height: var(--h);
-  padding: clamp(12px, 2vh, 16px) clamp(16px, 4vw, 56px); /* Conserve padding existant */
-  color: #F8F5E1; /* Conserve couleur existante */
-  text-align: center; /* Conserve alignement existant */
-  border-bottom: none;
+  padding: clamp(12px, 2vh, 16px) clamp(16px, 4vw, 56px);
+  color: #F8F5E1;
+  text-align: center;
 }
 
 .chat-footer {
-  bottom: 0;
-  border-top: none;
-  /* Hauteur fixe, identique au header pour l'harmonie */
   height: var(--h);
-  /* Centrage vertical du formulaire */
   display: flex;
   align-items: center;
-  /* Le padding est maintenant géré par le formulaire interne */
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* --- Zone de contenu principale (avec scroll unique) --- */
+/* --- Zone de contenu principale --- */
 .chat-main {
   flex: 1 1 auto; /* Prend toute la hauteur restante */
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  /* Le scroll-padding est maintenant dynamique, basé sur la hauteur réelle du footer */
-  scroll-padding-bottom: var(--footer-h, var(--f));
+  min-height: 0; /* Nécessaire pour que le flex-shrink fonctionne dans certains navigateurs */
   display: flex;
   flex-direction: column;
   align-items: center; /* Centre le contenu horizontalement */
+  overflow: hidden; /* Empêche le .chat-main de scroller, seul le .chat-body le fera */
 }
 
-/* --- Sections Rail (tirage) & Body (chat) --- */
-.chat-rail,
+/* --- Conteneur scrollable unique --- */
 .chat-body {
-  max-width: var(--content-w);
+  flex: 1 1 auto;
   width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  position: static; /* Important: pas de position:absolute */
-}
-
-.chat-rail {
-  /* La marge basse est maintenant gérée par une variable pour la cohérence */
-  margin-top: 0;
-  margin-bottom: var(--rail-gap);
-  padding: clamp(12px, 2.5vh, 24px) 0; /* Conserve padding vertical existant */
-}
-
-.chat-body {
-  margin-top: 0;
-  margin-bottom: 0;
-  /* On enlève le padding-bottom fixe de la règle 'padding' */
-  padding: 0 8px;
-  /* On ajoute un padding dynamique qui correspond à la hauteur du footer.
-     +16px pour conserver l'espacement initial. */
-  padding-bottom: calc(var(--footer-h, var(--f)) + 16px);
+  max-width: var(--content-w);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 8px; /* Padding horizontal pour les bulles */
   display: flex;
   flex-direction: column;
-  gap: 16px; /* Conserve le gap entre les bulles */
+}
+
+/* --- Sections Rail (tirage) & Messages --- */
+.chat-rail {
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: var(--rail-gap);
+  padding: clamp(12px, 2.5vh, 24px) 0;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 16px; /* Espace en bas des messages, avant la fin de la zone scrollable */
 }
 
 /* --- Animation d'apparition du footer --- */
@@ -140,4 +126,21 @@
 .page-chat .final-card-outer {
   width: min(100%, var(--card-w, var(--card-deck-w)));
   aspect-ratio: 9.27 / 18;
+}
+
+/* --- Styles pour la modale du tirage --- */
+.spread-modal-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px; /* Un peu d'air autour */
+  box-sizing: border-box;
+}
+
+/* On s'assure que le rail dans la modale a de l'espace pour grandir */
+.spread-modal-container .final-rail {
+  width: 100%;
+  max-width: var(--content-w); /* Respecte la largeur max du contenu */
 }
