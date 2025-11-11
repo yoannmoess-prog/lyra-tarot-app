@@ -80,7 +80,11 @@
 .chat-body {
   margin-top: 0;
   margin-bottom: 0;
-  padding: 0 8px 16px; /* Ajout d'un padding en bas pour l'espace final */
+  /* On enlève le padding-bottom fixe de la règle 'padding' */
+  padding: 0 8px;
+  /* On ajoute un padding dynamique qui correspond à la hauteur du footer.
+     +16px pour conserver l'espacement initial. */
+  padding-bottom: calc(var(--footer-h, var(--f)) + 16px);
   display: flex;
   flex-direction: column;
   gap: 16px; /* Conserve le gap entre les bulles */

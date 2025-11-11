@@ -136,6 +136,7 @@ export default function ChatPage({ spreadId }) {
   const typingRef = useRef(null);
   const footerRef = useRef(null);
   const railRef = useRef(null);
+  const modalRailRef = useRef(null);
 
   // Rail de cartes responsive
   useEffect(() => {
@@ -143,6 +144,14 @@ export default function ChatPage({ spreadId }) {
     const ro = fitRail(railRef.current, { spreadId });
     return () => ro?.disconnect();
   }, [spreadId]);
+
+  // Rail de la modale responsive
+  useEffect(() => {
+    if (isSpreadModalOpen) {
+      const ro = fitRail(modalRailRef.current, { spreadId });
+      return () => ro?.disconnect();
+    }
+  }, [isSpreadModalOpen, spreadId]);
 
   // Auto-scroll logic
   useEffect(() => {
@@ -389,7 +398,7 @@ export default function ChatPage({ spreadId }) {
           <Modal onClose={() => setIsSpreadModalOpen(false)}>
             <div className="spread-modal-container">
               {/* Le rail dans la modale réutilise la même logique de rendu pour garantir la cohérence */}
-              <div className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
+              <div ref={modalRailRef} className={`final-rail sealed ${spreadId === 'spread-truth' ? 'rail-truth' : 'rail-advice'}`}>
                 {renderRailContent({ isModal: true })}
               </div>
             </div>
