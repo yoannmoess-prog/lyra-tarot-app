@@ -359,23 +359,22 @@ export default function ChatPage({ spreadId }) {
 
   return (
     <div className={`page-chat ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
+      <header className="chat-header">
+        <div className="p5-fixed-title" role="button" tabIndex="0">
+          {question}
+        </div>
+        <div className="header-icon-container show">
+          <button
+            className="header-icon-btn"
+            onClick={() => setIsSpreadModalOpen(true)}
+            aria-label="Afficher le tirage de cartes"
+            title="Afficher le tirage"
+          >
+            <span className="ms-icon material-symbols-outlined">playing_cards</span>
+          </button>
+        </div>
+      </header>
       <main className="chat-main" ref={mainRef}>
-        <header className="chat-header glass">
-          <div className="p5-fixed-title" role="button" tabIndex="0">
-            {question}
-          </div>
-          <div className="header-icon-container show">
-            <button
-              className="header-icon-btn"
-              onClick={() => setIsSpreadModalOpen(true)}
-              aria-label="Afficher le tirage de cartes"
-              title="Afficher le tirage"
-            >
-              <span className="ms-icon material-symbols-outlined">playing_cards</span>
-            </button>
-          </div>
-        </header>
-
         <section id="chat-body" className="chat-body" ref={bodyRef} aria-live="polite">
           {/* Le rail et les bulles sont maintenant dans le même conteneur scrollable */}
           <div className="chat-rail" id="chat-rail">
@@ -431,33 +430,32 @@ export default function ChatPage({ spreadId }) {
             </div>
           )}
         </section>
-
-        <footer ref={footerRef} className={`chat-footer glass ${chatVisible ? " show" : ""}`}>
-          <div className="you-block">
-            <form onSubmit={onYouSubmit} className="you-form">
-              <input
-                ref={inputRef}
-                className="you-input"
-                placeholder={!youInputShown ? "Lyra est en train d'écrire..." : "Message à Lyra"}
-                value={youMessage}
-                onChange={(e) => setYouMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    onYouSubmit();
-                  }
-                }}
-                disabled={!youInputShown}
-              />
-              <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer" disabled={!youInputShown}>
-                <span className="material-symbols-outlined" style={{ color: youMessage ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)' }}>
-                  arrow_forward
-                </span>
-              </button>
-            </form>
-          </div>
-        </footer>
       </main>
+      <footer ref={footerRef} className={`chat-footer ${chatVisible ? " show" : ""}`}>
+        <div className="you-block">
+          <form onSubmit={onYouSubmit} className="you-form">
+            <input
+              ref={inputRef}
+              className="you-input"
+              placeholder={!youInputShown ? "Lyra est en train d'écrire..." : "Message à Lyra"}
+              value={youMessage}
+              onChange={(e) => setYouMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  onYouSubmit();
+                }
+              }}
+              disabled={!youInputShown}
+            />
+            <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer" disabled={!youInputShown}>
+              <span className="material-symbols-outlined" style={{ color: youMessage ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)' }}>
+                arrow_forward
+              </span>
+            </button>
+          </form>
+        </div>
+      </footer>
 
       {/* Modals are moved here, outside of the main layout flow, which is cleaner. */}
       {zoomedCard !== null && (
