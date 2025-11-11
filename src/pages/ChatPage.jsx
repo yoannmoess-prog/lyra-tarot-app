@@ -139,6 +139,17 @@ export default function ChatPage({ spreadId }) {
   const railRef = useRef(null);
   const modalRailRef = useRef(null);
 
+  // Auto-focus de l'input quand c'est au tour de l'utilisateur
+  useEffect(() => {
+    if (youInputShown) {
+      // On utilise requestAnimationFrame pour s'assurer que le focus est appliqué
+      // après que l'input soit bien "enabled" et visible, évitant des "race conditions".
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
+    }
+  }, [youInputShown]);
+
   // Rail de cartes responsive
   useEffect(() => {
     // On passe le spreadId pour que la fonction puisse appliquer la logique de hauteur si nécessaire
