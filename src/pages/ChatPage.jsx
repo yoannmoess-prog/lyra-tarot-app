@@ -159,7 +159,9 @@ export default function ChatPage({ spreadId }) {
     // On cible systématiquement l'ancre, qui se trouve après le dernier message ou la bulle de frappe.
     const scrollAnchor = bodyRef.current?.querySelector('#scroll-anchor');
     if (scrollAnchor) {
-      scrollAnchor.scrollIntoView({ behavior: "smooth", block: "end" });
+      requestAnimationFrame(() => {
+        scrollAnchor.scrollIntoView({ behavior: "smooth", block: "end" });
+      });
     }
   }, [conv.length, lyraTyping]);
 
@@ -416,7 +418,7 @@ export default function ChatPage({ spreadId }) {
                   </div>
                 )
               )}
-              {lyraTyping && (
+              {isChatReady && lyraTyping && (
                 <div ref={typingRef} className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire">
                   <div className="dots" role="status" aria-hidden="true">
                     <span></span>
