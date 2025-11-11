@@ -2,7 +2,7 @@
 
 :root {
   --h: 64px; /* Hauteur header */
-  --f: var(--h); /* Le footer a maintenant la même hauteur que le header */
+  --f: 88px; /* Hauteur footer */
   --content-w: min(900px, 92vw); /* Largeur max du contenu */
   --rail-gap: clamp(48px, 7vh, 80px); /* Espace vertical réduit de moitié */
   --card-deck-w: min(18vw, 150px); /* Largeur de référence des cartes, vient de Page4.css */
@@ -22,10 +22,11 @@
 .chat-footer {
   flex-shrink: 0; /* Empêche le header/footer de se réduire */
   z-index: 10;
-  position: relative; /* ou static, mais pas sticky dans ce contexte */
+  position: sticky;
 }
 
 .chat-header {
+  top: 0;
   height: var(--h);
   padding: clamp(12px, 2vh, 16px) clamp(16px, 4vw, 56px);
   color: #F8F5E1;
@@ -33,7 +34,8 @@
 }
 
 .chat-footer {
-  height: var(--h);
+  bottom: 0;
+  height: var(--f);
   display: flex;
   align-items: center;
   padding-bottom: env(safe-area-inset-bottom);
@@ -57,6 +59,8 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 0 8px; /* Padding horizontal pour les bulles */
+  padding-top: var(--h);
+  padding-bottom: var(--f);
   display: flex;
   flex-direction: column;
 }
@@ -143,4 +147,11 @@
 .spread-modal-container .final-rail {
   width: 100%;
   max-width: var(--content-w); /* Respecte la largeur max du contenu */
+}
+
+.glass {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  border: 1px solid rgba(255,255,255,0.14);
 }

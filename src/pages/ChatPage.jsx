@@ -359,7 +359,7 @@ export default function ChatPage({ spreadId }) {
 
   return (
     <div className={`page-chat ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
-      <header className="chat-header">
+      <header className="chat-header glass">
         <div className="p5-fixed-title" role="button" tabIndex="0">
           {question}
         </div>
@@ -431,7 +431,7 @@ export default function ChatPage({ spreadId }) {
           )}
         </section>
       </main>
-      <footer ref={footerRef} className={`chat-footer ${chatVisible ? " show" : ""}`}>
+      <footer ref={footerRef} className={`chat-footer glass ${chatVisible ? " show" : ""}`}>
         <div className="you-block">
           <form onSubmit={onYouSubmit} className="you-form">
             <input
