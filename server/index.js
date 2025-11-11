@@ -151,7 +151,7 @@ function buildMessages({
   turnIndex,
 }) {
   const safeCards = Array.isArray(cards) ? cards : [];
-  const cardNames = safeCards.join(", ");
+  const cardNames = safeCards.map((c) => c.name || "Carte inconnue").join(", ");
   const name = n || "l'utilisateur";
 
   const positionsMemo =
