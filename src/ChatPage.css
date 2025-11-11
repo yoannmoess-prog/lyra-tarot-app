@@ -17,12 +17,37 @@
   background-color: transparent;
 }
 
-/* --- Header & Footer (fixes, en dehors du main) --- */
+/* --- Zone de contenu principale --- */
+.chat-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Le main devient le seul conteneur scrollable */
+  position: relative; /* Contexte pour les éléments sticky */
+}
+
+/* --- Conteneur du contenu scrollable --- */
+.chat-body {
+  width: 100%;
+  max-width: var(--content-w);
+  margin: 0 auto; /* Centre le contenu */
+  padding: 0 8px; /* Padding horizontal pour les bulles */
+  display: flex;
+  flex-direction: column;
+  min-height: 100%; /* S'assure que le body prend toute la hauteur */
+}
+
+
+/* --- Header & Footer (sticky, à l'intérieur de main) --- */
 .chat-header,
 .chat-footer {
-  flex-shrink: 0; /* Empêche le header/footer de se réduire */
+  flex-shrink: 0;
   z-index: 10;
   position: sticky;
+  width: 100%;
+  max-width: var(--content-w);
+  margin: 0 auto;
 }
 
 .chat-header {
@@ -41,43 +66,23 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* --- Zone de contenu principale --- */
-.chat-main {
-  flex: 1 1 auto; /* Prend toute la hauteur restante */
-  min-height: 0; /* Nécessaire pour que le flex-shrink fonctionne dans certains navigateurs */
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centre le contenu horizontalement */
-  overflow: hidden; /* Empêche le .chat-main de scroller, seul le .chat-body le fera */
-}
-
-/* --- Conteneur scrollable unique --- */
-.chat-body {
-  flex: 1 1 auto;
-  width: 100%;
-  max-width: var(--content-w);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 0 8px; /* Padding horizontal pour les bulles */
-  padding-top: var(--h);
-  padding-bottom: var(--f);
-  display: flex;
-  flex-direction: column;
-}
 
 /* --- Sections Rail (tirage) & Messages --- */
 .chat-rail {
   width: 100%;
   margin-top: 0;
-  margin-bottom: var(--rail-gap);
   padding: clamp(12px, 2.5vh, 24px) 0;
+  padding-top: calc(var(--h) + clamp(12px, 2.5vh, 24px)); /* Espace pour le header */
+  margin-bottom: var(--rail-gap);
 }
 
 .messages {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-bottom: 16px; /* Espace en bas des messages, avant la fin de la zone scrollable */
+  padding-bottom: calc(var(--f) + 16px); /* Espace pour le footer */
+  flex-grow: 1; /* Permet aux messages de pousser le contenu */
+  justify-content: flex-end; /* Aligne les bulles en bas */
 }
 
 /* --- Animation d'apparition du footer --- */
@@ -93,40 +98,23 @@
 }
 
 /* --- Rail de cartes – configuration et comportement --- */
-/* On préfixe avec .page-chat pour éviter les fuites de style sur /spread-truth */
-/* Styles de base communs aux deux types de tirages */
 .page-chat .rail-truth, .page-chat .rail-advice {
   display: grid;
-  /* Centrer les colonnes de la grille elles-mêmes, et non seulement leur contenu */
   justify-content: center;
   align-items: start;
   gap: var(--gap, clamp(24px, 4vw, 100px));
   width: 100%;
-  /* Définir la taille des colonnes sur la taille des cartes, pas sur des fractions de l'espace */
   grid-template-columns: repeat(var(--cols, 3), var(--card-w, var(--card-deck-w)));
 }
 
-/* Style spécifique pour rail-advice (garde la disposition en ligne) */
-.page-chat .rail-advice {
-  /* La disposition est maintenant gérée par la règle commune */
-}
-
-/* Style spécifique pour rail-truth (disposition 1-up 1-down) */
 .page-chat .rail-truth {
-  margin-bottom: 8rem; /* Ajoute de l'espace pour la carte décalée */
+  margin-bottom: 8rem;
 }
 
-/* On décale la deuxième carte (B) vers le bas pour répliquer le layout de /spread-truth */
 .rail-truth .final-card-outer[data-pos='B'] {
   transform: translateY(50%);
 }
 
-/*
-  L'ordre de retournement est maintenant géré entièrement en JavaScript via des timeouts
-  pour un contrôle plus précis de la séquence.
-*/
-
-/* Styles communs pour la taille des cartes */
 .page-chat .final-card-outer {
   width: min(100%, var(--card-w, var(--card-deck-w)));
   aspect-ratio: 9.27 / 18;
@@ -139,14 +127,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 24px; /* Un peu d'air autour */
+  padding: 24px;
   box-sizing: border-box;
 }
 
-/* On s'assure que le rail dans la modale a de l'espace pour grandir */
 .spread-modal-container .final-rail {
   width: 100%;
-  max-width: var(--content-w); /* Respecte la largeur max du contenu */
+  max-width: var(--content-w);
 }
 
 .glass {
