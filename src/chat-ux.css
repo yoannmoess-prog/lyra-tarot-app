@@ -6,7 +6,7 @@
   border-radius: 24px;
   max-width: 90%;
   width: fit-content;
-  min-height: 44px; /* Hauteur approx d'une bulle vide ou typing */
+  min-height: 22px; /* Hauteur approx d'une bulle vide ou typing */
   box-sizing: border-box; /* S'assure que le padding est inclus dans la hauteur */
 }
 
