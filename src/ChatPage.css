@@ -53,8 +53,8 @@
   flex: 1 1 auto; /* Prend toute la hauteur restante */
   overflow-y: auto;
   overscroll-behavior: contain;
-  /* Ajoute une marge de sécurité en bas pour que le contenu ne soit pas masqué par le footer lors du défilement */
-  scroll-padding-bottom: var(--f);
+  /* Le scroll-padding est maintenant dynamique, basé sur la hauteur réelle du footer */
+  scroll-padding-bottom: var(--footer-h, var(--f));
   display: flex;
   flex-direction: column;
   align-items: center; /* Centre le contenu horizontalement */
@@ -84,10 +84,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px; /* Conserve le gap entre les bulles */
-  /* Aligne les bulles en bas du conteneur, juste au-dessus du footer */
-  justify-content: flex-end;
-  /* Assure que le conteneur prend toute la hauteur disponible pour que le justify-content fonctionne */
-  flex-grow: 1;
 }
 
 /* --- Animation d'apparition du footer --- */
@@ -127,7 +123,7 @@
 }
 
 /* On décale la deuxième carte (B) vers le bas pour répliquer le layout de /spread-truth */
-.page-chat .rail-truth .final-card-outer:nth-child(2) {
+.rail-truth .final-card-outer[data-pos='B'] {
   transform: translateY(50%);
 }
 

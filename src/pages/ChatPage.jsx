@@ -10,10 +10,7 @@ import "../toast.css";
 import "../chat-ux.css";
 
 import { streamLyra } from "../utils/streamLyra";
-// import { TRUTH_ORDER, ADVICE_ORDER } from "../utils/constants";
-const TRUTH_ORDER = ['A', 'C', 'B'];
-const ADVICE_ORDER = ['A', 'B', 'C'];
-
+import { TRUTH_ORDER, ADVICE_ORDER } from "../utils/constants";
 
 /* ---------------- Persistance conversation ---------------- */
 // La clé de stockage est maintenant dynamique et dépend du spreadId
@@ -153,6 +150,25 @@ export default function ChatPage({ spreadId }) {
     // Utiliser "end" pour s'assurer que la vue se cale en bas, au-dessus du footer (grâce au scroll-padding)
     target?.scrollIntoView({ block: "end", behavior: "smooth" });
     }, [conv.length, lyraTyping]);
+
+  // Mesure dynamique du footer pour un scroll-padding précis
+  useLayoutEffect(() => {
+    const mainEl = mainRef.current;
+    const footerEl = footerRef.current;
+    if (!mainEl || !footerEl) return;
+
+    const ro = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        const height = entry.contentRect.height;
+        // Applique la hauteur mesurée comme une variable CSS sur le controuteur scrollable
+        mainEl.style.setProperty('--footer-h', `${height}px`);
+      }
+    });
+
+    ro.observe(footerEl);
+
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const isNewSession = state?.isNew;
