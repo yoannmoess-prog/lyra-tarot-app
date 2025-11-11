@@ -150,6 +150,14 @@ export default function ChatPage({ spreadId }) {
     }
   }, [youInputShown]);
 
+  // Redimensionnement automatique du textarea
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = "auto";
+      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
+    }
+  }, [youMessage]);
+
   // Rail de cartes responsive
   useEffect(() => {
     // On passe le spreadId pour que la fonction puisse appliquer la logique de hauteur si nécessaire
@@ -455,9 +463,10 @@ export default function ChatPage({ spreadId }) {
       <footer ref={footerRef} className={`chat-footer ${chatVisible ? " show" : ""}`}>
         <div className="you-block">
           <form onSubmit={onYouSubmit} className="you-form">
-            <input
+            <textarea
               ref={inputRef}
               className="you-input"
+              rows="1"
               placeholder={!youInputShown ? "Lyra est en train d'écrire..." : "Message à Lyra"}
               value={youMessage}
               onChange={(e) => setYouMessage(e.target.value)}
@@ -469,8 +478,11 @@ export default function ChatPage({ spreadId }) {
               }}
               disabled={!youInputShown}
             />
-            <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer" disabled={!youInputShown}>
-              <span className="material-symbols-outlined" style={{ color: youMessage ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)' }}>
+            <button type="button" className="mic-btn" aria-label="Enregistrer un message vocal" title="Bientôt disponible" disabled>
+              <span className="material-symbols-outlined">mic</span>
+            </button>
+            <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer" disabled={!youInputShown || !youMessage}>
+              <span className="material-symbols-outlined">
                 arrow_forward
               </span>
             </button>
