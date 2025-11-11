@@ -129,7 +129,7 @@ export default function ChatPage({ spreadId }) {
   const [zoomedCard, setZoomedCard] = useState(null);
   const [isSpreadModalOpen, setIsSpreadModalOpen] = useState(false);
   const [conversationState, setConversationState] = useState('introduction');
-  const [isChatReady, setIsChatReady] = useState(false); // Nouvel état pour contrôler le timing
+  const [isLayoutStable, setLayoutStable] = useState(false);
 
   const mainRef = useRef(null);
   const inputRef = useRef(null);
@@ -159,32 +159,17 @@ export default function ChatPage({ spreadId }) {
     // On cible systématiquement l'ancre, qui se trouve après le dernier message ou la bulle de frappe.
     const scrollAnchor = bodyRef.current?.querySelector('#scroll-anchor');
     if (scrollAnchor) {
-      requestAnimationFrame(() => {
-        scrollAnchor.scrollIntoView({ behavior: "smooth", block: "end" });
-      });
+      scrollAnchor.scrollIntoView({ behavior: "smooth", block: "end" });
     }
   }, [conv.length, lyraTyping]);
 
-  // Effet pour gérer la préparation du chat après qu'il soit devenu visible
+  // On s'assure que le layout est stable avant tout premier rendu.
+  // C'est la clé pour éviter le "saut" de la première bulle.
   useLayoutEffect(() => {
-    if (chatVisible && !isChatReady) {
-      // On utilise un double requestAnimationFrame pour s'assurer que le DOM est
-      // entièrement calculé et "peint" par le navigateur avant de déclencher
-      // la première animation (la bulle "..."). C'est la méthode la plus fiable
-      // pour éviter un "flash" où la bulle apparaîtrait au mauvais endroit.
-      let frameId1, frameId2;
-      frameId1 = requestAnimationFrame(() => {
-        frameId2 = requestAnimationFrame(() => {
-          setIsChatReady(true);
-        });
-      });
-
-      return () => {
-        cancelAnimationFrame(frameId1);
-        cancelAnimationFrame(frameId2);
-      };
-    }
-  }, [chatVisible, isChatReady]);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setLayoutStable(true));
+    });
+  }, []);
 
   useEffect(() => {
     const isNewSession = state?.isNew;
@@ -196,7 +181,7 @@ export default function ChatPage({ spreadId }) {
       setSealed(true);
       setChatVisible(true);
       setYouInputShown(true);
-      setIsChatReady(true); // Si on charge une conversation, le chat est prêt
+      // isLayoutStable est géré par son propre useLayoutEffect, pas besoin de le forcer ici.
       return;
     }
 
@@ -207,7 +192,6 @@ export default function ChatPage({ spreadId }) {
     setChatVisible(false);
     setYouInputShown(false);
     setLyraTyping(false);
-    setIsChatReady(false); // Réinitialiser l'état de préparation
 
     // --- Séquence d'animation contrôlée en JS ---
     const timeouts = [];
@@ -288,15 +272,15 @@ export default function ChatPage({ spreadId }) {
   };
 
   useEffect(() => {
-    // La conversation démarre seulement quand le chat est prêt et vide
-    if (!isChatReady || conv.length > 0) return;
+    // La conversation démarre seulement quand le layout est stable et que la conv est vide.
+    if (!isLayoutStable || conv.length > 0) return;
 
     if (conversationState === 'introduction') {
       const cardNames = finalNames.filter(Boolean);
       const payload = { name: niceName, question, cards: cardNames, spreadId, userMessage: "", history: [] };
       showLyraStreamingResponse(payload, []);
     }
-  }, [isChatReady, conv.length, niceName, question, finalNames, spreadId, conversationState]);
+  }, [isLayoutStable, conv.length, niceName, question, finalNames, spreadId, conversationState]);
 
   const onYouSubmit = (e) => {
     if (e) e.preventDefault();
@@ -418,15 +402,23 @@ export default function ChatPage({ spreadId }) {
                   </div>
                 )
               )}
-              {isChatReady && lyraTyping && (
-                <div ref={typingRef} className="bubble lyra typing" aria-live="polite" aria-label="Lyra est en train d’écrire">
+              {/* Le "BottomSlot" persistant. Il est toujours là pour occuper l'espace. */}
+              <div
+                id="bottom-slot"
+                ref={typingRef}
+                className={`bubble lyra ${lyraTyping ? "typing" : "empty"}`}
+                aria-live="polite"
+                aria-label={lyraTyping ? "Lyra est en train d’écrire" : undefined}
+              >
+                {/* Le contenu (les points) n'est rendu que si nécessaire. */}
+                {isLayoutStable && lyraTyping && (
                   <div className="dots" role="status" aria-hidden="true">
                     <span></span>
                     <span></span>
                     <span></span>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
               {/* L'ancre pour le défilement est placée à la fin des messages */}
               <div id="scroll-anchor" />
             </div>
