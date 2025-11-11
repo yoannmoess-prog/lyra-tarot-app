@@ -159,7 +159,11 @@ export default function ChatPage({ spreadId }) {
     // On cible systématiquement l'ancre, qui se trouve après le dernier message ou la bulle de frappe.
     const scrollAnchor = bodyRef.current?.querySelector('#scroll-anchor');
     if (scrollAnchor) {
-      scrollAnchor.scrollIntoView({ behavior: "smooth", block: "end" });
+      // On attend la prochaine peinture du navigateur pour s'assurer que tous les éléments
+      // (y compris la bulle "typing") sont bien rendus avant de scroller.
+      requestAnimationFrame(() => {
+        scrollAnchor.scrollIntoView({ behavior: "smooth", block: "end" });
+      });
     }
   }, [conv.length, lyraTyping]);
 
@@ -402,21 +406,23 @@ export default function ChatPage({ spreadId }) {
                   </div>
                 )
               )}
-              {/* Le "BottomSlot" persistant. Il est toujours là pour occuper l'espace. */}
-              <div
-                id="bottom-slot"
-                ref={typingRef}
-                className={`bubble lyra ${lyraTyping ? "typing" : "empty"}`}
-                aria-live="polite"
-                aria-label={lyraTyping ? "Lyra est en train d’écrire" : undefined}
-              >
-                {/* Le contenu (les points) n'est rendu que si nécessaire. */}
-                {isLayoutStable && lyraTyping && (
-                  <div className="dots" role="status" aria-hidden="true">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+              {/* Le slot permanent pour la bulle "typing" */}
+              <div id="bottom-slot">
+                {lyraTyping ? (
+                  <div
+                    ref={typingRef}
+                    className="bubble lyra typing"
+                    aria-live="polite"
+                    aria-label="Lyra est en train d’écrire"
+                  >
+                    <div className="dots" role="status" aria-hidden="true">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
                   </div>
+                ) : (
+                  <div className="bubble empty" />
                 )}
               </div>
               {/* L'ancre pour le défilement est placée à la fin des messages */}
