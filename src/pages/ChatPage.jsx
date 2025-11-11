@@ -129,6 +129,7 @@ export default function ChatPage({ spreadId }) {
   const [zoomedCard, setZoomedCard] = useState(null);
   const [isSpreadModalOpen, setIsSpreadModalOpen] = useState(false);
   const [conversationState, setConversationState] = useState('introduction');
+  const [isChatReady, setIsChatReady] = useState(false); // Nouvel état pour contrôler le timing
 
   const mainRef = useRef(null);
   const inputRef = useRef(null);
@@ -162,6 +163,18 @@ export default function ChatPage({ spreadId }) {
     }
   }, [conv.length, lyraTyping]);
 
+  // Effet pour gérer la préparation du chat après qu'il soit devenu visible
+  useEffect(() => {
+    if (chatVisible && !isChatReady) {
+      // Une fois le conteneur visible, on attend un court instant pour que le layout
+      // se stabilise avant de le marquer comme "prêt".
+      const timer = setTimeout(() => {
+        setIsChatReady(true);
+      }, 100); // Un délai court est suffisant
+      return () => clearTimeout(timer);
+    }
+  }, [chatVisible, isChatReady]);
+
   useEffect(() => {
     const isNewSession = state?.isNew;
     const savedConv = loadConv(spreadId);
@@ -172,6 +185,7 @@ export default function ChatPage({ spreadId }) {
       setSealed(true);
       setChatVisible(true);
       setYouInputShown(true);
+      setIsChatReady(true); // Si on charge une conversation, le chat est prêt
       return;
     }
 
@@ -182,6 +196,7 @@ export default function ChatPage({ spreadId }) {
     setChatVisible(false);
     setYouInputShown(false);
     setLyraTyping(false);
+    setIsChatReady(false); // Réinitialiser l'état de préparation
 
     // --- Séquence d'animation contrôlée en JS ---
     const timeouts = [];
@@ -220,17 +235,8 @@ export default function ChatPage({ spreadId }) {
 
   const showLyraStreamingResponse = async (payload, baseConv) => {
     setYouInputShown(false);
-
-    // Pour la toute première réponse, on attend un "tick" de rendu pour
-    // s'assurer que le conteneur de chat est bien dessiné avant d'ajouter
-    // la bulle de frappe. Cela évite un bug de positionnement initial.
-    const isFirstLyraResponse = baseConv.length === 0;
-    if (isFirstLyraResponse) {
-      await new Promise(resolve => requestAnimationFrame(resolve));
-    }
-
     setLyraTyping(true);
-    const thinkingTime = isFirstLyraResponse ? getRandomInitialThinkingTime() : getRandomThinkingTime();
+    const thinkingTime = baseConv.length > 0 ? getRandomThinkingTime() : getRandomInitialThinkingTime();
     await new Promise(resolve => setTimeout(resolve, thinkingTime));
 
     let fullText = "";
@@ -271,14 +277,15 @@ export default function ChatPage({ spreadId }) {
   };
 
   useEffect(() => {
-    if (!chatVisible || conv.length > 0) return;
+    // La conversation démarre seulement quand le chat est prêt et vide
+    if (!isChatReady || conv.length > 0) return;
 
     if (conversationState === 'introduction') {
       const cardNames = finalNames.filter(Boolean);
       const payload = { name: niceName, question, cards: cardNames, spreadId, userMessage: "", history: [] };
       showLyraStreamingResponse(payload, []);
     }
-  }, [chatVisible, conv.length, niceName, question, finalNames, spreadId, conversationState]);
+  }, [isChatReady, conv.length, niceName, question, finalNames, spreadId, conversationState]);
 
   const onYouSubmit = (e) => {
     if (e) e.preventDefault();
