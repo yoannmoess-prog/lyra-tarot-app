@@ -164,14 +164,23 @@ export default function ChatPage({ spreadId }) {
   }, [conv.length, lyraTyping]);
 
   // Effet pour gérer la préparation du chat après qu'il soit devenu visible
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (chatVisible && !isChatReady) {
-      // Une fois le conteneur visible, on attend un court instant pour que le layout
-      // se stabilise avant de le marquer comme "prêt".
-      const timer = setTimeout(() => {
-        setIsChatReady(true);
-      }, 100); // Un délai court est suffisant
-      return () => clearTimeout(timer);
+      // On utilise un double requestAnimationFrame pour s'assurer que le DOM est
+      // entièrement calculé et "peint" par le navigateur avant de déclencher
+      // la première animation (la bulle "..."). C'est la méthode la plus fiable
+      // pour éviter un "flash" où la bulle apparaîtrait au mauvais endroit.
+      let frameId1, frameId2;
+      frameId1 = requestAnimationFrame(() => {
+        frameId2 = requestAnimationFrame(() => {
+          setIsChatReady(true);
+        });
+      });
+
+      return () => {
+        cancelAnimationFrame(frameId1);
+        cancelAnimationFrame(frameId2);
+      };
     }
   }, [chatVisible, isChatReady]);
 
