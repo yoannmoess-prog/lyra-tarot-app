@@ -431,7 +431,7 @@ export default function ChatPage({ spreadId }) {
           )}
         </section>
       </main>
-      <footer ref={footerRef} className={`chat-footer ${chatVisible ? " show" : ""}`}>
+      <footer ref={footerRef} className={`chat-footer glass ${chatVisible ? " show" : ""}`}>
         <div className="you-block">
           <form onSubmit={onYouSubmit} className="you-form">
             <input

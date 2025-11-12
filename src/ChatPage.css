@@ -1,92 +1,85 @@
 /* src/ChatPage.css - Refonte layout 2024 */
 
 :root {
-  --header-h: 64px; /* Hauteur header */
-  --footer-h: 88px; /* Hauteur footer */
+  --h: 64px; /* Hauteur header */
+  --f: var(--h); /* Le footer a maintenant la même hauteur que le header */
   --content-w: min(900px, 92vw); /* Largeur max du contenu */
   --rail-gap: clamp(48px, 7vh, 80px); /* Espace vertical réduit de moitié */
   --card-deck-w: min(18vw, 150px); /* Largeur de référence des cartes, vient de Page4.css */
 }
 
-/* --- Glassmorphism (uniquement pour le header) --- */
+/* --- Layout principal --- */
+.page-chat {
+  /*
+    Le layout de la page est maintenant un flux de document standard.
+    Le scroll se fait sur le body/html, pas sur un conteneur interne.
+    Ceci est essentiel pour que `position: sticky` fonctionne de manière fiable.
+  */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* S'assure que la page prend au moins toute la hauteur de l'écran */
+  background-color: transparent;
+}
+
+/* --- Glassmorphism Effect --- */
 .glass {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px) saturate(120%);
   -webkit-backdrop-filter: blur(12px) saturate(120%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-/* --- Layout principal --- */
-.page-chat {
-  height: 100vh;
-  height: 100svh;
-  display: flex;
-  flex-direction: column;
-  background-color: transparent;
-  overflow-y: auto; /* Le conteneur principal gère le défilement */
-  overscroll-behavior: contain;
-}
-
-/* --- Header & Footer --- */
-.chat-header,
-.chat-footer {
-  flex-shrink: 0;
-  z-index: 10;
-  position: sticky;
-  width: 100%; /* Assure que le header/footer prennent toute la largeur */
-}
-
+/* --- Header & Footer (Sticky) --- */
 .chat-header {
+  position: sticky;
   top: 0;
-  height: var(--header-h);
+  z-index: 10;
+  height: var(--h);
   padding: clamp(12px, 2vh, 16px) clamp(16px, 4vw, 56px);
   color: #F8F5E1;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .chat-footer {
+  position: sticky;
   bottom: 0;
-  height: var(--footer-h);
+  z-index: 10;
+  height: var(--h);
   display: flex;
   align-items: center;
   padding-bottom: env(safe-area-inset-bottom);
-  background: rgb(10, 27, 54); /* Fond opaque pour le footer */
+  flex-shrink: 0;
 }
 
 /* --- Zone de contenu principale --- */
 .chat-main {
   flex: 1 1 auto;
-  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative; /* Pour le pseudo-élément de fondu */
 }
 
-/* Effet de fondu au-dessus du footer */
-.chat-main::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: var(--footer-h);
-  background: linear-gradient(to top, rgb(10, 27, 54) 20%, transparent);
-  z-index: 5;
-  pointer-events: none;
-}
-
-/* --- Conteneur du contenu (rail + messages) --- */
+/* --- Conteneur de contenu --- */
 .chat-body {
-  flex: 1 1 auto;
   width: 100%;
   max-width: var(--content-w);
-  padding-top: var(--header-h, 64px);
-  padding-bottom: var(--footer-h, 88px);
+  padding: 0 8px;
   display: flex;
   flex-direction: column;
+  flex-grow: 1; /* S'assure qu'il remplit l'espace dans .chat-main */
+
+  /*
+    Les paddings suivants sont cruciaux. Ils créent un espace vide
+    en haut et en bas de la zone de contenu, de la même hauteur
+    que le header et le footer.
+    Le contenu scrollable ne sera donc JAMAIS recouvert par les
+    éléments sticky, tout en donnant l'illusion de passer dessous.
+  */
+  padding-top: var(--h);
+  padding-bottom: var(--f);
 }
+
 
 /* --- Sections Rail (tirage) & Messages --- */
 .chat-rail {
@@ -100,7 +93,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-bottom: 16px;
+  padding-bottom: 16px; /* Espace en bas des messages, avant la fin de la zone scrollable */
 }
 
 /* --- Animation d'apparition du footer --- */
@@ -124,6 +117,8 @@
   width: 100%;
   grid-template-columns: repeat(var(--cols, 3), var(--card-w, var(--card-deck-w)));
 }
+
+.page-chat .rail-advice {}
 
 .page-chat .rail-truth {
   margin-bottom: 8rem;
