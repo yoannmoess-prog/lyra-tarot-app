@@ -10,92 +10,65 @@
 
 /* --- Layout principal --- */
 .page-chat {
-  /*
-    Le layout de la page est maintenant un flux de document standard.
-    Le scroll se fait sur le body/html, pas sur un conteneur interne.
-    Ceci est essentiel pour que `position: sticky` fonctionne de manière fiable.
-  */
+  height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* S'assure que la page prend au moins toute la hauteur de l'écran */
   background-color: transparent;
 }
 
-/* --- Glassmorphism Effect --- */
-.glass {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px) saturate(120%);
-  -webkit-backdrop-filter: blur(12px) saturate(120%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+/* --- Header & Footer (fixes, en dehors du main) --- */
+.chat-header,
+.chat-footer {
+  flex-shrink: 0;
+  position: relative;
 }
 
-/* --- Header & Footer (Sticky) --- */
 .chat-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
   height: var(--h);
   padding: clamp(12px, 2vh, 16px) clamp(16px, 4vw, 56px);
   color: #F8F5E1;
   text-align: center;
-  flex-shrink: 0;
 }
 
 .chat-footer {
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-  height: var(--h);
+  height: auto;
+  min-height: var(--h);
   display: flex;
-  /* align-items: center; */ /* Centrage vertical n'est plus pertinent */
   padding-bottom: env(safe-area-inset-bottom);
-  flex-shrink: 0;
-
-  /* Footer must be clear: revert all visual effects */
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border: none;
-  box-shadow: none;
+  padding-top: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
+  background-color: #0A1B36; /* Fond pour la propreté visuelle */
 }
 
 /* --- Zone de contenu principale --- */
 .chat-main {
   flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; /* Centre le contenu horizontalement */
+  /* overflow: hidden; est supprimé pour que le layout flex fonctionne correctement */
 }
 
-/* --- Conteneur de contenu --- */
+/* --- Conteneur scrollable unique --- */
 .chat-body {
+  flex: 1 1 auto;
   width: 100%;
   max-width: var(--content-w);
-  padding: 0 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 8px; /* Padding horizontal pour les bulles */
   display: flex;
   flex-direction: column;
   scrollbar-width: none; /* Pour Firefox */
-  position: relative; /* Required for the pseudo-element */
-  padding-bottom: calc(var(--footer-h, 64px) + 10px); /* Dynamic padding + 10px safety slot */
-  scroll-padding-bottom: calc(var(--footer-h, 64px) + 10px); /* Ensures smooth scroll anchoring */
-}
-
-.chat-body::after {
-  content: '';
-  position: absolute;
-  bottom: calc(var(--footer-h, 64px) + 10px); /* Position just above the padding area */
-  left: 0;
-  right: 0;
-  height: 40px; /* Increased height for a smoother fade */
-  background: linear-gradient(to top, rgba(11, 14, 23, 1) 0%, rgba(11, 14, 23, 0) 100%);
-  pointer-events: none; /* Ensures it doesn't interfere with interaction */
-  z-index: 1; /* Sits above the content but below the footer */
 }
 
 .chat-body::-webkit-scrollbar {
   display: none; /* Pour Chrome, Safari, and Opera */
 }
-
 
 /* --- Sections Rail (tirage) & Messages --- */
 .chat-rail {
@@ -109,6 +82,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-bottom: 16px; /* Espace en bas des messages, avant la fin de la zone scrollable */
 }
 
 /* --- Animation d'apparition du footer --- */
@@ -124,25 +98,40 @@
 }
 
 /* --- Rail de cartes – configuration et comportement --- */
+/* On préfixe avec .page-chat pour éviter les fuites de style sur /spread-truth */
+/* Styles de base communs aux deux types de tirages */
 .page-chat .rail-truth, .page-chat .rail-advice {
   display: grid;
+  /* Centrer les colonnes de la grille elles-mêmes, et non seulement leur contenu */
   justify-content: center;
   align-items: start;
   gap: var(--gap, clamp(24px, 4vw, 100px));
   width: 100%;
+  /* Définir la taille des colonnes sur la taille des cartes, pas sur des fractions de l'espace */
   grid-template-columns: repeat(var(--cols, 3), var(--card-w, var(--card-deck-w)));
 }
 
-.page-chat .rail-advice {}
-
-.page-chat .rail-truth {
-  margin-bottom: 8rem;
+/* Style spécifique pour rail-advice (garde la disposition en ligne) */
+.page-chat .rail-advice {
+  /* La disposition est maintenant gérée par la règle commune */
 }
 
+/* Style spécifique pour rail-truth (disposition 1-up 1-down) */
+.page-chat .rail-truth {
+  margin-bottom: 8rem; /* Ajoute de l'espace pour la carte décalée */
+}
+
+/* On décale la deuxième carte (B) vers le bas pour répliquer le layout de /spread-truth */
 .rail-truth .final-card-outer[data-pos='B'] {
   transform: translateY(50%);
 }
 
+/*
+  L'ordre de retournement est maintenant géré entièrement en JavaScript via des timeouts
+  pour un contrôle plus précis de la séquence.
+*/
+
+/* Styles communs pour la taille des cartes */
 .page-chat .final-card-outer {
   width: min(100%, var(--card-w, var(--card-deck-w)));
   aspect-ratio: 9.27 / 18;
@@ -155,11 +144,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 24px;
+  padding: 24px; /* Un peu d'air autour */
   box-sizing: border-box;
 }
 
+/* On s'assure que le rail dans la modale a de l'espace pour grandir */
 .spread-modal-container .final-rail {
   width: 100%;
-  max-width: var(--content-w);
+  max-width: var(--content-w); /* Respecte la largeur max du contenu */
 }

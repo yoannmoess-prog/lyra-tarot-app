@@ -388,7 +388,7 @@ export default function ChatPage({ spreadId }) {
 
   return (
     <div className={`page-chat ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
-      <header className="chat-header glass">
+      <header className="chat-header">
         <div className="p5-fixed-title" role="button" tabIndex="0">
           {question}
         </div>
@@ -460,7 +460,7 @@ export default function ChatPage({ spreadId }) {
           )}
         </section>
       </main>
-      <footer ref={footerRef} className={`chat-footer glass ${chatVisible ? " show" : ""}`}>
+      <footer ref={footerRef} className={`chat-footer ${chatVisible ? " show" : ""}`}>
         <div className="you-block">
           <form onSubmit={onYouSubmit} className={`you-form ${youMessage ? "has-text" : ""}`}>
             <textarea
@@ -479,13 +479,13 @@ export default function ChatPage({ spreadId }) {
               disabled={!youInputShown}
             />
             <div className="form-icons">
-              <button type="button" className="mic-btn" aria-label="Enregistrer un message vocal" title="Bientôt disponible" disabled>
-                <span className="material-symbols-outlined">mic</span>
-              </button>
               <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer" disabled={!youInputShown || !youMessage}>
                 <span className="material-symbols-outlined">
                   arrow_forward
                 </span>
+              </button>
+              <button type="button" className="mic-btn" aria-label="Enregistrer un message vocal" title="Bientôt disponible" disabled>
+                <span className="material-symbols-outlined">mic</span>
               </button>
             </div>
           </form>
