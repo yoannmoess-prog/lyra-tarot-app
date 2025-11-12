@@ -50,6 +50,13 @@
   align-items: center;
   padding-bottom: env(safe-area-inset-bottom);
   flex-shrink: 0;
+
+  /* Footer must be clear: revert all visual effects */
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  box-shadow: none;
 }
 
 /* --- Zone de contenu principale --- */
@@ -68,6 +75,21 @@
   display: flex;
   flex-direction: column;
   scrollbar-width: none; /* Pour Firefox */
+  position: relative; /* Required for the pseudo-element */
+  padding-bottom: calc(var(--footer-h, 64px) + 10px); /* Dynamic padding + 10px safety slot */
+  scroll-padding-bottom: calc(var(--footer-h, 64px) + 10px); /* Ensures smooth scroll anchoring */
+}
+
+.chat-body::after {
+  content: '';
+  position: absolute;
+  bottom: calc(var(--footer-h, 64px) + 10px); /* Position just above the padding area */
+  left: 0;
+  right: 0;
+  height: 40px; /* Increased height for a smoother fade */
+  background: linear-gradient(to top, rgba(11, 14, 23, 1) 0%, rgba(11, 14, 23, 0) 100%);
+  pointer-events: none; /* Ensures it doesn't interfere with interaction */
+  z-index: 1; /* Sits above the content but below the footer */
 }
 
 .chat-body::-webkit-scrollbar {
@@ -87,7 +109,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-bottom: 16px; /* Espace en bas des messages, avant la fin de la zone scrollable */
 }
 
 /* --- Animation d'apparition du footer --- */
