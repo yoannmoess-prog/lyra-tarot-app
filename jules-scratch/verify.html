@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification Glassmorphism</title>
+    <link rel="stylesheet" href="../dist/assets/index-DkEwzbFY.css">
+    <style>
+        /* Styles additionnels pour simuler l'environnement */
+        body {
+            background-image: url('../dist/assets/background-Byj1qlGp.webp');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Open Sans', sans-serif;
+            color: white;
+        }
+        .bubble {
+            padding: 12px 18px;
+            border-radius: 22px;
+            max-width: 80%;
+            margin-bottom: 10px;
+        }
+        .user-bubble {
+            background-color: rgba(10, 27, 54, 0.5);
+            align-self: flex-end;
+        }
+        .lyra-bubble {
+            background-color: rgba(255, 255, 255, 0.15);
+            align-self: flex-start;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="page-chat">
+            <header class="chat-header glass">
+                <h1>Titre du Tirage</h1>
+            </header>
+            <main class="chat-main">
+                <div class="chat-body">
+                    <div class="chat-rail" style="height: 200px; display: flex; align-items: center; justify-content: center; border: 1px dashed white; margin-bottom: 50px;">
+                        [Zone du tirage]
+                    </div>
+                    <div class="messages" style="display: flex; flex-direction: column;">
+                        <div class="bubble lyra-bubble">Bonjour ! C'est une bulle de message pour commencer.</div>
+                        <div class="bubble user-bubble">Ceci est la réponse de l'utilisateur.</div>
+                        <div class="bubble lyra-bubble">Et voici une autre bulle de Lyra pour créer du contenu.</div>
+                        <div class="bubble lyra-bubble">On ajoute beaucoup de contenu pour pouvoir faire défiler la page.</div>
+                        <div class="bubble user-bubble">L'utilisateur répond encore.</div>
+                        <div class="bubble lyra-bubble">Bulle...</div>
+                        <div class="bubble lyra-bubble">Bulle...</div>
+                        <div class="bubble user-bubble">Bulle...</div>
+                        <div class="bubble lyra-bubble">Bulle...</div>
+                        <div class="bubble lyra-bubble">Bulle...</div>
+                        <div class="bubble user-bubble">Bulle...</div>
+                        <div class="bubble lyra-bubble">Bulle...</div>
+                        <div class="bubble user-bubble">Bulle...</div>
+                        <div class="bubble lyra-bubble">Bulle...</div>
+                        <div class="bubble lyra-bubble">Cette bulle devrait être visible juste au-dessus du footer quand on est en bas.</div>
+                        <div class="bubble user-bubble">Et celle-ci est la dernière.</div>
+                    </div>
+                </div>
+            </main>
+            <footer class="chat-footer glass">
+                <div style="width: 100%; text-align: center;">[Zone de saisie du formulaire]</div>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>
