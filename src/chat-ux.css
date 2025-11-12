@@ -64,11 +64,6 @@
   pointer-events: none; /* Empêche toute interaction */
 }
 
-/* Augmentation de la hauteur du slot final pour donner plus d'espace */
-#bottom-slot {
-  min-height: 32px;
-}
-
 .dots {
   display: flex;
   align-items: center;
@@ -160,11 +155,10 @@
   flex-direction: row;
   align-items: center;
   gap: 4px;
-  /* La hauteur est déterminée par le contenu, ce qui garantit l'alignement */
+  pointer-events: none;
 }
 
 .mic-btn, .send-btn {
-  /* Pas de positionnement individuel */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -176,6 +170,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
   color: rgba(255, 255, 255, 0.5);
+  pointer-events: auto;
 }
 
 /* Changement de couleur quand il y a du texte */

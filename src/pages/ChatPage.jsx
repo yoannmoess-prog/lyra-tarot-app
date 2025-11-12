@@ -173,6 +173,28 @@ export default function ChatPage({ spreadId }) {
     }
   }, [isSpreadModalOpen, spreadId]);
 
+  // --- Espacement dynamique sous le chat ---
+  // Cet effet observe la hauteur du footer et l'applique en tant que variable
+  // CSS (--footer-h) sur le corps du chat. Le CSS utilise ensuite cette variable
+  // pour ajuster le padding-bottom, garantissant que le dernier message
+  // ne soit jamais masqué par le footer, même si sa hauteur change.
+  useEffect(() => {
+    const footer = footerRef.current;
+    const body = bodyRef.current;
+    if (!footer || !body) return;
+
+    const resizeObserver = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        const { height } = entry.contentRect;
+        body.style.setProperty('--footer-h', `${height}px`);
+      }
+    });
+
+    resizeObserver.observe(footer);
+
+    return () => resizeObserver.disconnect();
+  }, []); // Dépendances vides pour ne s'exécuter qu'au montage/démontage
+
   // Auto-scroll logic
   useEffect(() => {
     // On cible systématiquement l'ancre, qui se trouve après le dernier message ou la bulle de frappe.
@@ -388,7 +410,7 @@ export default function ChatPage({ spreadId }) {
 
   return (
     <div className={`page-chat ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
-      <header className="chat-header">
+      <header className="chat-header glass">
         <div className="p5-fixed-title" role="button" tabIndex="0">
           {question}
         </div>
@@ -460,7 +482,7 @@ export default function ChatPage({ spreadId }) {
           )}
         </section>
       </main>
-      <footer ref={footerRef} className={`chat-footer ${chatVisible ? " show" : ""}`}>
+      <footer ref={footerRef} className={`chat-footer glass ${chatVisible ? " show" : ""}`}>
         <div className="you-block">
           <form onSubmit={onYouSubmit} className={`you-form ${youMessage ? "has-text" : ""}`}>
             <textarea
