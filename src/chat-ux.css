@@ -121,7 +121,7 @@
 
 .you-input {
   flex-grow: 1;
-  padding: 12px 96px 12px 18px;
+  padding: 12px 104px 12px 24px; /* Augmentation du padding droit pour les icônes */
   border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: rgba(0, 0, 0, 0.2);
@@ -146,9 +146,19 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
-.mic-btn, .send-btn {
+/* Nouveau conteneur pour les icônes */
+.form-icons {
   position: absolute;
-  bottom: 2px; /* Ajustement fin pour l'alignement vertical */
+  right: 6px;
+  bottom: 2px;
+  display: flex;
+  align-items: flex-end; /* Aligne les icônes en bas */
+  height: 100%; /* S'assure que le conteneur a la même hauteur que le form */
+  pointer-events: none; /* Laisse passer les clics vers les boutons en dessous */
+}
+
+.mic-btn, .send-btn {
+  /* La position n'est plus absolue */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -158,16 +168,9 @@
   border: none;
   background-color: transparent;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease; /* Ajout de la transition de couleur */
-  color: rgba(255, 255, 255, 0.5); /* Couleur par défaut (placeholder) */
-}
-
-.send-btn {
-  right: 2px;
-}
-
-.mic-btn {
-  right: 46px; /* 2px (right) + 44px (send-btn width) */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: auto; /* Restaure les événements de pointeur pour les boutons */
 }
 
 /* Changement de couleur quand il y a du texte */

@@ -33,10 +33,16 @@
 }
 
 .chat-footer {
-  height: var(--h);
+  height: auto; /* La hauteur s'adapte au contenu */
+  min-height: var(--h); /* Garde la hauteur minimale */
   display: flex;
-  align-items: center;
+  /* align-items: center; */ /* Centrage vertical n'est plus pertinent */
   padding-bottom: env(safe-area-inset-bottom);
+  /* Ajout d'un padding pour que le formulaire ne soit pas collé au bord */
+  padding-top: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
 }
 
 /* --- Zone de contenu principale --- */

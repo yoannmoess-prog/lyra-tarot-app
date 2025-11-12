@@ -478,14 +478,16 @@ export default function ChatPage({ spreadId }) {
               }}
               disabled={!youInputShown}
             />
-            <button type="button" className="mic-btn" aria-label="Enregistrer un message vocal" title="Bientôt disponible" disabled>
-              <span className="material-symbols-outlined">mic</span>
-            </button>
-            <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer" disabled={!youInputShown || !youMessage}>
-              <span className="material-symbols-outlined">
-                arrow_forward
-              </span>
-            </button>
+            <div className="form-icons">
+              <button type="button" className="mic-btn" aria-label="Enregistrer un message vocal" title="Bientôt disponible" disabled>
+                <span className="material-symbols-outlined">mic</span>
+              </button>
+              <button type="submit" className="send-btn" aria-label="Envoyer" title="Envoyer" disabled={!youInputShown || !youMessage}>
+                <span className="material-symbols-outlined">
+                  arrow_forward
+                </span>
+              </button>
+            </div>
           </form>
         </div>
       </footer>
