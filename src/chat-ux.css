@@ -119,14 +119,21 @@
   align-items: flex-start; /* Aligne le textarea en haut */
   padding: 8px;
   box-sizing: border-box;
+
+  /* --- Effet Glassmorphism --- */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px; /* Doit être légèrement > au border-radius de l'input */
 }
 
 .you-input {
   flex-grow: 1;
   padding: 12px 96px 12px 18px; /* padding-right augmenté pour les icônes */
   border-radius: 24px; /* Un peu plus arrondi pour correspondre à la hauteur */
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: rgba(0, 0, 0, 0.2);
+  border: none;
+  background-color: transparent;
   color: #FFFFFF;
   font-family: var(--font-sans);
   font-size: var(--font-size-standard);
@@ -140,8 +147,8 @@
 
 .you-input:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.5);
-  background-color: rgba(0, 0, 0, 0.3);
+  border-color: transparent; /* Maintenir la transparence */
+  background-color: transparent; /* Maintenir la transparence */
 }
 
 .you-input::placeholder {
