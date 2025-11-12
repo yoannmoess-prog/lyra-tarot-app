@@ -67,17 +67,11 @@
   padding: 0 8px;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* S'assure qu'il remplit l'espace dans .chat-main */
+  scrollbar-width: none; /* Pour Firefox */
+}
 
-  /*
-    Les paddings suivants sont cruciaux. Ils créent un espace vide
-    en haut et en bas de la zone de contenu, de la même hauteur
-    que le header et le footer.
-    Le contenu scrollable ne sera donc JAMAIS recouvert par les
-    éléments sticky, tout en donnant l'illusion de passer dessous.
-  */
-  padding-top: var(--h);
-  padding-bottom: var(--f);
+.chat-body::-webkit-scrollbar {
+  display: none; /* Pour Chrome, Safari, and Opera */
 }
 
 

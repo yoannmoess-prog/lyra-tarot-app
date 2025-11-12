@@ -6,7 +6,7 @@
   border-radius: 24px;
   max-width: 90%;
   width: fit-content;
-  min-height: 44px; /* Hauteur approx d'une bulle vide ou typing */
+  min-height: 22px; /* Hauteur approx d'une bulle vide ou typing */
   box-sizing: border-box; /* S'assure que le padding est inclus dans la hauteur */
 }
 
@@ -113,23 +113,29 @@
 
 /* Styles pour le formulaire de saisie */
 .you-form {
+  position: relative; /* Contexte pour les boutons positionnés absolument */
   display: flex;
-  align-items: center;
-  gap: 8px;
+  width: 100%;
+  align-items: flex-start; /* Aligne le textarea en haut */
   padding: 8px;
-  background-color: transparent;
+  box-sizing: border-box;
 }
 
 .you-input {
   flex-grow: 1;
-  padding: 8px 18px; /* Réduction du padding vertical pour diminuer la hauteur */
-  border-radius: 22px;
+  padding: 12px 96px 12px 18px; /* padding-right augmenté pour les icônes */
+  border-radius: 24px; /* Un peu plus arrondi pour correspondre à la hauteur */
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: rgba(0, 0, 0, 0.2);
   color: #FFFFFF;
   font-family: var(--font-sans);
   font-size: var(--font-size-standard);
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, background-color 0.3s ease; /* transition hauteur retirée */
+  resize: none;
+  overflow-y: hidden; /* Important pour le JS de redimensionnement */
+  min-height: 48px; /* Hauteur min pour s'aligner avec la hauteur des boutons */
+  box-sizing: border-box;
+  line-height: 1.5;
 }
 
 .you-input:focus {
@@ -142,7 +148,9 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
-.send-btn {
+.mic-btn, .send-btn {
+  position: absolute;
+  bottom: 10px; /* Aligner en bas avec un petit décalage */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -155,6 +163,18 @@
   transition: background-color 0.3s ease;
 }
 
+.send-btn {
+  right: 10px;
+}
+
+.mic-btn {
+  right: 54px; /* 10px (right) + 44px (send-btn width) */
+}
+
+.mic-btn {
+  color: rgba(255, 255, 255, 0.8);
+}
+
 .send-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -164,6 +184,11 @@
   background-color: #E0DBCB;
 }
 
+.mic-btn:not(:disabled):hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mic-btn .material-symbols-outlined,
 .send-btn .material-symbols-outlined {
   font-size: 24px;
   font-variation-settings: 'wght' 400;
