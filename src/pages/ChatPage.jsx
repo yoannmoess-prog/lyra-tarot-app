@@ -173,6 +173,28 @@ export default function ChatPage({ spreadId }) {
     }
   }, [isSpreadModalOpen, spreadId]);
 
+  // --- Espacement dynamique sous le chat ---
+  // Cet effet observe la hauteur du footer et l'applique en tant que variable
+  // CSS (--footer-h) sur le corps du chat. Le CSS utilise ensuite cette variable
+  // pour ajuster le padding-bottom, garantissant que le dernier message
+  // ne soit jamais masqué par le footer, même si sa hauteur change.
+  useEffect(() => {
+    const footer = footerRef.current;
+    const body = bodyRef.current;
+    if (!footer || !body) return;
+
+    const resizeObserver = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        const { height } = entry.contentRect;
+        body.style.setProperty('--footer-h', `${height}px`);
+      }
+    });
+
+    resizeObserver.observe(footer);
+
+    return () => resizeObserver.disconnect();
+  }, []); // Dépendances vides pour ne s'exécuter qu'au montage/démontage
+
   // Auto-scroll logic
   useEffect(() => {
     // On cible systématiquement l'ancre, qui se trouve après le dernier message ou la bulle de frappe.
