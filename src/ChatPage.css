@@ -11,13 +11,14 @@
 /* --- Layout principal --- */
 .page-chat {
   /*
-    Le layout de la page est maintenant un flux de document standard.
-    Le scroll se fait sur le body/html, pas sur un conteneur interne.
-    Ceci est essentiel pour que `position: sticky` fonctionne de manière fiable.
+    Ce conteneur prend toute la hauteur de la fenêtre et organise ses enfants
+    (header, main, footer) en colonne. Il empêche le scroll au niveau du body.
   */
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* S'assure que la page prend au moins toute la hauteur de l'écran */
+  height: 100vh; /* Prend toute la hauteur de la vue */
+  max-height: 100vh; /* Empêche le dépassement, surtout sur mobile */
+  overflow: hidden; /* Empêche le body de scroller */
   background-color: transparent;
 }
 
@@ -29,35 +30,49 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-/* --- Header & Footer (Sticky) --- */
+/* --- Header & Footer --- */
+/*
+  Header et Footer ne sont plus `sticky`. Ils sont des enfants flex fixes.
+  Leur taille ne change pas.
+*/
 .chat-header {
-  position: sticky;
-  top: 0;
+  flex-shrink: 0; /* Empêche le header de se réduire */
   z-index: 10;
   height: var(--h);
   padding: clamp(12px, 2vh, 16px) clamp(16px, 4vw, 56px);
   color: #F8F5E1;
   text-align: center;
-  flex-shrink: 0;
 }
 
 .chat-footer {
-  position: sticky;
-  bottom: 0;
+  flex-shrink: 0; /* Empêche le footer de se réduire */
   z-index: 10;
-  height: auto; /* La hauteur s'adapte maintenant au contenu */
-  min-height: var(--h); /* Garde la hauteur minimale */
+  height: auto; /* La hauteur s'adapte au contenu (textarea) */
+  min-height: var(--f); /* Garde la hauteur minimale */
   display: flex;
   padding-bottom: env(safe-area-inset-bottom);
-  flex-shrink: 0;
 }
 
 /* --- Zone de contenu principale --- */
 .chat-main {
-  flex: 1 1 auto;
+  /*
+    Cette zone prend toute la place restante et devient le SEUL conteneur
+    scrollable de la page. C'est la clé de la nouvelle architecture.
+  */
+  flex-grow: 1; /* Prend toute la hauteur disponible */
+  overflow-y: auto; /* Active le scroll vertical si nécessaire */
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  /*
+    Le padding et le scroll-padding utilisent la variable --footer-h pour
+    garantir que le contenu ne passe jamais sous le footer.
+    Le `var()` inclut une valeur de fallback (ex: 84px) au cas où la variable
+    ne serait pas encore définie au premier rendu.
+  */
+  padding-bottom: var(--footer-h, 84px);
+  scroll-padding-bottom: var(--footer-h, 84px);
 }
 
 /* --- Conteneur de contenu --- */
@@ -68,6 +83,7 @@
   display: flex;
   flex-direction: column;
   scrollbar-width: none; /* Pour Firefox */
+  /* Le padding-bottom n'est plus nécessaire car le scroll est géré par le parent */
 }
 
 .chat-body::-webkit-scrollbar {

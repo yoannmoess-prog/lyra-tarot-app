@@ -112,57 +112,78 @@
 }
 
 /* Styles pour le formulaire de saisie */
+/*
+  Stratégie de layout pour le formulaire :
+  1. `.you-form` est un conteneur "tray" avec l'effet glass. Il utilise Flexbox
+     pour aligner ses enfants (textarea, icônes) sur le bas.
+  2. Le `textarea` (`.you-input`) est transparent et grandit pour occuper l'espace.
+  3. Le conteneur d'icônes (`.form-icons`) a une taille fixe.
+  4. Une marge négative est appliquée à `.form-icons` pour le "tirer" visuellement
+     à l'intérieur de la zone de padding du textarea.
+  5. Des variables CSS sont utilisées pour que les paddings et les marges
+     soient synchronisés et faciles à maintenir.
+*/
 .you-form {
-  position: relative;
+  --icon-size: 44px;
+  --icon-gap: 4px;
+  --icons-width: calc(var(--icon-size) * 2 + var(--icon-gap));
+  --form-padding-h: 6px; /* Espace horizontal à l'intérieur du form */
+
   display: flex;
+  align-items: flex-end; /* Aligne le bas du textarea avec le bas des icônes */
   width: 100%;
   box-sizing: border-box;
 
-  /* --- Effet Glassmorphism --- */
+  /* Effet glassmorphism sur le conteneur du formulaire */
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px) saturate(120%);
   -webkit-backdrop-filter: blur(12px) saturate(120%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 28px; /* Doit être légèrement > au border-radius de l'input */
+}
+
+.you-form:focus-within {
+  border-color: rgba(255, 255, 255, 0.3); /* Feedback visuel global */
 }
 
 .you-input {
   flex-grow: 1;
-  padding: 12px 104px 12px 24px; /* Augmentation du padding droit pour les icônes */
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 0; /* Le radius est sur le form */
+  border: none;
+  background: transparent;
+
   color: #FFFFFF;
   font-family: var(--font-sans);
   font-size: var(--font-size-standard);
-  transition: border-color 0.3s ease, background-color 0.3s ease;
   resize: none;
   overflow-y: hidden;
   min-height: 48px;
   box-sizing: border-box;
   line-height: 1.5;
+
+  /* Le padding est ajusté pour le texte à gauche et pour ne PAS aller sous les icônes */
+  padding: 12px 0 12px 24px;
 }
 
 .you-input:focus {
   outline: none;
-  border-color: transparent; /* Maintenir la transparence */
-  background-color: transparent; /* Maintenir la transparence */
 }
 
 .you-input::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* Conteneur pour les icônes - Approche hybride robuste */
+/* Conteneur pour les icônes */
 .form-icons {
-  position: absolute;
-  right: 6px;
-  bottom: 2px;
   display: flex;
-  flex-direction: row;
   align-items: center;
-  gap: 4px;
-  pointer-events: none;
+  gap: var(--icon-gap);
+  /* Marge négative pour tirer les icônes vers la gauche, "dans" le textarea */
+  margin-left: calc(-1 * (var(--icons-width) + var(--form-padding-h)));
+  /* Espace à droite des icônes */
+  margin-right: var(--form-padding-h);
+  /* Ajustement vertical pour un alignement parfait avec le bas du textarea */
+  padding-bottom: 2px;
 }
 
 .mic-btn, .send-btn {
