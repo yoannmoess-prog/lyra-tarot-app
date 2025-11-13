@@ -99,18 +99,11 @@ function Page3() {
 
     setPhase("formOut");
 
-    // TEMPORARY BYPASS FOR TESTING
     timers.current.push(setTimeout(() => {
-      navigate("/chat-advice", {
+      navigate("/loading", {
         state: {
           name: name || "Jules",
           question: q,
-          cards: [
-            { pos: 'A', src: '/assets/cards/05_LePape.webp', name: 'Le Pape' },
-            { pos: 'B', src: '/assets/cards/10_LaRoueDeFortune.webp', name: 'La Roue de Fortune' },
-            { pos: 'C', src: '/assets/cards/20_LeJugement.webp', name: 'Le Jugement' },
-          ],
-          isNew: true,
         },
       });
     }, DUR.formOut));

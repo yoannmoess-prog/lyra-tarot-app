@@ -189,36 +189,17 @@ app.get("/", (_, res) => {
 
 app.get("/api/healthz", (_, res) => res.json({ ok: true, ts: Date.now() }));
 
-// --- /api/spread : accepte GET et POST + timeout/fallback
-async function resolveSpreadId(question) {
-  try {
-    const id = await detectSpreadFromQuestion(question || "");
-    return id || "spread-truth";
-  } catch (e) {
-    console.warn("[api/spread] detectSpreadFromQuestion KO -> fallback", e.message);
-    return "spread-truth";
-  }
-}
-
-app.get("/api/spread", async (req, res) => {
-  const spreadId = await Promise.race([
-    resolveSpreadId(""),
-    new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000)),
-  ]).catch(() => "spread-truth");
-  res.json({ spreadId });
-});
-
+// --- /api/spread : Route simplifiée et robuste ---
 app.post("/api/spread", async (req, res) => {
   const { question } = req.body || {};
   try {
-    const spreadId = await Promise.race([
-      resolveSpreadId(question),
-      new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000)),
-    ]).catch(() => "spread-truth");
+    // Appel direct, on se fie au fallback interne de la fonction
+    const spreadId = await detectSpreadFromQuestion(question);
     res.json({ spreadId });
   } catch (error) {
-    console.error("[api/spread] Erreur:", error);
-    res.status(200).json({ spreadId: "spread-truth" });
+    console.error("[api/spread] Erreur critique lors de la détection du spread:", error);
+    // En cas d'échec imprévu, on renvoie le tirage par défaut.
+    res.status(200).json({ spreadId: "spread-advice" });
   }
 });
 
