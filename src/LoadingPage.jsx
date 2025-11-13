@@ -27,14 +27,10 @@ const LoadingPage = () => {
       return; // Arrête l'exécution
     }
 
-    if (!question) {
-      console.warn("Aucune question trouvée, redirection vers la page de question.");
+    if (!question || sequenceStarted.current) {
+      if (!question) console.warn("Aucune question trouvée, redirection vers la page de question.");
+      if (sequenceStarted.current) console.log("[LoadingPage] Séquence déjà démarrée, on ignore.");
       navigate('/question');
-      return;
-    }
-    // Si la séquence a déjà commencé, on ne fait rien pour éviter
-    // de la relancer à chaque re-render causé par l'animation.
-    if (sequenceStarted.current) {
       return;
     }
     sequenceStarted.current = true;

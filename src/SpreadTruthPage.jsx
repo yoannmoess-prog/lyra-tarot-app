@@ -51,7 +51,7 @@ export default function SpreadTruthPage() {
     boardFading,
     shuffleActive,
     deckCount,
-    chosenCards,
+    chosenSlots,
     popIndex,
     deckRef,
     slotRefs,
@@ -89,27 +89,19 @@ export default function SpreadTruthPage() {
               </div>
             </div>
             <DroppableRail>
-              {[0, 1, 2].map((i) => {
-                const cardInSlot = chosenCards.find(c => c.slot === i);
-                return (
-                  <div
-                    key={`slotwrap-${i}`}
-                    ref={slotRefs[i]}
-                    className={`slot-wrap`}
-                  >
-                    {cardInSlot ? (
-                      <div className={`final-card-outer ${i === popIndex ? "pop" : ""}`}>
-                        <div className="final-card-inner">
-                          <div className="card card-back" />
-                          <div className="card card-face" style={{ backgroundImage: `url(${cardInSlot.src})` }} />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="card slot-ghost" />
-                    )}
-                  </div>
-                );
-              })}
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={`slotwrap-${i}`}
+                  ref={slotRefs[i]}
+                  className={`slot-wrap`}
+                >
+                  {chosenSlots.includes(i) ? (
+                    <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
+                  ) : (
+                    <div className="card slot-ghost" />
+                  )}
+                </div>
+              ))}
             </DroppableRail>
           </div>
         </div>

@@ -82,11 +82,11 @@ export function useSpreadPage(spreadType, pickCardLogic) {
         isDuplicate = chosenCards.some(card => card.name === newChosenCard.name);
       } while (isDuplicate);
 
-      // Associer la carte à sa position (A, B, C) et à son slot
+      // Associer la carte à sa position (A, B, C) en se basant sur l'ordre de tirage
       const position = spreadType === 'spread-truth' ? TRUTH_ORDER[chosenSlots.length] : ['A', 'B', 'C'][chosenSlots.length];
-      const cardWithPositionAndSlot = { ...newChosenCard, pos: position, slot: targetIndex };
+      const cardWithPosition = { ...newChosenCard, pos: position };
 
-      const updatedChosenCards = [...chosenCards, cardWithPositionAndSlot];
+      const updatedChosenCards = [...chosenCards, cardWithPosition];
       setChosenCards(updatedChosenCards);
 
       setChosenSlots((prevSlots) => {
@@ -147,7 +147,6 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     shuffleActive,
     deckCount,
     chosenSlots,
-    chosenCards,
     popIndex,
     pickingRef,
     deckRef,
