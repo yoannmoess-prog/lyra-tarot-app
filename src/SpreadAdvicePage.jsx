@@ -110,7 +110,7 @@ export default function SpreadAdvicePage() {
                 >
                   {chosenSlots.includes(i) ? (
                     (() => {
-                      const cardData = chosenCards.find(c => c.pos === (['A', 'B', 'C'][i]));
+                      const cardData = chosenCards.find(c => c.slotIndex === i);
                       return cardData?.src ? (
                         <img src={cardData.src} alt={cardData.name} className={`card chosen ${i === popIndex ? "pop" : ""}`} />
                       ) : (
