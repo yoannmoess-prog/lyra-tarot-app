@@ -113,11 +113,9 @@
 
 /* Styles pour le formulaire de saisie */
 .you-form {
-  position: relative; /* Contexte pour les boutons positionnés absolument */
+  position: relative;
   display: flex;
   width: 100%;
-  align-items: flex-start; /* Aligne le textarea en haut */
-  padding: 8px;
   box-sizing: border-box;
 
   /* --- Effet Glassmorphism --- */
@@ -130,17 +128,17 @@
 
 .you-input {
   flex-grow: 1;
-  padding: 12px 96px 12px 18px; /* padding-right augmenté pour les icônes */
-  border-radius: 24px; /* Un peu plus arrondi pour correspondre à la hauteur */
-  border: none;
-  background-color: transparent;
+  padding: 12px 104px 12px 24px; /* Augmentation du padding droit pour les icônes */
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(0, 0, 0, 0.2);
   color: #FFFFFF;
   font-family: var(--font-sans);
   font-size: var(--font-size-standard);
-  transition: border-color 0.3s ease, background-color 0.3s ease; /* transition hauteur retirée */
+  transition: border-color 0.3s ease, background-color 0.3s ease;
   resize: none;
-  overflow-y: hidden; /* Important pour le JS de redimensionnement */
-  min-height: 48px; /* Hauteur min pour s'aligner avec la hauteur des boutons */
+  overflow-y: hidden;
+  min-height: 48px;
   box-sizing: border-box;
   line-height: 1.5;
 }
@@ -155,9 +153,19 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
-.mic-btn, .send-btn {
+/* Nouveau conteneur pour les icônes */
+.form-icons {
   position: absolute;
-  bottom: 10px; /* Aligner en bas avec un petit décalage */
+  right: 6px;
+  bottom: 2px;
+  display: flex;
+  align-items: flex-end; /* Aligne les icônes en bas */
+  height: 100%; /* S'assure que le conteneur a la même hauteur que le form */
+  pointer-events: none; /* Laisse passer les clics vers les boutons en dessous */
+}
+
+.mic-btn, .send-btn {
+  /* La position n'est plus absolue */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -167,19 +175,15 @@
   border: none;
   background-color: transparent;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: auto; /* Restaure les événements de pointeur pour les boutons */
 }
 
-.send-btn {
-  right: 10px;
-}
-
-.mic-btn {
-  right: 54px; /* 10px (right) + 44px (send-btn width) */
-}
-
-.mic-btn {
-  color: rgba(255, 255, 255, 0.8);
+/* Changement de couleur quand il y a du texte */
+.you-form.has-text .mic-btn,
+.you-form.has-text .send-btn {
+  color: #FFFFFF;
 }
 
 .send-btn:disabled {
@@ -187,8 +191,9 @@
   cursor: not-allowed;
 }
 
+/* La couleur de l'icône s'assombrit au survol, pas le fond */
 .send-btn:not(:disabled):hover {
-  background-color: #E0DBCB;
+  color: #E0DBCB;
 }
 
 .mic-btn:not(:disabled):hover {

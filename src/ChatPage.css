@@ -47,7 +47,7 @@
   z-index: 10;
   height: var(--h);
   display: flex;
-  align-items: center;
+  /* align-items: center; */ /* Centrage vertical n'est plus pertinent */
   padding-bottom: env(safe-area-inset-bottom);
   flex-shrink: 0;
 }
