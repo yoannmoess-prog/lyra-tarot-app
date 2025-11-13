@@ -52,6 +52,7 @@ export default function SpreadTruthPage() {
     shuffleActive,
     deckCount,
     chosenSlots,
+    chosenCards,
     popIndex,
     deckRef,
     slotRefs,
@@ -96,7 +97,14 @@ export default function SpreadTruthPage() {
                   className={`slot-wrap`}
                 >
                   {chosenSlots.includes(i) ? (
-                    <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
+                    (() => {
+                      const cardData = chosenCards.find(c => c.slotIndex === i);
+                      return cardData?.src ? (
+                        <img src={cardData.src} alt={cardData.name} className={`card chosen ${i === popIndex ? "pop" : ""}`} />
+                      ) : (
+                        <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
+                      );
+                    })()
                   ) : (
                     <div className="card slot-ghost" />
                   )}

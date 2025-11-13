@@ -84,7 +84,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
 
       // Associer la carte à sa position (A, B, C) en se basant sur l'ordre de tirage
       const position = spreadType === 'spread-truth' ? TRUTH_ORDER[chosenSlots.length] : ['A', 'B', 'C'][chosenSlots.length];
-      const cardWithPosition = { ...newChosenCard, pos: position };
+      const cardWithPosition = { ...newChosenCard, pos: position, slotIndex: targetIndex };
 
       const updatedChosenCards = [...chosenCards, cardWithPosition];
       setChosenCards(updatedChosenCards);
