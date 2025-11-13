@@ -64,6 +64,7 @@ export default function SpreadAdvicePage() {
     shuffleActive,
     deckCount,
     chosenSlots,
+    chosenCards,
     popIndex,
     deckRef,
     slotRefs,
@@ -108,7 +109,14 @@ export default function SpreadAdvicePage() {
                   className={`slot-wrap`}
                 >
                   {chosenSlots.includes(i) ? (
-                    <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
+                    (() => {
+                      const cardData = chosenCards.find(c => c.pos === (['A', 'B', 'C'][i]));
+                      return cardData?.src ? (
+                        <img src={cardData.src} alt={cardData.name} className={`card chosen ${i === popIndex ? "pop" : ""}`} />
+                      ) : (
+                        <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
+                      );
+                    })()
                   ) : (
                     <div className="card slot-ghost" />
                   )}
