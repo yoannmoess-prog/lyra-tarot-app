@@ -99,9 +99,20 @@ function Page3() {
 
     setPhase("formOut");
 
-    // Redirige vers la page de chargement après l'animation de sortie
+    // TEMPORARY BYPASS FOR TESTING
     timers.current.push(setTimeout(() => {
-      navigate("/loading", { state: { name, question: q } });
+      navigate("/chat-advice", {
+        state: {
+          name: name || "Jules",
+          question: q,
+          cards: [
+            { pos: 'A', src: '/assets/cards/05_LePape.webp', name: 'Le Pape' },
+            { pos: 'B', src: '/assets/cards/10_LaRoueDeFortune.webp', name: 'La Roue de Fortune' },
+            { pos: 'C', src: '/assets/cards/20_LeJugement.webp', name: 'Le Jugement' },
+          ],
+          isNew: true,
+        },
+      });
     }, DUR.formOut));
 
   }, [phase, question, navigate, name, DUR.formOut]);
