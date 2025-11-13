@@ -153,19 +153,19 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* Nouveau conteneur pour les icônes */
+/* Conteneur pour les icônes - Approche hybride robuste */
 .form-icons {
   position: absolute;
   right: 6px;
   bottom: 2px;
   display: flex;
-  align-items: flex-end; /* Aligne les icônes en bas */
-  height: 100%; /* S'assure que le conteneur a la même hauteur que le form */
-  pointer-events: none; /* Laisse passer les clics vers les boutons en dessous */
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
 }
 
 .mic-btn, .send-btn {
-  /* La position n'est plus absolue */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -177,7 +177,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
   color: rgba(255, 255, 255, 0.5);
-  pointer-events: auto; /* Restaure les événements de pointeur pour les boutons */
+  pointer-events: auto;
 }
 
 /* Changement de couleur quand il y a du texte */

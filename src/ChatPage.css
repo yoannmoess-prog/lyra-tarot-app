@@ -45,9 +45,9 @@
   position: sticky;
   bottom: 0;
   z-index: 10;
-  height: var(--h);
+  height: auto; /* La hauteur s'adapte maintenant au contenu */
+  min-height: var(--h); /* Garde la hauteur minimale */
   display: flex;
-  /* align-items: center; */ /* Centrage vertical n'est plus pertinent */
   padding-bottom: env(safe-area-inset-bottom);
   flex-shrink: 0;
 }
