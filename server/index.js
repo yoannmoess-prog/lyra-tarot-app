@@ -1,3 +1,4 @@
+// RESTAURATION D'URGENCE
 /* eslint-env node */
 // server/index.js — Serveur de diagnostic avec routes API
 
