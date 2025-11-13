@@ -147,6 +147,7 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     shuffleActive,
     deckCount,
     chosenSlots,
+    chosenCards,
     popIndex,
     pickingRef,
     deckRef,
