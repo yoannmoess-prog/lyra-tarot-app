@@ -125,8 +125,7 @@
 */
 .you-form {
   --icon-size: 44px;
-  --icon-gap: 4px;
-  --icons-width: calc(var(--icon-size) * 2 + var(--icon-gap));
+  --icons-width: var(--icon-size); /* Une seule icône maintenant */
   --form-padding-h: 6px; /* Espace horizontal à l'intérieur du form */
 
   display: flex;
@@ -217,11 +216,6 @@
   color: #E0DBCB;
 }
 
-.mic-btn:not(:disabled):hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.mic-btn .material-symbols-outlined,
 .send-btn .material-symbols-outlined {
   font-size: 24px;
   font-variation-settings: 'wght' 400;
