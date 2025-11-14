@@ -4,45 +4,8 @@ import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import { useSpreadPage } from "./hooks/useSpreadPage";
 import "./Page4.css";
 
-/* ---------------- Card Data Helpers ---------------- */
-const FACE_MODULES = import.meta.glob("../assets/cards/*.webp", { eager: true });
-const asUrl = (m) => (typeof m === "string" ? m : m?.default ?? null);
-function buildFacePools() {
-  const all = Object.keys(FACE_MODULES)
-    .map((p) => {
-      const src = asUrl(FACE_MODULES[p]);
-      const name = p.split("/").pop() || "";
-      return src ? { path: p, name, src } : null;
-    })
-    .filter(Boolean);
-  return {
-    majors: all.filter((f) => /^(0\d|1\d|2[0-1])_/.test(f.name)),
-  };
-}
-const FACE_POOLS = buildFacePools();
-
-const MAJOR_LABELS = {
-  "00": "Le Mat", "01": "Le Bateleur", "02": "La Papesse", "03": "L’Impératrice", "04": "L’Empereur",
-  "05": "Le Pape", "06": "L’Amoureux", "07": "Le Chariot", "08": "La Justice", "09": "L’Hermite",
-  "10": "La Roue de Fortune", "11": "La Force", "12": "Le Pendu", "13": "L’Arcane Sans Nom",
-  "14": "Tempérance", "15": "Le Diable", "16": "La Maison Dieu", "17": "L’Étoile", "18": "La Lune",
-  "19": "Le Soleil", "20": "Le Jugement", "21": "Le Monde",
-};
-function labelFrom(fileName) {
-  if (!fileName) return "";
-  const maj = fileName.match(/^([0-2]\d)_/);
-  if (maj) return MAJOR_LABELS[maj[1]] || fileName;
-  return fileName;
-}
-const pick = (arr) => (arr?.length ? arr[Math.floor(Math.random() * arr.length)] : null);
-
 /* ---------------- Component ---------------- */
 export default function SpreadTruthPage() {
-  const pickCardLogic = () => {
-    const newCard = pick(FACE_POOLS.majors);
-    return { src: newCard?.src, name: labelFrom(newCard?.name) };
-  };
-
   const {
     question,
     isLandscape,
@@ -61,7 +24,7 @@ export default function SpreadTruthPage() {
     DUR,
     handleDragStart,
     handleDragEnd,
-  } = useSpreadPage("spread-truth", pickCardLogic);
+  } = useSpreadPage("spread-truth", null);
 
   const animationClass = boardFading ? "fade-out-2s" : arrive ? "fade-in-soft" : "pre-fade";
 

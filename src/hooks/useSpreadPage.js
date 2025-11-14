@@ -2,8 +2,29 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TRUTH_ORDER } from "../utils/constants";
+import { FACE_POOLS, labelFrom, pick } from "../lib/card-helpers";
 
-export function useSpreadPage(spreadType, pickCardLogic) {
+function internalPickCardLogic(chosenCards, spreadType, slotIndex) {
+  const cardPool = (() => {
+    if (spreadType === 'spread-truth') {
+      return FACE_POOLS.majors;
+    }
+    // spread-advice logic
+    if (slotIndex === 0) return FACE_POOLS.majors;
+    if (slotIndex === 1) return FACE_POOLS.minorsValues;
+    return FACE_POOLS.minorsCourt;
+  })();
+
+  // Filtrer pour n'avoir que les cartes pas encore piochées
+  const availableCards = cardPool.filter(
+    (card) => !chosenCards.some((chosen) => chosen.name === labelFrom(card.name))
+  );
+
+  const newCard = pick(availableCards);
+  return { src: newCard?.src, name: labelFrom(newCard?.name) };
+}
+
+export function useSpreadPage(spreadType) {
   const { state } = useLocation();
   const nav = useNavigate();
   const name = state?.name || "voyageur";
@@ -75,12 +96,9 @@ export function useSpreadPage(spreadType, pickCardLogic) {
       setPopIndex(targetIndex);
       setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
 
-      let newChosenCard;
-      let isDuplicate;
-      do {
-        newChosenCard = pickCardLogic(chosenSlots.length);
-        isDuplicate = chosenCards.some(card => card.name === newChosenCard.name);
-      } while (isDuplicate);
+      // La logique de pioche de carte est maintenant gérée directement ici
+      // pour éviter les boucles infinies et les "stale closures".
+      const newChosenCard = internalPickCardLogic(chosenCards, spreadType, chosenSlots.length);
 
       // Associer la carte à sa position (A, B, C) en se basant sur l'ordre de tirage
       const position = spreadType === 'spread-truth' ? TRUTH_ORDER[chosenSlots.length] : ['A', 'B', 'C'][chosenSlots.length];
