@@ -101,14 +101,19 @@ const LoadingPage = () => {
       });
 
       console.log("[LoadingPage] En attente de la fin de l'API et de l'animation...");
-      const [spreadId] = await Promise.all([
-        fetchPromise,
-        animationPromise
-      ]);
-      console.log(`[LoadingPage] Séquence terminée. Tirage sélectionné : ${spreadId}. Redirection...`);
-
-      // Redirige vers la page de tirage correspondante APRÈS la fin de l'animation
-      navigate(`/spread-${spreadId.replace('spread-', '')}`, { state: { name, question } });
+      try {
+        const [spreadId] = await Promise.all([
+          fetchPromise,
+          animationPromise
+        ]);
+        console.log(`[LoadingPage] Séquence terminée. Tirage sélectionné : ${spreadId}. Redirection...`);
+        // Redirige vers la page de tirage correspondante APRÈS la fin de l'animation
+        navigate(`/spread-${spreadId.replace('spread-', '')}`, { state: { name, question } });
+      } catch (error) {
+        console.error("[LoadingPage] Une erreur a interrompu la séquence de chargement. Redirection vers le tirage par défaut.", error);
+        // En cas d'erreur (API, réseau...), on redirige vers le tirage par défaut pour ne pas bloquer l'utilisateur.
+        navigate('/spread-advice', { state: { name, question } });
+      }
     };
 
     runLoadingSequence();
