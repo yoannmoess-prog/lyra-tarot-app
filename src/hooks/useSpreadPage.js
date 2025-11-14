@@ -96,29 +96,25 @@ export function useSpreadPage(spreadType) {
       setPopIndex(targetIndex);
       setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
 
-      // La logique de pioche de carte est maintenant gérée directement ici
-      // pour éviter les boucles infinies et les "stale closures".
-      const newChosenCard = internalPickCardLogic(chosenCards, spreadType, chosenSlots.length);
+      // Logique de mise à jour d'état sécurisée pour éviter les "stale closures"
+      setChosenCards(prevCards => {
+        const newCard = internalPickCardLogic(prevCards, spreadType, prevCards.length);
+        const position = spreadType === 'spread-truth' ? TRUTH_ORDER[prevCards.length] : ['A', 'B', 'C'][prevCards.length];
+        const cardWithPosition = { ...newCard, pos: position, slotIndex: targetIndex };
+        const updatedCards = [...prevCards, cardWithPosition];
 
-      // Associer la carte à sa position (A, B, C) en se basant sur l'ordre de tirage
-      const position = spreadType === 'spread-truth' ? TRUTH_ORDER[chosenSlots.length] : ['A', 'B', 'C'][chosenSlots.length];
-      const cardWithPosition = { ...newChosenCard, pos: position, slotIndex: targetIndex };
-
-      const updatedChosenCards = [...chosenCards, cardWithPosition];
-      setChosenCards(updatedChosenCards);
-
-      setChosenSlots((prevSlots) => {
-        const newSlots = [...prevSlots, targetIndex];
-        if (newSlots.length === 3) {
+        if (updatedCards.length === 3) {
           setShuffleActive(false);
           setTimeout(() => {
             setBoardFading(true);
             const chatPath = spreadType === "spread-advice" ? "/chat-advice" : "/chat-truth";
-            setTimeout(() => nav(chatPath, { state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
+            setTimeout(() => nav(chatPath, { state: { name, question, cards: updatedCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
           }, DUR.waitBeforeRedirect);
         }
-        return newSlots;
+        return updatedCards;
       });
+
+      setChosenSlots(prevSlots => [...prevSlots, targetIndex]);
 
       setFlight(null);
       pickingRef.current = false;
