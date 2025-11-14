@@ -1,9 +1,30 @@
 // src/hooks/useSpreadPage.js
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TRUTH_ORDER } from "../utils/constants";
+import { FACE_POOLS, labelFrom, pick } from "../lib/card-helpers";
 
-export function useSpreadPage(spreadType, pickCardLogic) {
+function internalPickCardLogic(chosenCards, spreadType, slotIndex) {
+  const cardPool = (() => {
+    if (spreadType === 'spread-truth') {
+      return FACE_POOLS.majors;
+    }
+    // spread-advice logic
+    if (slotIndex === 0) return FACE_POOLS.majors;
+    if (slotIndex === 1) return FACE_POOLS.minorsValues;
+    return FACE_POOLS.minorsCourt;
+  })();
+
+  // Filtrer pour n'avoir que les cartes pas encore piochées
+  const availableCards = cardPool.filter(
+    (card) => !chosenCards.some((chosen) => chosen.name === labelFrom(card.name))
+  );
+
+  const newCard = pick(availableCards);
+  return { src: newCard?.src, name: labelFrom(newCard?.name) };
+}
+
+export function useSpreadPage(spreadType) {
   const { state } = useLocation();
   const nav = useNavigate();
   const name = state?.name || "voyageur";
@@ -61,32 +82,26 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     return { key: Date.now(), left: d.left, top: d.top, dx, dy, scale, width: d.width, height: d.height };
   };
 
-  const pickCardTo = useCallback(
-    (targetIndex) => {
-      if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) return;
-      const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
-      if (!availableSlots.includes(targetIndex)) return;
+  const pickCardTo = (targetIndex) => {
+    if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) return;
+    const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
+    if (!availableSlots.includes(targetIndex)) return;
 
-      pickingRef.current = true;
-      const fl = computeFlight(targetIndex);
-      if (fl) setFlight(fl);
+    pickingRef.current = true;
+    const fl = computeFlight(targetIndex);
+    if (fl) setFlight(fl);
 
-      // The state updates are now immediate
+    setTimeout(() => {
       setDeckCount((n) => Math.max(0, n - 1));
       setPopIndex(targetIndex);
       setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
 
-      let newChosenCard;
-      let isDuplicate;
-      do {
-        newChosenCard = pickCardLogic(chosenSlots.length);
-        isDuplicate = chosenCards.some((card) => card.name === newChosenCard.name);
-      } while (isDuplicate);
+      // La logique de pioche de carte est maintenant gérée directement ici
+      // pour éviter les boucles infinies et les "stale closures".
+      const newChosenCard = internalPickCardLogic(chosenCards, spreadType, chosenSlots.length);
 
-      const position =
-        spreadType === "spread-truth"
-          ? TRUTH_ORDER[chosenSlots.length]
-          : ["A", "B", "C"][chosenSlots.length];
+      // Associer la carte à sa position (A, B, C) en se basant sur l'ordre de tirage
+      const position = spreadType === 'spread-truth' ? TRUTH_ORDER[chosenSlots.length] : ['A', 'B', 'C'][chosenSlots.length];
       const cardWithPosition = { ...newChosenCard, pos: position, slotIndex: targetIndex };
 
       const updatedChosenCards = [...chosenCards, cardWithPosition];
@@ -99,44 +114,29 @@ export function useSpreadPage(spreadType, pickCardLogic) {
           setTimeout(() => {
             setBoardFading(true);
             const chatPath = spreadType === "spread-advice" ? "/chat-advice" : "/chat-truth";
-            setTimeout(
-              () =>
-                nav(chatPath, {
-                  state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true },
-                }),
-              DUR.boardFade
-            );
+            setTimeout(() => nav(chatPath, { state: { name, question, cards: updatedChosenCards, spreadId: spreadType, isNew: true } }), DUR.boardFade);
           }, DUR.waitBeforeRedirect);
         }
         return newSlots;
       });
 
-      // The timeout is only for cleaning up the animation and the lock
-      setTimeout(() => {
-        setFlight(null);
-        pickingRef.current = false;
-      }, DUR.fly);
-    },
-    [chosenSlots, deckCount, pickCardLogic, spreadType, DUR, nav, name, question, chosenCards]
-  );
+      setFlight(null);
+      pickingRef.current = false;
+    }, DUR.fly);
+  };
 
-  const getNextSlot = useCallback(() => {
-    const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
-    if (availableSlots.length === 0) {
-      return undefined;
-    }
-
+  const getNextSlot = () => {
+    const chosenCount = chosenSlots.length;
     if (spreadType === 'spread-truth') {
-      const truthSlotOrder = [0, 2, 1]; // Ordre spécifique: A, C, B
-      for (const slot of truthSlotOrder) {
-        if (availableSlots.includes(slot)) {
-          return slot;
-        }
-      }
+      // Les slots sont 0 (A), 2 (C), 1 (B)
+      const slotOrder = { 'A': 0, 'B': 1, 'C': 2 };
+      const nextPos = TRUTH_ORDER[chosenCount];
+      return slotOrder[nextPos];
     }
-
-    return availableSlots[0]; // Pour 'spread-advice' ou en fallback
-  }, [chosenSlots, spreadType]);
+    // Ordre par défaut pour spread-advice
+    const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
+    return availableSlots[0];
+  };
 
   const handleDragStart = (event) => {
     // On se contente de marquer le début du glissement.
@@ -145,16 +145,15 @@ export function useSpreadPage(spreadType, pickCardLogic) {
     setActiveId(event.active.id);
   };
 
-  const handleDragEnd = useCallback(
-    (event) => {
-      setActiveId(null);
-      const nextSlot = getNextSlot();
-      if (nextSlot !== undefined) {
-        pickCardTo(nextSlot);
-      }
-    },
-    [getNextSlot, pickCardTo]
-  );
+  const handleDragEnd = (event) => {
+    // Quelle que soit l'interaction (clic, glisser-déposer),
+    // on déclenche la même action : piocher la prochaine carte.
+    setActiveId(null);
+    const nextSlot = getNextSlot();
+    if (nextSlot !== undefined) {
+      pickCardTo(nextSlot);
+    }
+  };
 
   return {
     name,
