@@ -6,22 +6,17 @@ import { FACE_POOLS, labelFrom, pick } from "../lib/card-helpers";
 
 function internalPickCardLogic(chosenCards, spreadType, slotIndex) {
   const cardPool = (() => {
-    if (spreadType === 'spread-truth') {
-      return FACE_POOLS.majors;
-    }
-    // spread-advice logic
+    if (spreadType === 'spread-truth') return FACE_POOLS.majors;
     if (slotIndex === 0) return FACE_POOLS.majors;
     if (slotIndex === 1) return FACE_POOLS.minorsValues;
     return FACE_POOLS.minorsCourt;
   })();
 
-  // Filtrer pour n'avoir que les cartes pas encore piochées
-  const availableCards = cardPool.filter(
-    (card) => !chosenCards.some((chosen) => chosen.name === labelFrom(card.name))
-  );
+  const chosenIds = new Set(chosenCards.map(c => c.id));
+  const availableCards = cardPool.filter(card => !chosenIds.has(card.id));
 
-  const newCard = pick(availableCards);
-  return { src: newCard?.src, name: labelFrom(newCard?.name) };
+  // On retourne la carte entière et non plus seulement src/name
+  return pick(availableCards);
 }
 
 export function useSpreadPage(spreadType) {
@@ -98,7 +93,14 @@ export function useSpreadPage(spreadType) {
 
       // Logique de mise à jour d'état sécurisée pour éviter les "stale closures"
       setChosenCards(prevCards => {
+        // newCard est maintenant l'objet carte complet {id, name, src, ...}
         const newCard = internalPickCardLogic(prevCards, spreadType, prevCards.length);
+        if (!newCard) {
+          console.warn("Aucune carte n'a pu être piochée.");
+          pickingRef.current = false;
+          return prevCards; // Retourne l'état précédent si aucune carte n'est trouvée
+        }
+
         const position = spreadType === 'spread-truth' ? TRUTH_ORDER[prevCards.length] : ['A', 'B', 'C'][prevCards.length];
         const cardWithPosition = { ...newCard, pos: position, slotIndex: targetIndex };
         const updatedCards = [...prevCards, cardWithPosition];
