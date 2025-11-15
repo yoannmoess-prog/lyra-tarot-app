@@ -2,22 +2,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TRUTH_ORDER } from "../utils/constants";
-import { FACE_POOLS, labelFrom, pick } from "../lib/card-helpers";
-
-function internalPickCardLogic(chosenCards, spreadType, slotIndex) {
-  const cardPool = (() => {
-    if (spreadType === 'spread-truth') return FACE_POOLS.majors;
-    if (slotIndex === 0) return FACE_POOLS.majors;
-    if (slotIndex === 1) return FACE_POOLS.minorsValues;
-    return FACE_POOLS.minorsCourt;
-  })();
-
-  const chosenIds = new Set(chosenCards.map(c => c.id));
-  const availableCards = cardPool.filter(card => !chosenIds.has(card.id));
-
-  // On retourne la carte entière et non plus seulement src/name
-  return pick(availableCards);
-}
+import { FACE_POOLS, pick } from "../lib/card-helpers";
 
 export function useSpreadPage(spreadType) {
   const { state } = useLocation();
@@ -31,8 +16,9 @@ export function useSpreadPage(spreadType) {
   const [boardFading, setBoardFading] = useState(false);
   const [shuffleActive, setShuffleActive] = useState(false);
   const [deckCount, setDeckCount] = useState(22);
-  const [chosenSlots, setChosenSlots] = useState([]);
   const [chosenCards, setChosenCards] = useState([]);
+  // Dériver `chosenSlots` de `chosenCards` pour avoir une seule source de vérité.
+  const chosenSlots = useMemo(() => chosenCards.map(c => c.slotIndex), [chosenCards]);
   const [popIndex, setPopIndex] = useState(null);
   const pickingRef = useRef(false);
   const deckRef = useRef(null);
@@ -91,16 +77,26 @@ export function useSpreadPage(spreadType) {
       setPopIndex(targetIndex);
       setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
 
-      // Logique de mise à jour d'état sécurisée pour éviter les "stale closures"
+      // Logique de mise à jour d'état refactorisée pour être plus robuste
+      // et éviter les boucles infinies potentielles si le pool de cartes est épuisé.
       setChosenCards(prevCards => {
-        // newCard est maintenant l'objet carte complet {id, name, src, ...}
-        const newCard = internalPickCardLogic(prevCards, spreadType, prevCards.length);
-        if (!newCard) {
-          console.warn("Aucune carte n'a pu être piochée.");
+        const cardPool = (() => {
+          if (spreadType === 'spread-truth') return FACE_POOLS.majors;
+          if (prevCards.length === 0) return FACE_POOLS.majors;
+          if (prevCards.length === 1) return FACE_POOLS.minorsValues;
+          return FACE_POOLS.minorsCourt;
+        })();
+
+        const chosenIds = new Set(prevCards.map(c => c.id));
+        const availableCards = cardPool.filter(card => !chosenIds.has(card.id));
+
+        if (availableCards.length === 0) {
+          console.warn("Aucune carte disponible dans le pool pour le tirage.");
           pickingRef.current = false;
-          return prevCards; // Retourne l'état précédent si aucune carte n'est trouvée
+          return prevCards; // Empêche un état bloqué
         }
 
+        const newCard = pick(availableCards);
         const position = spreadType === 'spread-truth' ? TRUTH_ORDER[prevCards.length] : ['A', 'B', 'C'][prevCards.length];
         const cardWithPosition = { ...newCard, pos: position, slotIndex: targetIndex };
         const updatedCards = [...prevCards, cardWithPosition];
@@ -116,7 +112,8 @@ export function useSpreadPage(spreadType) {
         return updatedCards;
       });
 
-      setChosenSlots(prevSlots => [...prevSlots, targetIndex]);
+      // La mise à jour de chosenSlots est maintenant inutile car il est dérivé de chosenCards.
+      // setChosenSlots(prevSlots => [...prevSlots, targetIndex]);
 
       setFlight(null);
       pickingRef.current = false;
