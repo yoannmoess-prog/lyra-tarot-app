@@ -119,6 +119,7 @@ export default function ChatPage({ spreadId }) {
   const [finalFlip, setFinalFlip] = useState([false, false, false]);
   const finalFaces = useMemo(() => cards.map((c) => c.src), [cards]);
   const finalNames = useMemo(() => cards.map((c) => c.name), [cards]);
+  const finalCards = useMemo(() => cards.map(c => ({ id: c.id, name: c.name })), [cards]);
   const [sealed, setSealed] = useState(false);
 
   const [chatVisible, setChatVisible] = useState(false);
@@ -331,11 +332,10 @@ export default function ChatPage({ spreadId }) {
     if (!isChatReady || conv.length > 0) return;
 
     if (conversationState === 'introduction') {
-      const cardNames = finalNames.filter(Boolean);
-      const payload = { name: niceName, question, cards: cardNames, spreadId, userMessage: "", history: [] };
+      const payload = { name: niceName, question, cards: finalCards, spreadId, userMessage: "", history: [] };
       showLyraStreamingResponse(payload, []);
     }
-  }, [isChatReady, conv.length, niceName, question, finalNames, spreadId, conversationState]);
+  }, [isChatReady, conv.length, niceName, question, finalCards, spreadId, conversationState]);
 
   const onYouSubmit = (e) => {
     if (e) e.preventDefault();
@@ -358,7 +358,7 @@ export default function ChatPage({ spreadId }) {
       content: m.text,
     }));
 
-    const payload = { name: niceName, question, cards: finalNames.filter(Boolean), spreadId, userMessage: msg, history, conversationState };
+    const payload = { name: niceName, question, cards: finalCards, spreadId, userMessage: msg, history, conversationState };
     showLyraStreamingResponse(payload, currentConv);
   };
 

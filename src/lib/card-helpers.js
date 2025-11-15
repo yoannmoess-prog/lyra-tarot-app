@@ -2,19 +2,27 @@
 const FACE_MODULES = import.meta.glob("../../assets/cards/*.webp", { eager: true });
 const asUrl = (m) => (typeof m === "string" ? m : m?.default ?? null);
 
+export function idFromFileName(fileName) {
+  if (!fileName) return null;
+  const match = fileName.match(/^([^_]+)/);
+  return match ? match[1] : null;
+}
+
 function buildFacePools() {
   const all = Object.keys(FACE_MODULES)
     .map((p) => {
       const src = asUrl(FACE_MODULES[p]);
-      const name = p.split("/").pop() || "";
-      return src ? { path: p, name, src } : null;
+      const fileName = p.split("/").pop() || "";
+      const id = idFromFileName(fileName);
+      if (!src || !id) return null;
+      return { path: p, fileName, src, id, name: labelFrom(fileName) };
     })
     .filter(Boolean);
   return {
     all,
-    majors: all.filter((f) => /^(0\d|1\d|2[0-1])_/.test(f.name)),
-    minorsValues: all.filter((f) => /^[DEBC](0[1-9]|10)_/.test(f.name)),
-    minorsCourt: all.filter((f) => /^[DEBC]1[1-4]_/.test(f.name)),
+    majors: all.filter((f) => /^(0\d|1\d|2[0-1])_/.test(f.fileName)),
+    minorsValues: all.filter((f) => /^[DEBC](0[1-9]|10)_/.test(f.fileName)),
+    minorsCourt: all.filter((f) => /^[DEBC]1[1-4]_/.test(f.fileName)),
   };
 }
 export const FACE_POOLS = buildFacePools();
