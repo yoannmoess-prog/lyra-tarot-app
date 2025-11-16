@@ -70,9 +70,17 @@ export function useSpreadPage(spreadType) {
 
     pickingRef.current = true;
     const fl = computeFlight(targetIndex);
-    if (fl) setFlight(fl);
+    if (fl) {
+      setFlight(fl);
+    }
 
     setTimeout(() => {
+      if (fl) {
+        // Il est crucial de réinitialiser `flight` à null DÈS QUE l'animation
+        // a commencé (c'est-à-dire, après le premier "tick" de setTimeout).
+        // Cela empêche un re-rendu accidentel de l'animation si un autre état change.
+        setFlight(null);
+      }
       setDeckCount((n) => Math.max(0, n - 1));
       setPopIndex(targetIndex);
       setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
@@ -111,11 +119,6 @@ export function useSpreadPage(spreadType) {
         }
         return updatedCards;
       });
-
-      // La mise à jour de chosenSlots est maintenant inutile car il est dérivé de chosenCards.
-      // setChosenSlots(prevSlots => [...prevSlots, targetIndex]);
-
-      setFlight(null);
       pickingRef.current = false;
     }, DUR.fly);
   };
