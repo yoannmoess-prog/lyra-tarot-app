@@ -2,7 +2,28 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TRUTH_ORDER } from "../utils/constants";
-import { FACE_POOLS, pick } from "../lib/card-helpers";
+import { FACE_POOLS, labelFrom, pick } from "../lib/card-helpers";
+
+function internalPickCardLogic(chosenCards, spreadType, slotIndex) {
+  const cardPool = (() => {
+    if (spreadType === 'spread-truth') {
+      return FACE_POOLS.majors;
+    }
+    // spread-advice logic
+    if (slotIndex === 0) return FACE_POOLS.majors;
+    if (slotIndex === 1) return FACE_POOLS.minorsValues;
+    return FACE_POOLS.minorsCourt;
+  })();
+
+  // Filtrer pour n'avoir que les cartes pas encore piochées
+  const availableCards = cardPool.filter(
+    (card) => !chosenCards.some((chosen) => chosen.id === card.id)
+  );
+
+  const newCard = pick(availableCards);
+  // Retourner l'objet carte complet pour avoir accès à l'id
+  return newCard;
+}
 
 export function useSpreadPage(spreadType) {
   const { state } = useLocation();
@@ -16,9 +37,8 @@ export function useSpreadPage(spreadType) {
   const [boardFading, setBoardFading] = useState(false);
   const [shuffleActive, setShuffleActive] = useState(false);
   const [deckCount, setDeckCount] = useState(22);
+  const [chosenSlots, setChosenSlots] = useState([]);
   const [chosenCards, setChosenCards] = useState([]);
-  // Dériver `chosenSlots` de `chosenCards` pour avoir une seule source de vérité.
-  const chosenSlots = useMemo(() => chosenCards.map(c => c.slotIndex), [chosenCards]);
   const [popIndex, setPopIndex] = useState(null);
   const pickingRef = useRef(false);
   const deckRef = useRef(null);
@@ -70,43 +90,18 @@ export function useSpreadPage(spreadType) {
 
     pickingRef.current = true;
     const fl = computeFlight(targetIndex);
-    if (fl) {
-      setFlight(fl);
-    }
+    if (fl) setFlight(fl);
 
     setTimeout(() => {
-      if (fl) {
-        // Il est crucial de réinitialiser `flight` à null DÈS QUE l'animation
-        // a commencé (c'est-à-dire, après le premier "tick" de setTimeout).
-        // Cela empêche un re-rendu accidentel de l'animation si un autre état change.
-        setFlight(null);
-      }
       setDeckCount((n) => Math.max(0, n - 1));
       setPopIndex(targetIndex);
       setTimeout(() => setPopIndex(null), Math.min(450, DUR.fly + 50));
 
-      // Logique de mise à jour d'état refactorisée pour être plus robuste
-      // et éviter les boucles infinies potentielles si le pool de cartes est épuisé.
+      // Logique de mise à jour d'état sécurisée pour éviter les "stale closures"
       setChosenCards(prevCards => {
-        const cardPool = (() => {
-          if (spreadType === 'spread-truth') return FACE_POOLS.majors;
-          if (prevCards.length === 0) return FACE_POOLS.majors;
-          if (prevCards.length === 1) return FACE_POOLS.minorsValues;
-          return FACE_POOLS.minorsCourt;
-        })();
-
-        const chosenIds = new Set(prevCards.map(c => c.id));
-        const availableCards = cardPool.filter(card => !chosenIds.has(card.id));
-
-        if (availableCards.length === 0) {
-          console.warn("Aucune carte disponible dans le pool pour le tirage.");
-          pickingRef.current = false;
-          return prevCards; // Empêche un état bloqué
-        }
-
-        const newCard = pick(availableCards);
+        const newCard = internalPickCardLogic(prevCards, spreadType, prevCards.length);
         const position = spreadType === 'spread-truth' ? TRUTH_ORDER[prevCards.length] : ['A', 'B', 'C'][prevCards.length];
-        const cardWithPosition = { ...newCard, pos: position, slotIndex: targetIndex };
+        const cardWithPosition = { ...newCard, name: labelFrom(newCard.fileName), pos: position, slotIndex: targetIndex };
         const updatedCards = [...prevCards, cardWithPosition];
 
         if (updatedCards.length === 3) {
@@ -119,6 +114,10 @@ export function useSpreadPage(spreadType) {
         }
         return updatedCards;
       });
+
+      setChosenSlots(prevSlots => [...prevSlots, targetIndex]);
+
+      setFlight(null);
       pickingRef.current = false;
     }, DUR.fly);
   };
