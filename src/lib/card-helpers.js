@@ -15,6 +15,7 @@ function buildFacePools() {
       const fileName = p.split("/").pop() || "";
       const id = idFromFileName(fileName);
       if (!src || !id) return null;
+      // Note: Le `name` est maintenant le nom lisible par l'humain, pas le nom de fichier
       return { path: p, fileName, src, id, name: labelFrom(fileName) };
     })
     .filter(Boolean);
