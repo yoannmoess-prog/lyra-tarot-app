@@ -59,14 +59,18 @@ export default function SpreadAdvicePage() {
                   ref={slotRefs[i]}
                   className={`slot-wrap`}
                 >
-                  {(() => {
-                    const cardData = chosenCards.find(c => c.slotIndex === i);
-                    return cardData?.src ? (
-                      <img src={cardData.src} alt={cardData.name} className={`card chosen ${i === popIndex ? "pop" : ""}`} />
-                    ) : (
-                      <div className="card slot-ghost" />
-                    );
-                  })()}
+                  {chosenSlots.includes(i) ? (
+                    (() => {
+                      const cardData = chosenCards.find(c => c.slotIndex === i);
+                      return cardData?.src ? (
+                        <img src={cardData.src} alt={cardData.name} className={`card chosen ${i === popIndex ? "pop" : ""}`} />
+                      ) : (
+                        <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
+                      );
+                    })()
+                  ) : (
+                    <div className="card slot-ghost" />
+                  )}
                 </div>
               ))}
             </DroppableRail>
