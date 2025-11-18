@@ -77,9 +77,10 @@ export function fitRail(container, { spreadId, cols = 3, minCard = 120 } = {}) {
     // --- Calcul basé sur la HAUTEUR (nouveau) ---
     let heightBasedCardW = Infinity; // Pas de limite par défaut
     if (spreadId === 'spread-truth') {
-      const headerH = parseFloat(docEl.getPropertyValue("--h")) || 64;
-      const footerH = parseFloat(docEl.getPropertyValue("--f")) || 84;
-      const railGap = parseFloat(docEl.getPropertyValue("--rail-gap")) || 160;
+      const computedDocElStyles = getComputedStyle(docEl);
+      const headerH = parseFloat(computedDocElStyles.getPropertyValue("--h")) || 64;
+      const footerH = parseFloat(computedDocElStyles.getPropertyValue("--f")) || 84;
+      const railGap = parseFloat(computedDocElStyles.getPropertyValue("--rail-gap")) || 160;
       const availableH = window.innerHeight - headerH - footerH - railGap;
 
       // La hauteur totale du rail-truth est de 1.5x la hauteur d'une carte + padding.

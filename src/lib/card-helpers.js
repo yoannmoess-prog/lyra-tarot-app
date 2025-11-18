@@ -13,12 +13,19 @@ function buildFacePools() {
       return src && id ? { id, name, src, filename } : null;
     })
     .filter(Boolean);
-  return {
+  const pools = {
     all,
     majors: all.filter((f) => /^(0\d|1\d|2[0-1])_/.test(f.filename)),
     minorsValues: all.filter((f) => /^[DEBC](0[1-9]|10)_/.test(f.filename)),
     minorsCourt: all.filter((f) => /^[DEBC]1[1-4]_/.test(f.filename)),
   };
+  console.log('[card-helpers] Carte du paquet :', {
+    all: pools.all.length,
+    majors: pools.majors.length,
+    minorsValues: pools.minorsValues.length,
+    minorsCourt: pools.minorsCourt.length,
+  });
+  return pools;
 }
 export const FACE_POOLS = buildFacePools();
 
