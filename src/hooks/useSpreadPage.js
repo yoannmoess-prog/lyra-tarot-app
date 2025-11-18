@@ -101,7 +101,7 @@ export function useSpreadPage(spreadType) {
       setChosenCards(prevCards => {
         const newCard = internalPickCardLogic(prevCards, spreadType, prevCards.length);
         const position = spreadType === 'spread-truth' ? TRUTH_ORDER[prevCards.length] : ['A', 'B', 'C'][prevCards.length];
-        const cardWithPosition = { ...newCard, name: newCard.name, pos: position, slotIndex: targetIndex };
+        const cardWithPosition = { ...newCard, pos: position, slotIndex: targetIndex };
         const updatedCards = [...prevCards, cardWithPosition];
 
         if (updatedCards.length === 3) {
