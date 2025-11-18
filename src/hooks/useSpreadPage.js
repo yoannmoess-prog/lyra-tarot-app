@@ -5,6 +5,12 @@ import { TRUTH_ORDER } from "../utils/constants";
 import { FACE_POOLS, labelFrom, pick } from "../lib/card-helpers";
 
 function internalPickCardLogic(chosenCards, spreadType, slotIndex) {
+  console.log('[useSpreadPage] Contenu de FACE_POOLS au moment de la pioche :', {
+    all: FACE_POOLS.all.length,
+    majors: FACE_POOLS.majors.length,
+    minorsValues: FACE_POOLS.minorsValues.length,
+    minorsCourt: FACE_POOLS.minorsCourt.length,
+  });
   const cardPool = (() => {
     if (spreadType === 'spread-truth') {
       return FACE_POOLS.majors;
