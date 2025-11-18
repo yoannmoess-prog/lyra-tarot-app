@@ -15,9 +15,9 @@ function buildFacePools() {
     .filter(Boolean);
   return {
     all,
-    majors: all.filter((f) => /^(0\d|1\d|2[0-1])_/.test(f.name)),
-    minorsValues: all.filter((f) => /^[DEBC](0[1-9]|10)_/.test(f.name)),
-    minorsCourt: all.filter((f) => /^[DEBC]1[1-4]_/.test(f.name)),
+    majors: all.filter((f) => /^(0\d|1\d|2[0-1])_/.test(f.filename)),
+    minorsValues: all.filter((f) => /^[DEBC](0[1-9]|10)_/.test(f.filename)),
+    minorsCourt: all.filter((f) => /^[DEBC]1[1-4]_/.test(f.filename)),
   };
 }
 export const FACE_POOLS = buildFacePools();
