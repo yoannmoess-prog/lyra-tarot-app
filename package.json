@@ -12,8 +12,7 @@
     "preview": "vite preview",
     "rag:build": "node scripts/md2jsonl.mjs records build/rag/index.jsonl",
     "rag:embed": "node scripts/embed.mjs build/rag/index.jsonl build/rag/index.vec.jsonl",
-    "rag:rebuild": "npm run rag:build && npm run rag:embed",
-    "postinstall": "npm install --prefix server"
+    "rag:rebuild": "npm run rag:build && npm run rag:embed"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
