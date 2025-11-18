@@ -6,8 +6,11 @@ function buildFacePools() {
   const all = Object.keys(FACE_MODULES)
     .map((p) => {
       const src = asUrl(FACE_MODULES[p]);
-      const name = p.split("/").pop() || "";
-      return src ? { path: p, name, src } : null;
+      const filename = p.split("/").pop() || "";
+      const idMatch = filename.match(/^([^_]+)_/);
+      const id = idMatch ? idMatch[1] : null;
+      const name = labelFrom(filename);
+      return src && id ? { id, name, src, filename } : null;
     })
     .filter(Boolean);
   return {
