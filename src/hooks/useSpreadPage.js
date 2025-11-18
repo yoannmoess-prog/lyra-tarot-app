@@ -40,7 +40,7 @@ export function useSpreadPage(spreadType) {
   const [chosenSlots, setChosenSlots] = useState([]);
   const [chosenCards, setChosenCards] = useState([]);
   const [popIndex, setPopIndex] = useState(null);
-  const pickingRef = useRef(false);
+  const [isPicking, setIsPicking] = useState(false);
   const deckRef = useRef(null);
   const slotRefs = [useRef(null), useRef(null), useRef(null)];
   const [flight, setFlight] = useState(null);
@@ -84,11 +84,11 @@ export function useSpreadPage(spreadType) {
   };
 
   const pickCardTo = (targetIndex) => {
-    if (pickingRef.current || chosenSlots.length >= 3 || deckCount <= 0) return;
+    if (isPicking || chosenSlots.length >= 3 || deckCount <= 0) return;
     const availableSlots = [0, 1, 2].filter((i) => !chosenSlots.includes(i));
     if (!availableSlots.includes(targetIndex)) return;
 
-    pickingRef.current = true;
+    setIsPicking(true);
     const fl = computeFlight(targetIndex);
     if (fl) setFlight(fl);
 
@@ -102,6 +102,9 @@ export function useSpreadPage(spreadType) {
         const newCard = internalPickCardLogic(prevCards, spreadType, prevCards.length);
         const position = spreadType === 'spread-truth' ? TRUTH_ORDER[prevCards.length] : ['A', 'B', 'C'][prevCards.length];
         const cardWithPosition = { ...newCard, pos: position, slotIndex: targetIndex };
+
+        console.log(`Carte piochée pour la position ${position} (slot ${targetIndex}):`, { id: cardWithPosition.id, name: cardWithPosition.name });
+
         const updatedCards = [...prevCards, cardWithPosition];
 
         if (updatedCards.length === 3) {
@@ -118,7 +121,7 @@ export function useSpreadPage(spreadType) {
       setChosenSlots(prevSlots => [...prevSlots, targetIndex]);
 
       setFlight(null);
-      pickingRef.current = false;
+      setIsPicking(false);
     }, DUR.fly);
   };
 
@@ -138,7 +141,7 @@ export function useSpreadPage(spreadType) {
   const handleDragStart = (event) => {
     // On se contente de marquer le début du glissement.
     // Aucune carte n'est pré-sélectionnée ici.
-    if (pickingRef.current || chosenSlots.length >= 3) return;
+    if (isPicking || chosenSlots.length >= 3) return;
     setActiveId(event.active.id);
   };
 
@@ -164,7 +167,7 @@ export function useSpreadPage(spreadType) {
     chosenSlots,
     chosenCards,
     popIndex,
-    pickingRef,
+    isPicking,
     deckRef,
     slotRefs,
     flight,

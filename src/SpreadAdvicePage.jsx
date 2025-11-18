@@ -17,6 +17,7 @@ export default function SpreadAdvicePage() {
     chosenSlots,
     chosenCards,
     popIndex,
+    isPicking,
     deckRef,
     slotRefs,
     flight,
@@ -38,7 +39,7 @@ export default function SpreadAdvicePage() {
 
           <div className={`board ${isLandscape ? "" : "col"}`}>
             <div className="deck-block">
-              <DraggableHandle />
+              <DraggableHandle isPicking={isPicking} />
               <div
                 ref={deckRef}
                 className={`deck-area ${shuffleActive ? "shuffling" : ""}`}
@@ -100,13 +101,15 @@ export default function SpreadAdvicePage() {
   );
 }
 
-function DraggableHandle() {
+function DraggableHandle({ isPicking }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: "deck-handle",
+    disabled: isPicking,
   });
 
   const style = {
     visibility: isDragging ? 'hidden' : 'visible',
+    cursor: isPicking ? 'default' : 'grab',
   };
 
   return (
@@ -116,9 +119,10 @@ function DraggableHandle() {
       style={style}
       {...listeners}
       {...attributes}
-      className="draggable-handle"
+      className={`draggable-handle ${isPicking ? 'disabled' : ''}`}
       role="button"
       aria-label="Touchez ou glissez pour piocher une carte"
+      aria-disabled={isPicking}
     />
   );
 }
