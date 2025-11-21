@@ -2,19 +2,19 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Intro from "./Intro.jsx";
-import Page2 from "./Page2.jsx";
+import Intro from "./Intro";
+import Page2 from "./Page2";
 
 // Ton flow historique
-import Page3 from "./Page3.jsx";   // /question
-import LoadingPage from "./LoadingPage.jsx"; // /loading
-import SpreadAdvicePage from "./SpreadAdvicePage.jsx";
-import SpreadTruthPage from "./SpreadTruthPage.jsx";
-import ChatAdvicePage from "./ChatAdvicePage.jsx";
-import ChatTruthPage from "./ChatTruthPage.jsx";
+import Page3 from "./Page3";   // /question
+import LoadingPage from "./LoadingPage"; // /loading
+import SpreadAdvicePage from "./SpreadAdvicePage";
+import SpreadTruthPage from "./SpreadTruthPage";
+import ChatAdvicePage from "./ChatAdvicePage";
+import ChatTruthPage from "./ChatTruthPage";
 
 // Démo spreads en sandbox (optionnelle)
-import SpreadsDemo from "./pages/SpreadsDemo.jsx";
+import SpreadsDemo from "./pages/SpreadsDemo";
 
 export default function App() {
   return (

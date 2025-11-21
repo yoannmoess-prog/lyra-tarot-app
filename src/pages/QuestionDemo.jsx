@@ -2,10 +2,10 @@
 import React, { useMemo, useState } from "react";
 import "./Question.css";
 
-import { loadSpreadsConfigClient } from "../lib/spreads.client.js";
-import { chooseSpreadIdFromConfig } from "../lib/routing.js";
-import { buildDeckFromAssets } from "../lib/deck.js";
-import { drawSpread } from "../lib/draw.js";
+import { loadSpreadsConfigClient } from "@/lib/spreads.client";
+import { chooseSpreadIdFromConfig } from "@/lib/routing";
+import { buildDeckFromAssets } from "@/lib/deck";
+import { drawSpread } from "@/lib/draw";
 
 export default function QuestionPage() {
   const [question, setQuestion] = useState("");

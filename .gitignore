@@ -27,6 +27,9 @@ dist-ssr
 server/.env
 server/.env.*
 
+# Test results
+test-results/
+
 # never commit secrets
 server/.env
 server/.env.*
