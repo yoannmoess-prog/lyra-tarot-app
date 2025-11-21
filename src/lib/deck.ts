@@ -1,5 +1,5 @@
 // src/lib/deck.ts
-import type { Card, Deck, Suit } from "@/lib/draw";
+import type { Card, Deck, Suit } from "./draw.ts";
 
 const SUIT_MAP: Record<string, Suit> = {
   B: "bâtons",

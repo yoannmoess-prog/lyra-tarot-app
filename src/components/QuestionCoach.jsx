@@ -1,6 +1,6 @@
 // src/components/QuestionCoach.jsx
 import React, { useMemo, useState } from "react";
-import { postJson, toast } from "../utils/net";
+import { postJson, toast } from "../utils/net.js";
 import "./question-coach.css";
 
 export default function QuestionCoach({ name, question, onUseSuggestion, onQualityChange }) {
