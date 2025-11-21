@@ -62,11 +62,7 @@ export default function SpreadTruthPage() {
                   {(() => {
                     const cardData = chosenCards.find(c => c.slotIndex === i);
                     return cardData ? (
-                      cardData.src ? (
-                        <img src={cardData.src} alt={cardData.name} className={`card chosen ${i === popIndex ? "pop" : ""}`} />
-                      ) : (
-                        <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
-                      )
+                      <div className={`card card-back chosen ${i === popIndex ? "pop" : ""}`} />
                     ) : (
                       <div className="card slot-ghost" />
                     );
