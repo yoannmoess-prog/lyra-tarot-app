@@ -1,5 +1,5 @@
 // src/lib/card-helpers.js
-const FACE_MODULES = import.meta.glob("../../assets/cards/*.webp", { eager: true });
+const FACE_MODULES = import.meta.glob("../assets/cards/*.webp", { eager: true });
 const asUrl = (m) => (typeof m === "string" ? m : m?.default ?? null);
 
 function buildFacePools() {
@@ -19,12 +19,6 @@ function buildFacePools() {
     minorsValues: all.filter((f) => /^[DEBC](0[1-9]|10)_/.test(f.filename)),
     minorsCourt: all.filter((f) => /^[DEBC]1[1-4]_/.test(f.filename)),
   };
-  console.log('[card-helpers] Carte du paquet :', {
-    all: pools.all.length,
-    majors: pools.majors.length,
-    minorsValues: pools.minorsValues.length,
-    minorsCourt: pools.minorsCourt.length,
-  });
   return pools;
 }
 export const FACE_POOLS = buildFacePools();

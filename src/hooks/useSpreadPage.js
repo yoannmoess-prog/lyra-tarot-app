@@ -1,8 +1,8 @@
 // src/hooks/useSpreadPage.js
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { TRUTH_ORDER } from "../utils/constants.js";
-import { FACE_POOLS, labelFrom, pick } from "../lib/card-helpers.js";
+import { TRUTH_ORDER } from "../utils/constants";
+import { FACE_POOLS, labelFrom, pick } from "../lib/card-helpers";
 
 function internalPickCardLogic(chosenCards, spreadType, slotIndex) {
   console.log('[useSpreadPage] Contenu de FACE_POOLS au moment de la pioche :', {

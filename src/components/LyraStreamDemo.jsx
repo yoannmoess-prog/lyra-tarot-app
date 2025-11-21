@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { streamLyra } from "../utils/streamLyra.js";
+import { streamLyra } from "../utils/streamLyra";
 
 export default function LyraStreamDemo() {
   const [question, setQuestion] = useState("Comment canaliser mon énergie cette semaine ?");

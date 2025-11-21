@@ -1,16 +1,16 @@
-// src/pages/ChatPage.jsx — Page de conversation générique
+// src/ChatAdvicePage.jsx — Page de conversation pour "spread-advice"
 import React, { useEffect, useMemo, useRef, useState, useLayoutEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import "../components/Modal.css";
 import "../ChatPage.css";
 import "../Page5.css"; // Ré-ajouté pour les styles des cartes
-import { toast } from "../utils/net.js";
+import { toast } from "../utils/net";
 import "../toast.css";
 import "../chat-ux.css";
 
-import { streamLyra } from "../utils/streamLyra.js";
-import { TRUTH_ORDER, ADVICE_ORDER } from "../utils/constants.js";
+import { streamLyra } from "../utils/streamLyra";
+import { TRUTH_ORDER, ADVICE_ORDER } from "../utils/constants";
 
 /* ---------------- Persistance conversation ---------------- */
 // La clé de stockage est maintenant dynamique et dépend du spreadId

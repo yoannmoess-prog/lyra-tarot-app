@@ -1,6 +1,6 @@
 // src/components/DebugBar.jsx
 import React, { useEffect, useState } from "react";
-import { getSessionId } from "../utils/session.js";
+import { getSessionId } from "../utils/session";
 
 export default function DebugBar() {
   const [sid, setSid] = useState("");
