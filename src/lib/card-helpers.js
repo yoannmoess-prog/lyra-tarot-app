@@ -1,5 +1,5 @@
 // src/lib/card-helpers.js
-const FACE_MODULES = import.meta.glob("../assets/cards/*.webp", { eager: true });
+const FACE_MODULES = import.meta.glob("../../assets/cards/*.webp", { eager: true });
 const asUrl = (m) => (typeof m === "string" ? m : m?.default ?? null);
 
 function buildFacePools() {
