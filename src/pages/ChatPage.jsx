@@ -63,8 +63,9 @@ export function fitRail(container, { spreadId, cols = 3, minCard = 120 } = {}) {
   const ro = new ResizeObserver(() => {
     const cs = getComputedStyle(container);
     const docEl = document.documentElement;
+    const computedDocElStyles = getComputedStyle(docEl);
     const gap = parseFloat(cs.getPropertyValue("--gap")) || 16;
-    const deck = parseFloat(docEl.getPropertyValue("--card-deck-w"));
+    const deck = parseFloat(computedDocElStyles.getPropertyValue("--card-deck-w"));
 
     // --- Calcul basé sur la LARGEUR (existant) ---
     let c = cols;
