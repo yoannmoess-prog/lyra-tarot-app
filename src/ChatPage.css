@@ -140,8 +140,17 @@
   transform: translateY(50%);
 }
 
-.page-chat .final-card-outer {
-  width: min(100%, var(--card-w, var(--card-deck-w)));
+/*
+  Ceci est la correction clé. On applique la largeur dynamique calculée
+  via JS (--card-w) aux cartes DANS DEUX CONTEXTES :
+  1. `.page-chat .final-card-outer`: Pour le rail sur la page principale.
+  2. `.spread-modal-container .final-card-outer`: Pour le rail dans la modale.
+  Cela surcharge la largeur fixe de Page5.css de manière ciblée,
+  sans causer de régression.
+*/
+.page-chat .final-card-outer,
+.spread-modal-container .final-card-outer {
+  width: var(--card-w, var(--card-deck-w));
   aspect-ratio: 9.27 / 18;
 }
 
