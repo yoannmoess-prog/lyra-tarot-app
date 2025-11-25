@@ -80,12 +80,7 @@
 /* Cartes finales */
 .final-rail {
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  justify-items: center;
-  align-items: start;
-  gap: clamp(12px, 2.2vw, 28px);
-  opacity: 0;
+  opacity: 0; /* Visibilité gérée par l'animation ou des règles spécifiques */
 }
 .appear-slow { animation: finalAppear 1.2s ease .2s forwards; }
 

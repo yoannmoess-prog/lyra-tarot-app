@@ -121,7 +121,12 @@
 }
 
 /* --- Rail de cartes – configuration et comportement --- */
-.page-chat .rail-truth, .page-chat .rail-advice {
+/*
+  Logique de grille unifiée pour le rail de la page ET de la modale.
+  C'est la source de vérité pour la mise en page.
+*/
+#chat-body .final-rail,
+.spread-modal-container .final-rail {
   display: grid;
   justify-content: center;
   align-items: start;
@@ -130,29 +135,20 @@
   grid-template-columns: repeat(var(--cols, 3), var(--card-w, var(--card-deck-w)));
 }
 
-.page-chat .rail-advice {}
-
-.page-chat .rail-truth {
+/* Styles spécifiques à chaque contexte */
+#chat-body .rail-truth {
   margin-bottom: 8rem;
 }
 
-.rail-truth .final-card-outer[data-pos='B'] {
+#chat-body .rail-truth .final-card-outer[data-pos='B'],
+.spread-modal-container .rail-truth .final-card-outer[data-pos='B'] {
   transform: translateY(50%);
 }
 
-/*
-  Ceci est la correction clé. On applique la largeur dynamique calculée
-  via JS (--card-w) aux cartes DANS DEUX CONTEXTES :
-  1. `.page-chat .final-card-outer`: Pour le rail sur la page principale.
-  2. `.spread-modal-container .final-card-outer`: Pour le rail dans la modale.
-  Cela surcharge la largeur fixe de Page5.css de manière ciblée,
-  sans causer de régression.
-*/
 #chat-body .final-card-outer,
 .spread-modal-container .final-card-outer {
   width: var(--card-w, var(--card-deck-w));
   aspect-ratio: 9.27 / 18;
-  box-sizing: border-box; /* Assure que le padding/border est inclus dans la largeur */
 }
 
 /* --- Styles pour la modale du tirage --- */
