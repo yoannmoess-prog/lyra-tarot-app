@@ -25,13 +25,6 @@
 .name-inner.leaving > *{ opacity: 0; transform: translateY(-8px) scale(.985); }
 .name-inner.gone      { visibility: hidden; }
 
-.name-title {
-  margin: 0;
-  font-family: 'Sorts Mill Goudy', serif;
-  color: #F8F5E1;
-  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
-  line-height: 1.25;
-}
 
 /* Bulle de saisie */
 .input-bubble {

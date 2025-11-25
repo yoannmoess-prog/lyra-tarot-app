@@ -26,9 +26,6 @@
 .question-inner.pre > *    { opacity: 0; transform: translateY(8px) scale(.995); }
 .question-inner.leaving > *{ opacity: 0; transform: translateY(-8px) scale(.985); }
 
-.question-title{
-  /* Les styles sont maintenant dans la classe .page-title dans index.css */
-}
 
 /* bulle claire (textarea) */
 .input-bubble{
