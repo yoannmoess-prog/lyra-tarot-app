@@ -148,10 +148,11 @@
   Cela surcharge la largeur fixe de Page5.css de manière ciblée,
   sans causer de régression.
 */
-.page-chat .final-card-outer,
+#chat-body .final-card-outer,
 .spread-modal-container .final-card-outer {
   width: var(--card-w, var(--card-deck-w));
   aspect-ratio: 9.27 / 18;
+  box-sizing: border-box; /* Assure que le padding/border est inclus dans la largeur */
 }
 
 /* --- Styles pour la modale du tirage --- */
