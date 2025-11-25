@@ -79,12 +79,11 @@
 
 /* Cartes finales */
 .final-rail {
+  /* La mise en page (display: grid, etc.) est maintenant gérée par ChatPage.css */
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  justify-items: center;
+  justify-items: center; /* Gardé pour la compatibilité */
   align-items: start;
-  gap: clamp(12px, 2.2vw, 28px);
+  gap: clamp(12px, 2.2vw, 28px); /* Gardé comme fallback */
   opacity: 0;
 }
 .appear-slow { animation: finalAppear 1.2s ease .2s forwards; }

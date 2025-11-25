@@ -121,7 +121,11 @@
 }
 
 /* --- Rail de cartes – configuration et comportement --- */
-.page-chat .rail-truth, .page-chat .rail-advice {
+/*
+  Ces règles sont maintenant globales (sans .page-chat) pour s'appliquer
+  aussi bien à la page principale qu'à la modale.
+*/
+.rail-truth, .rail-advice {
   display: grid;
   justify-content: center;
   align-items: start;
@@ -130,9 +134,9 @@
   grid-template-columns: repeat(var(--cols, 3), var(--card-w, var(--card-deck-w)));
 }
 
-.page-chat .rail-advice {}
+.rail-advice {}
 
-.page-chat .rail-truth {
+.rail-truth {
   margin-bottom: 8rem;
 }
 
@@ -159,4 +163,17 @@
 .spread-modal-container .final-rail {
   width: 100%;
   max-width: var(--content-w);
+}
+
+/* --- Responsive pour le rail --- */
+/*
+  Sur les petits écrans, nous forçons le rail à s'adapter en modifiant la
+  variable CSS --cols, qui est utilisée par `grid-template-columns`.
+  Cela garantit que le rail est responsive partout où il est utilisé.
+*/
+@media (max-width: 520px) {
+  .rail-truth, .rail-advice {
+    --cols: 2;
+    gap: var(--gap, 16px);
+  }
 }
