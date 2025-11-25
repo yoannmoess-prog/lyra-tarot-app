@@ -93,10 +93,7 @@ export function fitRail(container, { spreadId, cols = 3, minCard = 120 } = {}) {
 
     // --- Décision finale ---
     // On prend la plus petite des deux largeurs calculées.
-    // Pour `spread-truth`, on ajoute une contrainte pour ne pas dépasser la largeur du paquet.
-    const finalCardW = spreadId === 'spread-truth'
-      ? Math.min(widthBasedCardW, heightBasedCardW, deck)
-      : Math.min(widthBasedCardW, heightBasedCardW);
+    const finalCardW = Math.min(widthBasedCardW, heightBasedCardW, deck);
 
     container.style.setProperty("--cols", c);
     container.style.setProperty("--card-w", `${Math.floor(finalCardW)}px`);

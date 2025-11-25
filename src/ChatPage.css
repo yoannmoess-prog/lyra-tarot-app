@@ -136,13 +136,7 @@
   margin-bottom: 8rem;
 }
 
-/*
-  Règle unifiée et de haute spécificité pour le positionnement de la carte B.
-  Cible le rail en triangle dans les deux contextes (page et modale)
-  pour garantir l'application du style.
-*/
-#chat-body .rail-truth .final-card-outer[data-pos='B'],
-.spread-modal-container .rail-truth .final-card-outer[data-pos='B'] {
+.rail-truth .final-card-outer[data-pos='B'] {
   transform: translateY(50%);
 }
 

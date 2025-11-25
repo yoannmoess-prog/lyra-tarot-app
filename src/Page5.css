@@ -129,11 +129,8 @@
 
 /* Responsive pour le rail */
 @media (max-width: 520px) {
-  .final-rail.rail-truth { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  /* La gestion de la grille est maintenant entièrement dans ChatPage.css */
   .final-rail.rail-truth .final-card-outer { width: 100%; max-width: 156px; }
-}
-@media (max-width: 380px) {
-  .final-rail.rail-truth { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Bloc "VOUS" dans le footer */
