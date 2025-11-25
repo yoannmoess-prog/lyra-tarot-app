@@ -79,11 +79,12 @@
 
 /* Cartes finales */
 .final-rail {
-  /* La mise en page (display: grid, etc.) est maintenant gérée par ChatPage.css */
   width: 100%;
-  justify-items: center; /* Gardé pour la compatibilité */
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-items: center;
   align-items: start;
-  gap: clamp(12px, 2.2vw, 28px); /* Gardé comme fallback */
+  gap: clamp(12px, 2.2vw, 28px);
   opacity: 0;
 }
 .appear-slow { animation: finalAppear 1.2s ease .2s forwards; }
@@ -128,8 +129,11 @@
 
 /* Responsive pour le rail */
 @media (max-width: 520px) {
-  /* La gestion de la grille est maintenant entièrement dans ChatPage.css */
+  .final-rail.rail-truth { grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .final-rail.rail-truth .final-card-outer { width: 100%; max-width: 156px; }
+}
+@media (max-width: 380px) {
+  .final-rail.rail-truth { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Bloc "VOUS" dans le footer */
