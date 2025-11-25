@@ -33,7 +33,7 @@ export default function SpreadTruthPage() {
       <div className={`page4-root ${pageLoaded ? "fade-in-soft" : "pre-fade"}`}>
         <div className={`page4-container ${animationClass}`}>
           <div className="title-block">
-            <div className="p4-fixed-title">{question}</div>
+            <div className="p4-fixed-title page-title">{question}</div>
           </div>
 
           <div className={`board ${isLandscape ? "" : "col"}`}>

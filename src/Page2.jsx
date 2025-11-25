@@ -92,7 +92,7 @@ export default function Page2() {
     >
       {showForm && (
         <div className={`name-inner ${arrive ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""}`} style={{pointerEvents: showForm ? 'auto' : 'none'}}>
-          <h1 className="name-title">{greeting}</h1>
+          <h1 className="name-title page-title">{greeting}</h1>
 
           <form className="name-form" onSubmit={onSubmit} autoComplete="off">
             <label className="sr-only" htmlFor="name">Votre prénom</label>

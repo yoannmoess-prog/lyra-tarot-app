@@ -51,8 +51,6 @@
   font-family: 'Sorts Mill Goudy', serif;
 }
 .p4-fixed-title {
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
-  line-height: 1.25;
   margin-bottom: 0.5em;
 }
 .p4-instruction {
