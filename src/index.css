@@ -47,3 +47,23 @@ html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 /* Utilitaires de fade communs */
 .fade-in { opacity: 1; transition: opacity .8s ease; }
 .fade-out{ opacity: 0; transition: opacity .8s ease; }
+
+.page-title {
+  margin: 0;
+  font-family: 'Sorts Mill Goudy', serif;
+  color: #F8F5E1;
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  line-height: 1.25;
+}
+
+@media screen and (max-width: 520px) {
+  .page-title {
+    font-size: clamp(1.4rem, 5vw, 1.8rem);
+  }
+}
+
+@media screen and (min-width: 961px) {
+  .page-title {
+    font-size: clamp(2rem, 2.8vw, 3rem);
+  }
+}

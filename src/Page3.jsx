@@ -148,7 +148,7 @@ function Page3() {
         className={`question-inner ${phase === "form" ? "arrive" : "pre"} ${phase === "formOut" ? "leaving" : ""}`}
         onSubmit={(e) => { e.preventDefault(); onSubmit(); }}
       >
-        <div className="question-title">{randomIntro}</div>
+        <div className="question-title page-title">{randomIntro}</div>
         <div className="q-shuffle is-on">
           {[...Array(5)].map((_, i) => (
             <div

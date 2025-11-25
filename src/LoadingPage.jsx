@@ -132,8 +132,8 @@ const LoadingPage = () => {
       ) : (
         <>
           <div className="loading-header">
-            <p>Très bien, {name}.</p>
-            <p>Prépare-toi à tirer les cartes.</p>
+            <p className="page-title">Très bien, {name}.</p>
+            <p className="page-title">Prépare-toi à tirer les cartes.</p>
           </div>
           <div className="loading-animation">
             <ul>

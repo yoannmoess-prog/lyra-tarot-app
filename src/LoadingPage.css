@@ -16,10 +16,6 @@
 
 .loading-header {
   margin-bottom: 40px;
-  font-family: 'Sorts Mill Goudy', serif;
-  color: #F8F5E1;
-  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
-  line-height: 1.25;
 }
 
 .loading-header p {
