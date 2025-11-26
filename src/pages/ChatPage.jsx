@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState, useLayoutEffect } from "re
 import { useLocation, useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import "../components/Modal.css";
-import "../ChatPage.css";
+import "./ChatPage.css";
 import "../Page5.css"; // Ré-ajouté pour les styles des cartes
 import { toast } from "../utils/net";
 import "../toast.css";

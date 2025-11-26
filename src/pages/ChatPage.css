@@ -1,0 +1,111 @@
+/* src/ChatPage.css */
+
+/* --------- Main Layout --------- */
+.page-chat {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh; /* Pour iOS/Safari */
+  overflow: hidden; /* Empêche le body de scroller */
+  background: var(--bg-dark-blue);
+  position: relative;
+}
+
+.chat-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: var(--header-h);
+  flex-shrink: 0;
+}
+
+.chat-main {
+  flex-grow: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+.chat-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background: transparent;
+  flex-shrink: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  opacity: 0;
+  transform: translateY(10px);
+}
+.chat-footer.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chat-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Aligne le contenu en bas */
+  min-height: 100%;
+  /* Utilise une variable pour le padding, synchronisée par JS */
+  padding-bottom: var(--footer-h, 90px);
+  /* Indique au navigateur où arrêter le défilement */
+  scroll-padding-bottom: var(--footer-h, 90px);
+}
+
+/* --------- Tarot Rail Layout --------- */
+.chat-rail {
+  padding: 32px 0 48px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  /* Un min-height pour éviter les sauts de layout au chargement */
+  min-height: 250px;
+}
+
+.final-rail {
+  --gap: 16px;
+  display: grid;
+  /* La grille est contrôlée par des variables CSS pilotées par JS */
+  grid-template-columns: repeat(var(--cols, 3), 1fr);
+  gap: var(--gap);
+  width: 100%;
+  max-width: calc(var(--cols, 3) * var(--card-w, 120px) + (var(--cols, 3) - 1) * var(--gap));
+  margin: 0 auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.final-card-outer {
+  /* La largeur de la carte est directement pilotée par la variable JS */
+  width: var(--card-w, 120px);
+  box-sizing: border-box;
+}
+
+/* --------- Rail-Truth Specific Layout --------- */
+/*
+  Ce layout spécifique est appliqué à la fois sur la page
+  principale (.page-chat) et dans la modale.
+  On utilise des sélecteurs plus simples pour que ça fonctionne
+  dans les deux contextes.
+*/
+.rail-truth {
+  grid-template-columns: repeat(3, 1fr); /* Toujours 3 colonnes */
+}
+
+/*
+  Le rendu de ChatPage.jsx trie les cartes par position (A, B, C),
+  donc on peut cibler la carte du milieu (B) de manière fiable
+  avec :nth-child(2).
+*/
+.rail-truth > *:nth-child(2) {
+  /* Décale la carte du milieu vers le bas pour former un triangle */
+  transform: translateY(calc(50% + (var(--gap) / 2)));
+}
+
+/*
+  Sur la page principale uniquement, on ajoute une marge en bas du rail
+  pour laisser de la place à la conversation.
+*/
+.page-chat .rail-truth {
+  --rail-gap: 160px; /* Espace vertical ajustable */
+  margin-bottom: var(--rail-gap);
+}
