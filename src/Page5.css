@@ -78,12 +78,12 @@
 }
 
 /* Cartes finales */
+/*
+  Les propriétés de layout (grid, gap, etc.) ont été déplacées
+  dans ChatPage.css pour devenir la source unique de vérité.
+  Ici on ne garde que l'opacité et l'animation d'apparition.
+*/
 .final-rail {
-  /* La mise en page (display: grid, etc.) est maintenant gérée par ChatPage.css */
-  width: 100%;
-  justify-items: center; /* Gardé pour la compatibilité */
-  align-items: start;
-  gap: clamp(12px, 2.2vw, 28px); /* Gardé comme fallback */
   opacity: 0;
 }
 .appear-slow { animation: finalAppear 1.2s ease .2s forwards; }
@@ -93,11 +93,15 @@
   from { box-shadow: 0 8px 18px rgba(0,0,0,.33); }
   to   { box-shadow: 0 14px 34px rgba(0,0,0,.58); }
 }
+/*
+  Le dimensionnement (.final-card-outer) est maintenant géré
+  dans ChatPage.css. Il n'y a plus de règles ici.
+  On conserve juste la perspective pour l'effet 3D.
+*/
 .final-card-outer {
-  display: flex;
+  display: flex; /* Nécessaire pour le centrage du caption */
   flex-direction: column;
   align-items: center;
-  width: clamp(120px, 28%, 200px); /* Largeur responsive */
   perspective: 1100px;
   justify-self: center;
 }
@@ -127,10 +131,10 @@
 .final-card-flip.is-flipped + .final-caption { opacity: .9; transform: translateY(0); }
 
 /* Responsive pour le rail */
-@media (max-width: 520px) {
-  /* La gestion de la grille est maintenant entièrement dans ChatPage.css */
-  .final-rail.rail-truth .final-card-outer { width: 100%; max-width: 156px; }
-}
+/* Les règles de responsive design pour le layout du rail ont été
+   consolidées avec la logique de variables CSS globales et ne sont
+   plus nécessaires ici.
+*/
 
 /* Bloc "VOUS" dans le footer */
 .you-block {
@@ -195,6 +199,6 @@
 }
 
 @media (max-width:520px) {
-  .final-card-outer { width:min(30vw, 26vh, 156px); }
+  /* La largeur de .final-card-outer est gérée par les variables globales */
   .p5-fixed-title { font-size: 1rem; }
 }
