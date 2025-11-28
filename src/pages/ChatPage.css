@@ -7,7 +7,6 @@
   height: 100vh;
   max-height: 100vh; /* Pour iOS/Safari */
   overflow: hidden; /* Empêche le body de scroller */
-  background: var(--bg-dark-blue);
   position: relative;
 }
 
@@ -15,8 +14,13 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  height: var(--header-h);
+  height: 64px; /* Rétablissement d'une hauteur fixe sûre */
   flex-shrink: 0;
+  /* --- Ajouts pour corriger l'alignement --- */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px; /* Ajoute un peu d'air sur les côtés */
 }
 
 .chat-main {
@@ -49,11 +53,15 @@
   padding-bottom: var(--footer-h, 90px);
   /* Indique au navigateur où arrêter le défilement */
   scroll-padding-bottom: var(--footer-h, 90px);
+  /* --- Ajout du padding latéral --- */
+  padding-left: 12px;
+  padding-right: 12px;
 }
 
 /* --------- Tarot Rail Layout --------- */
 .chat-rail {
-  padding: 32px 0 48px;
+  /* Le padding supérieur a été réduit pour un espace plus harmonieux */
+  padding: 16px 0 48px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -70,7 +78,7 @@
   width: 100%;
   max-width: calc(var(--cols, 3) * var(--card-w, 120px) + (var(--cols, 3) - 1) * var(--gap));
   margin: 0 auto;
-  padding: 0 16px;
+  /* Padding est maintenant géré par .chat-body */
   box-sizing: border-box;
 }
 
