@@ -84,6 +84,13 @@
   padding-right: 12px;
 }
 
+/* --------- Messages Layout --------- */
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 30px; /* Espace vertical entre les bulles */
+}
+
 /* --------- Tarot Rail Layout --------- */
 .chat-rail {
   /* Le padding supérieur a été réduit pour un espace plus harmonieux */

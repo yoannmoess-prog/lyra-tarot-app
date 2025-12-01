@@ -4,7 +4,7 @@
 .bubble {
   padding: 12px 18px;
   border-radius: 24px;
-  max-width: 90%;
+  max-width: 60%; /* Largeur max unifiée */
   width: fit-content;
   min-height: 22px; /* Hauteur approx d'une bulle vide ou typing */
   box-sizing: border-box; /* S'assure que le padding est inclus dans la hauteur */
@@ -104,12 +104,14 @@
 }
 
 
-/* Styles pour les écrans larges */
+/*
+  Ancienne règle pour les écrans larges, maintenant unifiée ci-dessus.
 @media (min-width: 768px) {
   .bubble {
-    max-width: 50%; /* Limite la largeur des bulles sur desktop */
+    max-width: 50%;
   }
 }
+*/
 
 /* Styles pour le formulaire de saisie */
 /*
