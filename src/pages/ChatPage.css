@@ -21,6 +21,10 @@
   align-items: center;
   justify-content: center;
   padding: 0 16px; /* Ajoute un peu d'air sur les côtés */
+  /* --- Annulation de l'effet glassmorphism --- */
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border: none !important;
 }
 
 .chat-main {
@@ -29,6 +33,21 @@
   position: relative;
   /* Ajoute un léger espace en haut */
   padding-top: 16px;
+  /* --- Effet de fondu aux extrémités --- */
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
 }
 
 .chat-footer {
