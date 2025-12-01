@@ -85,8 +85,14 @@
 */
 .final-rail {
   opacity: 0;
+  transition: opacity 0.5s ease; /* Fallback pour une apparition en douceur */
 }
 .appear-slow { animation: finalAppear 1.2s ease .2s forwards; }
+
+/* Une fois scellé, le rail doit être visible, indépendamment de l'animation */
+.final-rail.sealed {
+  opacity: 1;
+}
 
 .final-rail.sealed .final-card-flip .final-front { animation: cardGlowHero 1s ease-out forwards; }
 @keyframes cardGlowHero {
