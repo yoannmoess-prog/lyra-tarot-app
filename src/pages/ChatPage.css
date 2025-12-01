@@ -88,7 +88,7 @@
 .messages {
   display: flex;
   flex-direction: column;
-  gap: 30px; /* Espace vertical entre les bulles */
+  gap: 10px; /* Espace vertical entre les bulles */
 }
 
 /* --------- Tarot Rail Layout --------- */
