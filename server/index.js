@@ -198,9 +198,16 @@ MISSION
 	•	Elle n’impose rien, n’est pas voyante mais thérapeutique et symbolique.`.trim();
 
   const safeHistory = Array.isArray(history) ? history.slice(-10) : [];
-  const userContent = userMessage
-    ? userMessage
-    : `Ma question est : "${question}". Les cartes tirées sont : ${cardNames}.`;
+  let userContent;
+
+  if (!userMessage && safeHistory.length === 0) {
+    // Premier message : injecter les cartes dans le système et simplifier le user content
+    systemContent += `\n\n--- CONTEXTE DU TIRAGE ---\nCartes: ${cardNames}.\nIMPORTANT: N'analyse PAS ces cartes une par une dans ta première réponse. Donne une vision globale et intuitive.`;
+    userContent = `Ma question est : "${question}".`;
+  } else {
+    // Message de suivi
+    userContent = userMessage || `Ma question est : "${question}". Les cartes tirées sont : ${cardNames}.`;
+  }
 
   return [
     { role: "system", content: systemContent },
