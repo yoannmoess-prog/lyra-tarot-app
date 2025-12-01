@@ -55,6 +55,11 @@
   padding-bottom: var(--footer-h, 90px);
   /* Indique au navigateur où arrêter le défilement */
   scroll-padding-bottom: var(--footer-h, 90px);
+  /* --- Ajout pour centrer et limiter la largeur --- */
+  width: 100%;
+  max-width: min(900px, 92vw);
+  margin: 0 auto;
+  box-sizing: border-box; /* S'assure que le padding ne s'ajoute pas à la largeur */
   /* --- Ajout du padding latéral --- */
   padding-left: 12px;
   padding-right: 12px;
@@ -72,21 +77,19 @@
 }
 
 .final-rail {
-  --gap: 16px;
-  display: grid;
-  /* La grille est contrôlée par des variables CSS pilotées par JS */
-  grid-template-columns: repeat(var(--cols, 3), 1fr);
-  gap: var(--gap);
+  display: flex;
+  justify-content: center;
+  gap: clamp(8px, 3vw, 30px); /* Espacement dynamique avec un max de 30px */
   width: 100%;
-  max-width: calc(var(--cols, 3) * var(--card-w, 120px) + (var(--cols, 3) - 1) * var(--gap));
   margin: 0 auto;
-  /* Padding est maintenant géré par .chat-body */
   box-sizing: border-box;
 }
 
 .final-card-outer {
-  /* La largeur de la carte est directement pilotée par la variable JS */
-  width: var(--card-w, 120px);
+  flex: 1 1 0; /* Permet aux cartes de grandir et rétrécir */
+  max-width: 160px; /* Une largeur maximale raisonnable pour les cartes */
+  min-width: 80px; /* Empêche les cartes de devenir trop petites */
+  aspect-ratio: 9.27 / 18; /* Conserve les proportions de la carte */
   box-sizing: border-box;
 }
 
@@ -94,21 +97,17 @@
 /*
   Ce layout spécifique est appliqué à la fois sur la page
   principale (.page-chat) et dans la modale.
-  On utilise des sélecteurs plus simples pour que ça fonctionne
-  dans les deux contextes.
 */
 .rail-truth {
-  grid-template-columns: repeat(3, 1fr); /* Toujours 3 colonnes */
+  /* Pas de style spécifique nécessaire avec flexbox, l'alignement est déjà géré. */
 }
 
 /*
-  Le rendu de ChatPage.jsx trie les cartes par position (A, B, C),
-  donc on peut cibler la carte du milieu (B) de manière fiable
-  avec :nth-child(2).
+  On cible directement la carte en position B pour la décaler.
+  L'utilisation de `data-pos` est plus robuste que `:nth-child`.
 */
-.rail-truth > *:nth-child(2) {
-  /* Décale la carte du milieu vers le bas pour former un triangle */
-  transform: translateY(calc(50% + (var(--gap) / 2)));
+.rail-truth > [data-pos='B'] {
+  transform: translateY(50%);
 }
 
 /*
@@ -118,6 +117,21 @@
 .page-chat .rail-truth {
   --rail-gap: 160px; /* Espace vertical ajustable */
   margin-bottom: var(--rail-gap);
+}
+
+/*
+  Pour le tirage vérité, on ajoute une contrainte de hauteur pour éviter
+  le débordement vertical sur les écrans courts (ex: mobile en paysage).
+  La hauteur du rail est d'environ 1.5x la hauteur d'une carte.
+  La hauteur de la carte est de ~1.94x sa largeur.
+  On peut donc calculer la largeur max de la carte à partir de la hauteur du viewport.
+  (100svh - paddings) / 1.5 / 1.94
+  Ce qui donne une largeur max d'environ 25svh. On prend une valeur sûre.
+*/
+@media (max-height: 500px) {
+  .rail-truth .final-card-outer {
+    max-width: 22svh;
+  }
 }
 
 /* Force rebuild */
