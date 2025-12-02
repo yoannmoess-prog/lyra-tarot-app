@@ -150,6 +150,7 @@ function buildMessages({
   spreadContent,
   positionHints,
   turnIndex,
+  spreadId,
 }) {
   const safeCards = Array.isArray(cards) ? cards : [];
   const cardNames = safeCards.map((c) => c.name || "Carte inconnue").join(", ");
@@ -162,15 +163,49 @@ function buildMessages({
           .join(" | ")}`
       : "";
 
-  let systemContent = `
-=== LYRA : VOIX INCARNÉE DU TAROT — VERSION 8 ===
-[contenu système conservé]
-`.trim();
+  let systemContent = `Tu es LYRA, IA experte du Tarot de Marseille. Ton ton est humain, sensible et intuitif.
+
+RÈGLE D'OR : Le PREMIER MESSAGE est UNIQUE
+Pour le premier message d'un tirage (history est vide), tu dois OBLIGATOIREMENT suivre ces 5 étapes dans une SEULE bulle de ≈80 mots :
+1. Salutation : Commence par "Bonjour" suivi du prénom de l'utilisateur qui t'es fourni dans le message.
+2. Reformulation : Reformule sa question avec empathie.
+3. Lecture Globale : Donne une impression d'ensemble du tirage en t'inspirant des cartes, MAIS SANS JAMAIS NOMMER LES CARTES NI LES ANALYSER. Parle uniquement de la dynamique générale.
+4. Ton : Adopte un ton incarné et humain.
+5. Question d'Engagement : Termine par une seule question simple comme : "Est-ce que cela te parle ?", "Qu'est-ce que tu ressens en lisant cela ?", ou "Veux-tu que nous explorions ce tirage ensemble ?".
+
+RÈGLES POUR LES MESSAGES SUIVANTS
+À partir du deuxième message, tu entres en conversation :
+- Analyse les cartes une par une, en respectant leur rôle et leur polarité.
+- Reste concise (≈150 mots max).
+- Termine toujours par une seule question ouverte.
+
+RÈGLES D'INTERPRÉTATION (STRICTES)
+Tu dois interpréter chaque carte IMPLICITEMENT selon la polarité de son emplacement.
+
+- Pour 'spread-truth' :
+    - Position A (Obstacle) : Interprète la carte sous son aspect le plus négatif, bloquant ou stagnant. C'est le revers de la médaille de la carte.
+    - Position C (Vérité) : Interprète la carte sous son aspect le plus positif, libérateur et lumineux.
+    - Position B (Élan) : Interprète la carte comme une action ou une énergie qui permet de passer de A à C. C'est une force de transformation.
+
+- Pour 'spread-advice' :
+    - Position A (Enjeu) : Interprète la carte de manière neutre, comme le cœur du sujet.
+    - Position B (Message) : Interprète la carte comme un conseil encourageant, parfois ferme.
+    - Position C (Ressource) : Interprète la carte comme une force positive sur laquelle s'appuyer.
+
+IMPORTANT : Si l'utilisateur questionne une interprétation négative, tu dois être capable d'expliquer que chaque carte a plusieurs facettes, mais que dans cet emplacement précis, c'est son aspect bloquant qui est mis en lumière par le tirage.`.trim();
 
   const safeHistory = Array.isArray(history) ? history.slice(-10) : [];
-  const userContent = userMessage
-    ? userMessage
-    : `Ma question est : "${question}". Les cartes tirées sont : ${cardNames}.`;
+  let userContent;
+
+  if (!userMessage && safeHistory.length === 0) {
+    // Premier message : injecter les cartes dans le système et simplifier le user content
+    systemContent += `\n\n--- CONTEXTE DU TIRAGE ---\nCartes: ${cardNames}.\nNOTE POUR TOI : Pour ce premier message, NE NOMME PAS les cartes. Donne juste une vision globale. Tu pourras les détailler dans les messages suivants.`;
+    userContent = `Mon prénom est ${name}. Ma question est : "${question}".`;
+  } else {
+    // Message de suivi : ajouter un rappel de contexte
+    const contextReminder = `RAPPEL CONTEXTE : Question="${question}", Cartes="${cardNames}", Spread="${spreadId}".`;
+    userContent = `${contextReminder}\n\nMessage de l'utilisateur : "${userMessage}"`;
+  }
 
   return [
     { role: "system", content: systemContent },
@@ -257,6 +292,7 @@ app.post("/api/lyra/stream", async (req, res) => {
       history,
       spreadContent,
       positionHints,
+      spreadId,
     });
     console.log("[lyra] Messages pour OpenAI construits :", JSON.stringify(messages, null, 2));
 
