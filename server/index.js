@@ -150,6 +150,7 @@ function buildMessages({
   spreadContent,
   positionHints,
   turnIndex,
+  spreadId,
 }) {
   const safeCards = Array.isArray(cards) ? cards : [];
   const cardNames = safeCards.map((c) => c.name || "Carte inconnue").join(", ");
@@ -201,8 +202,9 @@ IMPORTANT : Si l'utilisateur questionne une interprétation négative, tu dois �
     systemContent += `\n\n--- CONTEXTE DU TIRAGE ---\nCartes: ${cardNames}.\nNOTE POUR TOI : Pour ce premier message, NE NOMME PAS les cartes. Donne juste une vision globale. Tu pourras les détailler dans les messages suivants.`;
     userContent = `Mon prénom est ${name}. Ma question est : "${question}".`;
   } else {
-    // Message de suivi
-    userContent = userMessage || `Ma question est : "${question}". Les cartes tirées sont : ${cardNames}.`;
+    // Message de suivi : ajouter un rappel de contexte
+    const contextReminder = `RAPPEL CONTEXTE : Question="${question}", Cartes="${cardNames}", Spread="${spreadId}".`;
+    userContent = `${contextReminder}\n\nMessage de l'utilisateur : "${userMessage}"`;
   }
 
   return [
@@ -290,6 +292,7 @@ app.post("/api/lyra/stream", async (req, res) => {
       history,
       spreadContent,
       positionHints,
+      spreadId,
     });
     console.log("[lyra] Messages pour OpenAI construits :", JSON.stringify(messages, null, 2));
 
